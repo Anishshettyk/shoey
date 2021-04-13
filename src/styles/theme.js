@@ -24,6 +24,7 @@ const theme = {
     xxl: `32px`,
   },
   navHeight: '70px',
+  transition: `all 1s cubic-bezier(0.3, 0, 0.4, 1);`,
 };
 
 export default theme;

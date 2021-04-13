@@ -7,7 +7,7 @@ import signUpImage from '../images/signup.svg';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Paper } from '@material-ui/core';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 import googleIcon from '../images/googleIcon.svg';
 import twitterIcon from '../images/twitterIcon.svg';
@@ -135,14 +135,20 @@ const useStyles = makeStyles(() => ({
 const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const { signup } = useAuth();
   const classes = useStyles();
+  const history = useHistory();
 
   const signUpSubmit = async (event) => {
     event.preventDefault();
     try {
+      setError('');
       await signup(email, password);
-    } catch {}
+      history.push('/');
+    } catch {
+      setError('Error occured while creating account please try again.');
+    }
   };
 
   return (
@@ -178,6 +184,7 @@ const SignUp = () => {
             margin="normal"
             fullWidth
           />
+          <p className="error_message">{error}</p>
           <Button type="submit" color="primary" variant="contained" className={classes.buttonStyles}>
             CREATE ACCOUNT
           </Button>

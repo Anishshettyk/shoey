@@ -49,6 +49,9 @@ a{
     font-weight:200;
     font-size:16px;
 }
+.error_message{
+    color: ${colors.red};
+}
 
 `;
 
