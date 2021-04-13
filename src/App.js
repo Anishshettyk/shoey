@@ -22,9 +22,9 @@ const themes = createMuiTheme({
 function App() {
   return (
     <MuiThemeProvider theme={themes}>
-      <GlobalStyle />
-      <Navbar />
       <Router>
+        <GlobalStyle />
+        <Navbar />
         <AuthProvider>
           <Switch>
             <Route component={SignUp} path="/signup" />
