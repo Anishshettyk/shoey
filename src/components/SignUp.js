@@ -6,11 +6,11 @@ import { theme } from '../styles';
 import signUpImage from '../images/signup.svg';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button, Paper } from '@material-ui/core';
+import { Button, Paper, CircularProgress } from '@material-ui/core';
 import { Link, useHistory } from 'react-router-dom';
 
 import googleIcon from '../images/googleIcon.svg';
-import twitterIcon from '../images/twitterIcon.svg';
+import githubIcon from '../images/github_icon.svg';
 import logo from '../images/shoey_logo.svg';
 
 const { colors, navHeight } = theme;
@@ -93,7 +93,7 @@ const ImageContainer = styled.section`
   }
 `;
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     '& > *': {
       margin: '15px 0px',
@@ -122,13 +122,21 @@ const useStyles = makeStyles(() => ({
     margin: '30px 10px',
     padding: '0px 20px',
     cursor: 'pointer',
+    transition: 'all 0.175s',
     '& img': {
       maxWidth: '32px',
       backgroundColor: 'transparent',
     },
+    '&:hover': {
+      transform: 'translateY(-10px)',
+      backgroundColor: colors.grey3,
+    },
   },
   signUpProviderText: {
     marginLeft: '10px',
+  },
+  loading: {
+    margin: '0 auto',
   },
 }));
 
@@ -136,19 +144,45 @@ const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { signup } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const { signup, googleSignUp, githubSignUp } = useAuth();
   const classes = useStyles();
   const history = useHistory();
 
   const signUpSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true);
     try {
       setError('');
       await signup(email, password);
       history.push('/');
-    } catch {
-      setError('Error occured while creating account please try again.');
+    } catch (error) {
+      setError(error.message ? error.message : 'Error occured while creating account please try again.');
     }
+    setLoading(false);
+  };
+
+  const signUpWithGoogle = async () => {
+    setLoading(true);
+    try {
+      setError('');
+      await googleSignUp();
+      history.push('/');
+    } catch (error) {
+      setError(error.message ? error.message : 'Error occured while creating account please try again.');
+    }
+    setLoading(false);
+  };
+  const signUpWithGithub = async () => {
+    setLoading(true);
+    try {
+      setError('');
+      await githubSignUp();
+      history.push('/');
+    } catch (error) {
+      setError(error.message ? error.message : 'Error occured while creating account please try again.');
+    }
+    setLoading(false);
   };
 
   return (
@@ -184,20 +218,24 @@ const SignUp = () => {
             margin="normal"
             fullWidth
           />
-          <p className="error_message">{error}</p>
-          <Button type="submit" color="primary" variant="contained" className={classes.buttonStyles}>
-            CREATE ACCOUNT
-          </Button>
+          {error && <p className="error_message">{error}</p>}
+          {loading ? (
+            <CircularProgress className={classes.loading} />
+          ) : (
+            <Button type="submit" color="primary" variant="contained" className={classes.buttonStyles}>
+              CREATE ACCOUNT
+            </Button>
+          )}
         </form>
         <Divider>or</Divider>
         <SignUpProvider>
-          <Paper elevation={3} className={classes.signUpProvider}>
+          <Paper elevation={3} className={classes.signUpProvider} onClick={signUpWithGoogle}>
             <LazyImage src={googleIcon} alt="google logo" className={classes.signUpProviderLogo} />
             <h5 className={classes.signUpProviderText}>Sign up with Google</h5>
           </Paper>
-          <Paper elevation={3} className={classes.signUpProvider}>
-            <LazyImage src={twitterIcon} alt="google logo" className={classes.signUpProviderLogo} />
-            <h5 className={classes.signUpProviderText}>Sign up with Twitter</h5>
+          <Paper elevation={3} className={classes.signUpProvider} onClick={signUpWithGithub}>
+            <LazyImage src={githubIcon} alt="github logo" className={classes.signUpProviderLogo} />
+            <h5 className={classes.signUpProviderText}>Sign up with Github</h5>
           </Paper>
         </SignUpProvider>
       </SignUpForm>

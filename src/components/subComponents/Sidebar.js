@@ -15,7 +15,11 @@ const AuthContainer = styled.div`
   bottom: 0;
   width: 100%;
   display: flex;
-  padding: 10px 20px;
+  padding: 5px 10px;
+  border-top: 2px solid ${colors.lightBlue};
+  p {
+    font-size: 16px;
+  }
 `;
 
 const useStyles = makeStyles((theme) => ({
@@ -28,12 +32,6 @@ const useStyles = makeStyles((theme) => ({
   categoryItems: {
     '& span': {
       fontSize: 16,
-    },
-    '&:hover': {
-      '& span': {
-        transform: 'Scale(1.07)',
-        color: colors.blue,
-      },
     },
   },
   heading: {
@@ -73,6 +71,7 @@ const Sidebar = ({ open, setOpen }) => {
         ))}
       </List>
       <AuthContainer>
+        <Divider />
         <p>
           Don't have a Account?{' '}
           <Link to="/signup" onClick={() => setOpen(false)}>
