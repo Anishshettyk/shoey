@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { LazyImage } from './index';
 import { useAuth } from '../context/AuthContext';
-import { theme } from '../styles';
+import { theme, media } from '../styles';
 import signUpImage from '../images/signup.svg';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
@@ -21,6 +21,10 @@ const SignUpContainer = styled.div`
   width: 100%;
   height: calc(100vh - ${navHeight});
   margin-top: ${navHeight};
+  ${media.tabletL`
+    display:block;
+    margin-top: calc(${navHeight} + 20px);
+  `}
 `;
 const SignUpForm = styled.section`
   margin: 20px 60px;
@@ -39,6 +43,9 @@ const SignUpForm = styled.section`
     font-size: 40px;
     margin: 0;
   }
+  ${media.tphone`
+  margin: 10px 30px;
+  `}
 `;
 const Divider = styled.p`
   margin: 30px 0px 0px 0px;
@@ -67,6 +74,9 @@ const Divider = styled.p`
 const SignUpProvider = styled.div`
   display: Flex;
   justify-content: space-around;
+  ${media.phablet`
+    display:block;
+  `}
 `;
 const ImageContainer = styled.section`
   position: relative;
@@ -91,6 +101,9 @@ const ImageContainer = styled.section`
     position: absolute;
     max-height: 100vh;
   }
+  ${media.tabletL`
+    display:none;
+  `}
 `;
 
 const useStyles = makeStyles((theme) => ({
@@ -131,6 +144,11 @@ const useStyles = makeStyles((theme) => ({
       transform: 'translateY(-10px)',
       backgroundColor: colors.grey3,
     },
+    [theme.breakpoints.down('sm')]: {
+      '& h5': {
+        fontSize: '10px',
+      },
+    },
   },
   signUpProviderText: {
     marginLeft: '10px',
@@ -148,6 +166,7 @@ const SignUp = () => {
   const { signup, googleSignUp, githubSignUp } = useAuth();
   const classes = useStyles();
   const history = useHistory();
+  const defaultErrorMessage = 'Error occured while creating account please try again.';
 
   const signUpSubmit = async (event) => {
     event.preventDefault();
@@ -157,7 +176,7 @@ const SignUp = () => {
       await signup(email, password);
       history.push('/');
     } catch (error) {
-      setError(error.message ? error.message : 'Error occured while creating account please try again.');
+      setError(error.message ? error.message : defaultErrorMessage);
     }
     setLoading(false);
   };
@@ -169,7 +188,7 @@ const SignUp = () => {
       await googleSignUp();
       history.push('/');
     } catch (error) {
-      setError(error.message ? error.message : 'Error occured while creating account please try again.');
+      setError(error.message ? error.message : defaultErrorMessage);
     }
     setLoading(false);
   };
@@ -180,7 +199,7 @@ const SignUp = () => {
       await githubSignUp();
       history.push('/');
     } catch (error) {
-      setError(error.message ? error.message : 'Error occured while creating account please try again.');
+      setError(error.message ? error.message : defaultErrorMessage);
     }
     setLoading(false);
   };
@@ -190,7 +209,7 @@ const SignUp = () => {
       <ImageContainer>
         <img src={signUpImage} alt="sign up side" className="signUp_sidebar_image" />
         <div className="signUp__company">
-          <img src={logo} alt="" />
+          <img src={logo} alt="shoey logo" />
           <p className="company_desc">A central hub to find a perfect sole.</p>
         </div>
       </ImageContainer>
