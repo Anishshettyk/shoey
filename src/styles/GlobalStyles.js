@@ -52,6 +52,29 @@ a{
 .error_message{
     color: ${colors.red};
 }
+.company__info {
+    position: absolute;
+    top: 5%;
+    left: 10%;
+    img {
+      max-width: 130px;
+    }
+    p {
+      margin: 0;
+      color: ${colors.grey2}
+    }
+}
+.auth__message{
+    text-transform: uppercase;
+    color: ${colors.grey2};
+    font-weight: bold;
+}
+.auth__heading {
+    color: ${colors.textColor};
+    font-weight: bold;
+    font-size: 40px;
+    margin: 0;
+}
 
 `;
 

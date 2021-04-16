@@ -2,74 +2,41 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { LazyImage } from './index';
 import { useAuth } from '../context/AuthContext';
-import { theme, media } from '../styles';
-import signUpImage from '../images/signup.svg';
+import { theme, media, mixins } from '../styles';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Paper, CircularProgress } from '@material-ui/core';
 import { Link, useHistory } from 'react-router-dom';
 
+import signUpImage from '../images/signup.svg';
 import googleIcon from '../images/googleIcon.svg';
 import githubIcon from '../images/github_icon.svg';
 import logo from '../images/shoey_logo.svg';
 
-const { colors, navHeight } = theme;
+const { colors } = theme;
 
-const SignUpContainer = styled.div`
+const SignUpContainer = styled.main`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  width: 100%;
-  height: calc(100vh - ${navHeight});
-  margin-top: ${navHeight};
+  ${mixins.visibleLayout}
   ${media.tabletL`
     display:block;
-    margin-top: calc(${navHeight} + 20px);
+    margin-top:80px;
   `}
 `;
+
 const SignUpForm = styled.section`
   margin: 20px 60px;
   form {
     display: flex;
     flex-direction: column;
   }
-  .signUp__message {
-    text-transform: uppercase;
-    color: ${colors.grey2};
-    font-weight: bold;
-  }
-  .signUp__heading {
-    color: ${colors.textColor};
-    font-weight: bold;
-    font-size: 40px;
-    margin: 0;
-  }
   ${media.tphone`
   margin: 10px 30px;
   `}
 `;
 const Divider = styled.p`
-  margin: 30px 0px 0px 0px;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-  &:before {
-    position: absolute;
-    width: 35%;
-    height: 2px;
-    top: 50%;
-    left: 60%;
-    background-color: ${colors.grey1};
-    content: '';
-  }
-  &:after {
-    position: absolute;
-    width: 35%;
-    height: 2px;
-    top: 50%;
-    right: 60%;
-    background-color: ${colors.grey1};
-    content: '';
-  }
+  ${mixins.divider};
 `;
 const SignUpProvider = styled.div`
   display: Flex;
@@ -82,17 +49,6 @@ const ImageContainer = styled.section`
   position: relative;
   width: 100%;
   height: 100%;
-  .signUp__company {
-    position: absolute;
-    top: 5%;
-    left: 10%;
-    img {
-      max-width: 130px;
-    }
-    p {
-      margin: 0;
-    }
-  }
   .signUp_sidebar_image {
     background-color: ${colors.grey3};
     padding: 0px 20px;
@@ -111,6 +67,9 @@ const useStyles = makeStyles((theme) => ({
     '& > *': {
       margin: '15px 0px',
     },
+  },
+  loading: {
+    margin: '0 auto',
   },
   buttonStyles: {
     width: '30%',
@@ -153,9 +112,6 @@ const useStyles = makeStyles((theme) => ({
   signUpProviderText: {
     marginLeft: '10px',
   },
-  loading: {
-    margin: '0 auto',
-  },
 }));
 
 const SignUp = () => {
@@ -163,7 +119,7 @@ const SignUp = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signup, googleSignUp, githubSignUp } = useAuth();
+  const { signup, googleAuth, githubAuth } = useAuth();
   const classes = useStyles();
   const history = useHistory();
   const defaultErrorMessage = 'Error occured while creating account please try again.';
@@ -174,7 +130,7 @@ const SignUp = () => {
     try {
       setError('');
       await signup(email, password);
-      history.push('/');
+      history.push('/profile');
     } catch (error) {
       setError(error.message ? error.message : defaultErrorMessage);
     }
@@ -185,8 +141,8 @@ const SignUp = () => {
     setLoading(true);
     try {
       setError('');
-      await googleSignUp();
-      history.push('/');
+      await googleAuth();
+      history.push('/profile');
     } catch (error) {
       setError(error.message ? error.message : defaultErrorMessage);
     }
@@ -196,8 +152,8 @@ const SignUp = () => {
     setLoading(true);
     try {
       setError('');
-      await githubSignUp();
-      history.push('/');
+      await githubAuth();
+      history.push('/profile');
     } catch (error) {
       setError(error.message ? error.message : defaultErrorMessage);
     }
@@ -208,14 +164,14 @@ const SignUp = () => {
     <SignUpContainer>
       <ImageContainer>
         <img src={signUpImage} alt="sign up side" className="signUp_sidebar_image" />
-        <div className="signUp__company">
+        <div className="company__info">
           <img src={logo} alt="shoey logo" />
           <p className="company_desc">A central hub to find a perfect sole.</p>
         </div>
       </ImageContainer>
       <SignUpForm>
-        <p className="signUp__message">Start for free</p>
-        <h1 className="signUp__heading">Sign up to Shoey.</h1>
+        <p className="auth__message">Start for free</p>
+        <h1 className="auth__heading">Sign up to Shoey.</h1>
         <p>
           Already a member? <Link to="/signin">Sign in</Link>
         </p>

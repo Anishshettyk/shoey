@@ -15,12 +15,16 @@ const AuthProvider = ({ children }) => {
     return auth.createUserWithEmailAndPassword(email, password);
   };
 
-  const googleSignUp = () => {
+  const googleAuth = () => {
     return auth.signInWithPopup(googleProvider);
   };
 
-  const githubSignUp = () => {
+  const githubAuth = () => {
     return auth.signInWithPopup(githubProvider);
+  };
+
+  const signin = (email, password) => {
+    return auth.signInWithEmailAndPassword(email, password);
   };
 
   useEffect(() => {
@@ -32,7 +36,7 @@ const AuthProvider = ({ children }) => {
     return unsubscribe;
   }, []);
 
-  const value = { signup, googleSignUp, githubSignUp, currentUser };
+  const value = { signup, googleAuth, githubAuth, currentUser, signin };
 
   return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;
 };

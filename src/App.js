@@ -1,34 +1,22 @@
 import React from 'react';
 import { GlobalStyle } from './styles';
 import AuthProvider from './context/AuthContext';
-import { SignUp, Navbar, Home } from './components';
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import { theme } from './styles';
+import { SignUp, Navbar, Home, SignIn } from './components';
+import { MuiThemeProvider } from '@material-ui/core/styles';
+import { MuiThemes } from './styles';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-
-const { colors } = theme;
-
-const themes = createMuiTheme({
-  palette: {
-    primary: {
-      main: colors.blue,
-    },
-    secondary: {
-      main: colors.red,
-    },
-  },
-});
 
 function App() {
   return (
-    <MuiThemeProvider theme={themes}>
+    <MuiThemeProvider theme={MuiThemes}>
       <Router>
         <GlobalStyle />
         <Navbar />
         <AuthProvider>
           <Switch>
             <Route component={SignUp} path="/signup" />
-            <Route component={Home} path="/" />
+            <Route component={Home} path="/" exact />
+            <Route component={SignIn} path="/signin" />
           </Switch>
         </AuthProvider>
       </Router>
