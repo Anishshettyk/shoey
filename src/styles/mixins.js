@@ -4,6 +4,23 @@ import theme from './theme';
 const { colors, navHeight } = theme;
 
 const mixins = {
+  flexColumn: css`
+    display: flex;
+    flex-direction: column;
+  `,
+  flexCenter: css`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  `,
+  spaceAround: css`
+    display: flex;
+    justify-content: space-around;
+  `,
+  spaceBetween: css`
+    display: flex;
+    justify-content: space-between;
+  `,
   visibleLayout: css`
     width: 100%;
     height: calc(100vh - ${navHeight});

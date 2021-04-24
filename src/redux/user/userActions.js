@@ -6,3 +6,9 @@ export const setUser = (userDetails) => {
     payload: userDetails,
   };
 };
+
+export const signoutUser = () => {
+  return {
+    type: types.SIGN_OUT_USER,
+  };
+};
