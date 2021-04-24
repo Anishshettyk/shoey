@@ -35,7 +35,6 @@ const AuthProvider = ({ children }) => {
 
     return unsubscribe;
   }, []);
-  console.log(currentUser);
 
   const value = { signup, googleAuth, githubAuth, currentUser, signin };
 
