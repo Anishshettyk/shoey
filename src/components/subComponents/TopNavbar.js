@@ -3,21 +3,10 @@ import { Icon } from '../index';
 import styled from 'styled-components';
 import { theme, mixins } from '../../styles';
 import { Link } from 'react-router-dom';
+import { socials, links } from '../../utils';
 
 const { colors, transitionTime } = theme;
-const socials = [
-  { name: 'Facebook', link: '#' },
-  { name: 'Github', link: '#' },
-  { name: 'Linked in', link: '#' },
-  { name: 'Codepen', link: '#' },
-  { name: 'Twitter', link: '#' },
-];
 
-const links = [
-  { name: 'Clone', link: '/#' },
-  { name: 'Contribute', link: '/#' },
-  { name: 'Issues', link: '/#' },
-];
 const StyledTopBanner = styled.div`
   border-bottom: 0.5px solid ${colors.grey2};
   padding: 5px 0px;
@@ -37,7 +26,8 @@ const StyledTopBanner = styled.div`
   .topBanner__socials {
     svg {
       margin: 0px 7px;
-      color: ${colors.darkGrey};
+      color: ${({ color }) => color};
+
       transition: ${transitionTime.t4};
       &:hover {
         color: ${colors.textColor};
@@ -59,7 +49,7 @@ const TopNavbar = () => {
       </div>
       <div className="topBanner__socials">
         {socials.map((social, i) => (
-          <Link to={social.link} key={i}>
+          <Link to={social.link} key={i} style={{ color: social.color }}>
             <Icon name={social.name} />
           </Link>
         ))}

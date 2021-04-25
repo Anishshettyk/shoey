@@ -9,6 +9,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { signoutUser } from '../../redux';
 import { auth } from '../../lib/firebase';
 import Icon from './Icon';
+import { Pagelinks, category } from '../../utils';
 
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
@@ -74,25 +75,6 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const category = [
-  {
-    name: 'Women',
-  },
-  {
-    name: 'Men',
-  },
-  {
-    name: 'Kids',
-  },
-];
-
-const links = [
-  { name: 'Home', link: '/' },
-  { name: 'About Us', link: '/about' },
-  { name: 'Cart', link: '/cart' },
-  { name: 'Contact', link: '/contact' },
-];
-
 const Sidebar = ({ open, setOpen }) => {
   const classes = useStyles();
   const history = useHistory();
@@ -110,7 +92,7 @@ const Sidebar = ({ open, setOpen }) => {
       <List className={classes.category}>
         {category.map((category, i) => (
           <CategoryContainer key={i}>
-            <ListItem button onClick={() => setOpen(false)} component={Link} to={`/${category.name.toLowerCase()}`}>
+            <ListItem button onClick={() => setOpen(false)} component={Link} to={category.link}>
               <ListItemIcon className={classes.categoryIcon}>
                 <Icon name={category.name} />
               </ListItemIcon>
@@ -121,7 +103,7 @@ const Sidebar = ({ open, setOpen }) => {
       </List>
       <Divider />
       <List className={classes.links}>
-        {links.map((link, i) => (
+        {Pagelinks.map((link, i) => (
           <div key={i}>
             <ListItem component={Link} to={link.link} onClick={() => setOpen(false)} button>
               <ListItemIcon className={classes.linkIcon}>
