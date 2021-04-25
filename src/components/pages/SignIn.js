@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { mixins, theme, media } from '../styles';
+import { mixins, theme, media } from '../../styles';
 import { Button, TextField, Paper, CircularProgress } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { LazyImage } from './index';
-import { useAuth } from '../context/AuthContext';
+import { LazyImage } from '../index';
+import { useAuth } from '../../context/AuthContext';
 import { useHistory } from 'react-router-dom';
 
-import googleIcon from '../images/googleIcon.svg';
-import githubIcon from '../images/github_icon.svg';
-import signInImage from '../images/signIn.svg';
-import logo from '../images/shoey_logo.svg';
+import googleIcon from '../../images/googleIcon.svg';
+import githubIcon from '../../images/github_icon.svg';
+import signInImage from '../../images/signIn.svg';
+import logo from '../../images/shoey_logo.svg';
 
 const { colors } = theme;
 

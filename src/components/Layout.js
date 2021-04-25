@@ -2,8 +2,9 @@ import React, { useEffect } from 'react';
 import { auth } from '../lib/firebase';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../redux';
+import Navbar from './Navbar';
 
-const Home = () => {
+const Layout = ({ children }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -15,10 +16,11 @@ const Home = () => {
     return unsubscribe;
   }, [dispatch]);
   return (
-    <div>
-      <h1>home</h1>
-    </div>
+    <main>
+      <Navbar />
+      <div>{children}</div>
+    </main>
   );
 };
 
-export default Home;
+export default Layout;
