@@ -2,17 +2,22 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Divider, List, ListItem, ListItemText, ListItemIcon, Avatar } from '@material-ui/core';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { theme } from '../../styles';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 import { signoutUser } from '../../redux';
 import { auth } from '../../lib/firebase';
+import Icon from './Icon';
 
-import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 const { colors, transition } = theme;
+
+const CategoryContainer = styled.div`
+  margin: 5px 10px;
+  transition: 0.3s;
+`;
 
 const AuthContainer = styled.div`
   position: absolute;
@@ -35,31 +40,41 @@ const AuthContainer = styled.div`
         color: ${colors.textColor};
         font-size: 11px;
         font-weight: bold;
-        margin-left: 4px;
+        margin-left: 8px;
       }
     }
   }
 `;
 
 const useStyles = makeStyles(() => ({
-  list: {
+  category: {
     width: 300,
     marginTop: 10,
     transition: transition,
     position: 'relative',
+    border: 'none',
   },
   categoryItems: {
     '& span': {
       fontSize: 16,
     },
   },
-  heading: {
-    textAlign: 'center',
-    color: colors.blue,
+  categoryIcon: {
+    width: '32px',
+    height: '32px',
+    overflow: 'hidden',
+  },
+  links: {
+    margin: '30px 10px 0px',
+  },
+  linkIcon: {
+    '& svg': {
+      fill: colors.black,
+    },
   },
 }));
 
-const lists = [
+const category = [
   {
     name: 'Women',
   },
@@ -71,29 +86,49 @@ const lists = [
   },
 ];
 
+const links = [
+  { name: 'Home', link: '/' },
+  { name: 'About Us', link: '/about' },
+  { name: 'Cart', link: '/cart' },
+  { name: 'Contact', link: '/contact' },
+];
+
 const Sidebar = ({ open, setOpen }) => {
   const classes = useStyles();
+  const history = useHistory();
   const user = useSelector((state) => state.user.userDetails);
   const dispatch = useDispatch();
   const signout = () => {
     auth.signOut();
     dispatch(signoutUser());
     setOpen(false);
+    history.push('/');
   };
-  console.log(user.userDetails);
+
   return (
     <SwipeableDrawer anchor="left" open={open} onClose={() => setOpen(false)} onOpen={() => setOpen(true)}>
-      <List className={classes.list}>
-        <h3 className={classes.heading}>Categories</h3>
-        {lists.map((list, i) => (
-          <div key={i}>
-            <ListItem button onClick={() => setOpen(false)} component={Link} to={`/${list.name.toLowerCase()}`}>
-              <ListItemText primary={list.name} className={classes.categoryItems} />
-              <ListItemIcon>
-                <ArrowForwardIosIcon />
+      <List className={classes.category}>
+        {category.map((category, i) => (
+          <CategoryContainer key={i}>
+            <ListItem button onClick={() => setOpen(false)} component={Link} to={`/${category.name.toLowerCase()}`}>
+              <ListItemIcon className={classes.categoryIcon}>
+                <Icon name={category.name} />
               </ListItemIcon>
+              <ListItemText primary={category.name} className={classes.categoryItems} />
             </ListItem>
-            <Divider />
+          </CategoryContainer>
+        ))}
+      </List>
+      <Divider />
+      <List className={classes.links}>
+        {links.map((link, i) => (
+          <div key={i}>
+            <ListItem component={Link} to={link.link} onClick={() => setOpen(false)} button>
+              <ListItemIcon className={classes.linkIcon}>
+                <Icon name={link.name} />
+              </ListItemIcon>
+              <ListItemText>{link.name}</ListItemText>
+            </ListItem>
           </div>
         ))}
       </List>
@@ -108,9 +143,9 @@ const Sidebar = ({ open, setOpen }) => {
           </div>
         ) : (
           <p>
-            Don't have a Account?{' '}
-            <Link to="/signup" onClick={() => setOpen(false)}>
-              Sign up
+            Already a member?{' '}
+            <Link to="/signin" onClick={() => setOpen(false)}>
+              Sign in
             </Link>
           </p>
         )}
