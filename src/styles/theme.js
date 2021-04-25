@@ -9,6 +9,7 @@ const theme = {
     grey1: '#a3b7ad',
     grey2: '#8f97aa',
     grey3: '#f3f4f6',
+    darkGrey: '#74706B',
     textColor: '#2f2e37',
     black: '#10111a',
     white: '#fff',
@@ -25,6 +26,11 @@ const theme = {
   },
   navHeight: '70px',
   transition: `all 1s cubic-bezier(0.3, 0, 0.4, 1);`,
+  transitionTime: {
+    t2: '0.2s',
+    t4: '0.4s',
+    t6: '0.4s',
+  },
 };
 
 export default theme;

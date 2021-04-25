@@ -6,6 +6,7 @@ import { GrCart } from 'react-icons/gr';
 import { AiOutlineHome } from 'react-icons/ai';
 import { BsPerson } from 'react-icons/bs';
 import { BiPhone } from 'react-icons/bi';
+import { FiFacebook, FiLinkedin, FiGithub, FiTwitter, FiCodepen } from 'react-icons/fi';
 
 const Icon = ({ name }) => {
   switch (name) {
@@ -23,6 +24,16 @@ const Icon = ({ name }) => {
       return <BsPerson />;
     case 'Contact':
       return <BiPhone />;
+    case 'Facebook':
+      return <FiFacebook />;
+    case 'Github':
+      return <FiGithub />;
+    case 'Codepen':
+      return <FiCodepen />;
+    case 'Linked in':
+      return <FiLinkedin />;
+    case 'Twitter':
+      return <FiTwitter />;
     default:
       return <p>please enter a valid name</p>;
   }
