@@ -5,6 +5,7 @@ export { default as LazyImage } from './subComponents/LazyImage';
 export { default as Sidebar } from './subComponents/Sidebar';
 export { default as Icon } from './subComponents/Icon';
 export { default as TopNavbar } from './subComponents/TopNavbar';
+export { default as PrivateRoute } from './subComponents/PrivateRoute';
 
 export { default as SignIn } from './pages/SignIn';
 export { default as SignUp } from './pages/SignUp';

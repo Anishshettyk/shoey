@@ -1,7 +1,7 @@
 import React from 'react';
 import { GlobalStyle } from './styles';
 import AuthProvider from './context/AuthContext';
-import { SignUp, Layout, Home, SignIn } from './components';
+import { SignUp, Layout, Home, SignIn, PrivateRoute } from './components';
 import { MuiThemeProvider, StylesProvider } from '@material-ui/core/styles';
 import { MuiThemes } from './styles';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
@@ -18,9 +18,9 @@ function App() {
             <Layout>
               <AuthProvider>
                 <Switch>
-                  <Route component={SignUp} path="/signup" />
+                  <PrivateRoute component={SignUp} path="/signup" />
                   <Route component={Home} path="/" exact />
-                  <Route component={SignIn} path="/signin" />
+                  <PrivateRoute component={SignIn} path="/signin" />
                 </Switch>
               </AuthProvider>
             </Layout>

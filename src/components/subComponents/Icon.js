@@ -6,7 +6,8 @@ import kids from '../../images/icons/kids.svg';
 import { AiOutlineHome } from 'react-icons/ai';
 import { BsPerson, BsSearch, BsFillPersonFill } from 'react-icons/bs';
 import { BiPhone } from 'react-icons/bi';
-import { FiFacebook, FiLinkedin, FiGithub, FiTwitter, FiCodepen, FiShoppingCart } from 'react-icons/fi';
+import { FiFacebook, FiLinkedin, FiGithub, FiTwitter, FiCodepen, FiShoppingCart, FiUserCheck, FiUserPlus } from 'react-icons/fi';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 const Icon = ({ name }) => {
   switch (name) {
@@ -38,6 +39,12 @@ const Icon = ({ name }) => {
       return <BsSearch />;
     case 'User':
       return <BsFillPersonFill />;
+    case 'Sign out':
+      return <ExitToAppIcon />;
+    case 'Sign in':
+      return <FiUserCheck />;
+    case 'Sign up':
+      return <FiUserPlus />;
     default:
       return <p>please enter a valid name</p>;
   }

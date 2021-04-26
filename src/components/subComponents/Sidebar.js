@@ -11,8 +11,6 @@ import { auth } from '../../lib/firebase';
 import Icon from './Icon';
 import { Pagelinks, category } from '../../utils';
 
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-
 const { colors, transition } = theme;
 
 const CategoryContainer = styled.div`
@@ -44,6 +42,9 @@ const AuthContainer = styled.div`
         margin-left: 8px;
       }
     }
+    svg {
+      color: ${colors.grey2};
+    }
   }
 `;
 
@@ -70,7 +71,7 @@ const useStyles = makeStyles(() => ({
   },
   linkIcon: {
     '& svg': {
-      fill: colors.black,
+      color: colors.black,
     },
   },
 }));
@@ -121,7 +122,7 @@ const Sidebar = ({ open, setOpen }) => {
               <Avatar src={user?.photoURL} alt={user?.email} />
               <p>{user?.email}</p>
             </div>
-            <ExitToAppIcon style={{ color: colors.grey2 }} onClick={() => signout()} />
+            <Icon name="Logout" onClick={() => signout()} />
           </div>
         ) : (
           <p>

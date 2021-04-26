@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { theme, mixins, media } from '../styles';
 import logo from '../images/shoey_logo.svg';
-import { Button } from '@material-ui/core';
+import { Button, ListItemText } from '@material-ui/core';
 import { Sidebar, TopNavbar, Icon } from './index';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { Pagelinks, category } from '../utils';
-import { Badge, IconButton } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core';
+import { Badge, IconButton, Tooltip, Menu, MenuItem, makeStyles, ListItemIcon } from '@material-ui/core';
+import { useSelector, useDispatch } from 'react-redux';
+import { auth } from '../lib/firebase';
+import { signoutUser } from '../redux';
 
 import DehazeIcon from '@material-ui/icons/Dehaze';
 
@@ -78,11 +80,43 @@ const useStyles = makeStyles((theme) => ({
   Badge: {
     padding: '3px',
   },
+  menuText: {
+    color: colors.black,
+  },
 }));
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const [openAccount, setOpenAccount] = useState(null);
+
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const userId = useSelector((state) => state.user.userDetails.uid);
+
+  const handleUserAccountClick = (event) => {
+    setOpenAccount(event.currentTarget);
+  };
+  const handleUserAccountClose = () => {
+    setOpenAccount(null);
+  };
+  const signout = () => {
+    auth.signOut();
+    dispatch(signoutUser());
+    history.push('/');
+    handleUserAccountClose();
+  };
+
+  const UserExistMenu = [
+    { name: 'Edit profile', link: '/profile', iconName: 'User', func: handleUserAccountClose },
+    { name: 'View cart', link: '/cart', iconName: 'Cart', func: handleUserAccountClose },
+    { name: 'Sign out', link: '/', iconName: 'Sign out', func: signout },
+  ];
+  const UserNotExistMenu = [
+    { name: 'Sign in', link: '/signin', iconName: 'Sign in', func: handleUserAccountClose },
+    { name: 'Sign up', link: '/signup', iconName: 'Sign up', func: handleUserAccountClose },
+  ];
+
   return (
     <StyledNavbar>
       <TopNavbar />
@@ -100,29 +134,58 @@ const Navbar = () => {
         <NavLinkContainer>
           {navLinks.map((navLink, i) => (
             <Link to={navLink.link} key={i}>
-              {navLink.name === 'Kids' ? (
+              {navLink?.name === 'Kids' ? (
                 <Badge
                   badgeContent="new"
                   color="secondary"
                   anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
                   className={classes.Badge}
                 >
-                  {navLink.name}
+                  {navLink?.name}
                 </Badge>
               ) : (
-                navLink.name
+                navLink?.name
               )}
             </Link>
           ))}
         </NavLinkContainer>
 
         <div className={classes.NavOperationsContainer}>
-          <IconButton>
-            <Icon name="Search" />
-          </IconButton>
-          <IconButton>
-            <Icon name="User" />
-          </IconButton>
+          <Tooltip title="Search" aria-label="Search">
+            <IconButton>
+              <Icon name="Search" />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title={userId ? 'user signed in' : 'login or sign up'} aria-label="user account">
+            <IconButton onClick={handleUserAccountClick}>
+              <Badge variant="dot" color={userId ? 'primary' : 'secondary'}>
+                <Icon name="User" />
+              </Badge>
+            </IconButton>
+          </Tooltip>
+          <Menu anchorEl={openAccount} keepMounted open={Boolean(openAccount)} onClose={handleUserAccountClose}>
+            {userId
+              ? UserExistMenu.map((menu, i) => (
+                  <Link to={menu.link} key={i}>
+                    <MenuItem onClick={() => menu.func()}>
+                      <ListItemIcon>
+                        <Icon name={menu.iconName} />
+                      </ListItemIcon>
+                      <ListItemText className={classes.menuText}>{menu.name}</ListItemText>
+                    </MenuItem>
+                  </Link>
+                ))
+              : UserNotExistMenu.map((menu, i) => (
+                  <Link to={menu.link} key={i}>
+                    <MenuItem onClick={() => menu.func()}>
+                      <ListItemIcon>
+                        <Icon name={menu.iconName} />
+                      </ListItemIcon>
+                      <ListItemText className={classes.menuText}>{menu.name}</ListItemText>
+                    </MenuItem>
+                  </Link>
+                ))}
+          </Menu>
           <IconButton>
             <Badge badgeContent={1} color="primary">
               <Icon name="Cart" />
