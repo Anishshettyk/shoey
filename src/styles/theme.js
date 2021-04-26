@@ -4,7 +4,7 @@ const theme = {
     blue: '#1464ff',
     darkBlue: '#19456b',
     green: '#16c79a',
-    red: '#e84545',
+    red: '#FF2020',
     lightBlue: '#a6c6fd',
     grey1: '#a3b7ad',
     grey2: '#8f97aa',
@@ -24,7 +24,7 @@ const theme = {
     xl: `28px`,
     xxl: `32px`,
   },
-  navHeight: '70px',
+  navHeight: '100px',
   transition: `all 1s cubic-bezier(0.3, 0, 0.4, 1);`,
   transitionTime: {
     t2: '0.2s',

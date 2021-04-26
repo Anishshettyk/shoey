@@ -1,14 +1,14 @@
 import React from 'react';
 import { Icon } from '../index';
 import styled from 'styled-components';
-import { theme, mixins } from '../../styles';
+import { theme, mixins, media } from '../../styles';
 import { Link } from 'react-router-dom';
 import { socials, links } from '../../utils';
 
 const { colors, transitionTime } = theme;
 
 const StyledTopBanner = styled.div`
-  border-bottom: 0.5px solid ${colors.grey2};
+  border-bottom: 0.5px solid ${colors.grey3};
   padding: 5px 0px;
   ${mixins.spaceAround}
   .topBanner__links {
@@ -35,6 +35,9 @@ const StyledTopBanner = styled.div`
       }
     }
   }
+  ${media.phone`
+  display:none;
+  `}
 `;
 
 const TopNavbar = () => {

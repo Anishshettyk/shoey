@@ -2,11 +2,11 @@ import React from 'react';
 import women from '../../images/icons/woman.svg';
 import men from '../../images/icons//men.svg';
 import kids from '../../images/icons/kids.svg';
-import { GrCart } from 'react-icons/gr';
+// import { GrCart } from 'react-icons/gr';
 import { AiOutlineHome } from 'react-icons/ai';
-import { BsPerson } from 'react-icons/bs';
+import { BsPerson, BsSearch, BsFillPersonFill } from 'react-icons/bs';
 import { BiPhone } from 'react-icons/bi';
-import { FiFacebook, FiLinkedin, FiGithub, FiTwitter, FiCodepen } from 'react-icons/fi';
+import { FiFacebook, FiLinkedin, FiGithub, FiTwitter, FiCodepen, FiShoppingCart } from 'react-icons/fi';
 
 const Icon = ({ name }) => {
   switch (name) {
@@ -17,7 +17,7 @@ const Icon = ({ name }) => {
     case 'Kids':
       return <img src={kids} alt="kids icon" />;
     case 'Cart':
-      return <GrCart />;
+      return <FiShoppingCart />;
     case 'Home':
       return <AiOutlineHome />;
     case 'About Us':
@@ -34,6 +34,10 @@ const Icon = ({ name }) => {
       return <FiLinkedin />;
     case 'Twitter':
       return <FiTwitter />;
+    case 'Search':
+      return <BsSearch />;
+    case 'User':
+      return <BsFillPersonFill />;
     default:
       return <p>please enter a valid name</p>;
   }
