@@ -1,6 +1,5 @@
 import React from 'react';
 import { GlobalStyle } from './styles';
-import AuthProvider from './context/AuthContext';
 import { SignUp, Layout, Home, SignIn, PrivateRoute } from './components';
 import { MuiThemeProvider, StylesProvider } from '@material-ui/core/styles';
 import { MuiThemes } from './styles';
@@ -16,13 +15,11 @@ function App() {
           <Router>
             <GlobalStyle />
             <Layout>
-              <AuthProvider>
-                <Switch>
-                  <PrivateRoute component={SignUp} path="/signup" />
-                  <Route component={Home} path="/" exact />
-                  <PrivateRoute component={SignIn} path="/signin" />
-                </Switch>
-              </AuthProvider>
+              <Switch>
+                <PrivateRoute component={SignUp} path="/signup" />
+                <Route component={Home} path="/" exact />
+                <PrivateRoute component={SignIn} path="/signin" />
+              </Switch>
             </Layout>
           </Router>
         </MuiThemeProvider>

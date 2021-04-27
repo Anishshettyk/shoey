@@ -16,4 +16,20 @@ export const auth = app.auth();
 
 export const googleProvider = new firebase.auth.GoogleAuthProvider();
 export const githubProvider = new firebase.auth.GithubAuthProvider();
+
+export const signup = (email, password) => {
+  return auth.createUserWithEmailAndPassword(email, password);
+};
+
+export const googleAuth = () => {
+  return auth.signInWithPopup(googleProvider);
+};
+
+export const githubAuth = () => {
+  return auth.signInWithPopup(githubProvider);
+};
+
+export const signin = (email, password) => {
+  return auth.signInWithEmailAndPassword(email, password);
+};
 export default app;

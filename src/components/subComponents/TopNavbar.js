@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { theme, mixins, media } from '../../styles';
 import { Link } from 'react-router-dom';
 import { socials, links } from '../../utils';
+import { Tooltip } from '@material-ui/core';
 
 const { colors, transitionTime } = theme;
 
@@ -52,9 +53,11 @@ const TopNavbar = () => {
       </div>
       <div className="topBanner__socials">
         {socials.map((social, i) => (
-          <Link to={social.link} key={i} style={{ color: social.color }}>
-            <Icon name={social.name} />
-          </Link>
+          <Tooltip title={social.name} aria-label="social links" key={i}>
+            <Link to={social.link} style={{ color: social.color }}>
+              <Icon name={social.name} />
+            </Link>
+          </Tooltip>
         ))}
       </div>
     </StyledTopBanner>

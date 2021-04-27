@@ -186,11 +186,13 @@ const Navbar = () => {
                   </Link>
                 ))}
           </Menu>
-          <IconButton>
-            <Badge badgeContent={1} color="primary">
-              <Icon name="Cart" />
-            </Badge>
-          </IconButton>
+          <Tooltip title="cart" aria-label="cart">
+            <IconButton>
+              <Badge badgeContent={1} color="primary">
+                <Icon name="Cart" />
+              </Badge>
+            </IconButton>
+          </Tooltip>
         </div>
       </div>
     </StyledNavbar>

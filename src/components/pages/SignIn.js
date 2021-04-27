@@ -5,8 +5,8 @@ import { mixins, theme, media } from '../../styles';
 import { Button, TextField, Paper, CircularProgress } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { LazyImage } from '../index';
-import { useAuth } from '../../context/AuthContext';
 import { useHistory } from 'react-router-dom';
+import { googleAuth, githubAuth, signin } from '../../lib/firebase';
 
 import googleIcon from '../../images/googleIcon.svg';
 import githubIcon from '../../images/github_icon.svg';
@@ -89,7 +89,7 @@ const SignIn = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const { signin, googleAuth, githubAuth } = useAuth();
+
   const history = useHistory();
   const classes = useStyles();
   const defaultErrorMessage = 'Error occured while signing in please try again.';

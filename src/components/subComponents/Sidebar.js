@@ -122,7 +122,7 @@ const Sidebar = ({ open, setOpen }) => {
               <Avatar src={user?.photoURL} alt={user?.email} />
               <p>{user?.email}</p>
             </div>
-            <Icon name="Logout" onClick={() => signout()} />
+            <Icon name="Sign out" onClick={() => signout()} />
           </div>
         ) : (
           <p>
