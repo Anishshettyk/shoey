@@ -3,6 +3,13 @@ import { auth } from '../lib/firebase';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../redux';
 import Navbar from './Navbar';
+import styled from 'styled-components';
+import { theme } from '../styles';
+
+const { navHeight } = theme;
+const StyledContentBox = styled.section`
+  margin: ${navHeight} 0px 0px;
+`;
 
 const Layout = ({ children }) => {
   const dispatch = useDispatch();
@@ -18,7 +25,7 @@ const Layout = ({ children }) => {
   return (
     <main>
       <Navbar />
-      <div>{children}</div>
+      <StyledContentBox>{children}</StyledContentBox>
     </main>
   );
 };

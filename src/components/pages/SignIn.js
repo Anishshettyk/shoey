@@ -57,9 +57,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const SignInContainer = styled.main`
-  ${mixins.visibleLayout}
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  ${media.tabletL`
+    display:block;
+    margin:110px 0px;
+  `}
 `;
 const ImageContainer = styled.section`
   background-color: ${colors.grey3};
@@ -69,6 +72,9 @@ const ImageContainer = styled.section`
     height: 100%;
     overflow: hidden;
   }
+  ${media.tabletL`
+    display:none;
+  `}
 `;
 const SignInFormContainer = styled.section`
   margin: 30px 60px;

@@ -18,10 +18,9 @@ const { colors } = theme;
 const SignUpContainer = styled.main`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  ${mixins.visibleLayout}
   ${media.tabletL`
     display:block;
-    margin-top:80px;
+    margin:110px 0px;
   `}
 `;
 
@@ -31,9 +30,6 @@ const SignUpForm = styled.section`
     display: flex;
     flex-direction: column;
   }
-  ${media.tphone`
-  margin: 10px 30px;
-  `}
 `;
 const Divider = styled.p`
   ${mixins.divider};

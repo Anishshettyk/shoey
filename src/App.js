@@ -1,6 +1,6 @@
 import React from 'react';
 import { GlobalStyle } from './styles';
-import { SignUp, Layout, Home, SignIn, PrivateRoute } from './components';
+import { SignUp, Layout, Home, SignIn, BlockedRoute } from './components';
 import { MuiThemeProvider, StylesProvider } from '@material-ui/core/styles';
 import { MuiThemes } from './styles';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
@@ -16,9 +16,9 @@ function App() {
             <GlobalStyle />
             <Layout>
               <Switch>
-                <PrivateRoute component={SignUp} path="/signup" />
+                <BlockedRoute component={SignUp} path="/signup" exact />
                 <Route component={Home} path="/" exact />
-                <PrivateRoute component={SignIn} path="/signin" />
+                <BlockedRoute component={SignIn} path="/signin" exact />
               </Switch>
             </Layout>
           </Router>
