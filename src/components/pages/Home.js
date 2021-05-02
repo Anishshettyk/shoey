@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import hero__background from '../../images/pngs/hero__background.png';
 import { theme, mixins, media } from '../../styles';
+import { Link } from 'react-router-dom';
 
 const { colors } = theme;
 const HeroSection = styled.section`
@@ -14,6 +15,9 @@ const HeroSection = styled.section`
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  ${media.tablet`
+    justify-content: center;
+  `}
   &:before {
     content: '';
     background: rgba(255, 255, 255, 0.2);
@@ -23,21 +27,24 @@ const HeroSection = styled.section`
     left: 0;
     right: 0;
     ${media.tabletL`
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.8);
     `}
   }
   .content {
     position: relative;
     margin-left: 50px;
+    ${media.tablet`
+    margin-left:25px;
+    `}
     h1 {
       margin: 0;
       font-size: 48px;
       font-weight: 700;
       line-height: 56px;
       color: ${colors.textColor};
-      span {
-        color: ${colors.blue};
-      }
+      ${media.tablet`
+      font-size: 40px;
+    `}
     }
     h4 {
       color: ${colors.darkBlue};
@@ -53,6 +60,9 @@ const HeroSection = styled.section`
       .aboutus__button {
         ${mixins.outlinedButton}
       }
+      ${media.tablet`
+      margin-top: 40px;
+    `}
     }
   }
 `;
@@ -89,8 +99,12 @@ const Home = () => {
           </h1>
           <h4>Find best in class sneakers for men with all variants and sizes</h4>
           <div className="button__container">
-            <button className="shop__button">shop now</button>
-            <button className="aboutus__button">about us</button>
+            <Link to="/mens" className="shop__button">
+              shop now
+            </Link>
+            <Link to="/about" className="aboutus__button">
+              about us
+            </Link>
           </div>
         </div>
       </HeroSection>

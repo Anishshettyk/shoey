@@ -1,5 +1,6 @@
 import { css } from 'styled-components/macro';
 import theme from './theme';
+import media from './media';
 
 const { colors, navHeight, transitionTime } = theme;
 
@@ -64,6 +65,9 @@ const mixins = {
       background-color: transparent;
       color: ${colors.blue};
     }
+    ${media.tablet`
+    padding: 10px 30px;
+    `}
   `,
   outlinedButton: css`
     padding: 15px 40px;
@@ -79,6 +83,9 @@ const mixins = {
       background-color: ${colors.blue};
       color: ${colors.grey3};
     }
+    ${media.tablet`
+    padding: 10px 30px;
+    `}
   `,
 };
 
