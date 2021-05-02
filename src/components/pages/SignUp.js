@@ -20,7 +20,6 @@ const SignUpContainer = styled.main`
   grid-template-columns: repeat(2, 1fr);
   ${media.tabletL`
     display:block;
-    margin:110px 0px;
   `}
 `;
 

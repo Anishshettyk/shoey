@@ -61,7 +61,6 @@ const SignInContainer = styled.main`
   grid-template-columns: repeat(2, 1fr);
   ${media.tabletL`
     display:block;
-    margin:110px 0px;
   `}
 `;
 const ImageContainer = styled.section`

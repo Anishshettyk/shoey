@@ -1,7 +1,7 @@
 import { css } from 'styled-components/macro';
 import theme from './theme';
 
-const { colors, navHeight } = theme;
+const { colors, navHeight, transitionTime } = theme;
 
 const mixins = {
   flexColumn: css`
@@ -48,6 +48,36 @@ const mixins = {
       right: 60%;
       background-color: ${colors.grey1};
       content: '';
+    }
+  `,
+  simpleButton: css`
+    padding: 15px 40px;
+    background-color: ${colors.blue};
+    color: ${colors.grey3};
+    outline: none;
+    border: none;
+    text-transform: uppercase;
+    border: 2px solid transparent;
+    transition: ${transitionTime.t4};
+    &:hover {
+      border-color: ${colors.blue};
+      background-color: transparent;
+      color: ${colors.blue};
+    }
+  `,
+  outlinedButton: css`
+    padding: 15px 40px;
+    background-color: transparent;
+    color: ${colors.blue};
+    outline: none;
+    border: none;
+    text-transform: uppercase;
+    border: 2px solid ${colors.blue};
+    transition: ${transitionTime.t4};
+    &:hover {
+      border-color: transparent;
+      background-color: ${colors.blue};
+      color: ${colors.grey3};
     }
   `,
 };

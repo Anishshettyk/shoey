@@ -18,15 +18,11 @@ const { colors, navHeight, transitionTime } = theme;
 const navLinks = [Pagelinks[0], ...category, Pagelinks[1], Pagelinks[3]];
 
 const StyledNavbar = styled.nav`
-  position: fixed;
-  top: 0;
-  left: 0;
   width: 100%;
   z-index: 1000;
   max-height: ${navHeight};
   background-color: ${colors.white};
   box-shadow: 0px 3px 3px -2px rgb(0 0 0 / 15%), 0px 3px 4px 0px rgb(0 0 0 / 10%), 0px 1px 8px 0px rgb(0 0 0 / 8%);
-
   .botton__navbar {
     ${mixins.spaceAround}
     align-items: center;

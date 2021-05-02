@@ -4,12 +4,8 @@ import { useDispatch } from 'react-redux';
 import { setUser } from '../redux';
 import Navbar from './Navbar';
 import styled from 'styled-components';
-import { theme } from '../styles';
 
-const { navHeight } = theme;
-const StyledContentBox = styled.section`
-  margin: ${navHeight} 0px 0px;
-`;
+const StyledContentBox = styled.section``;
 
 const Layout = ({ children }) => {
   const dispatch = useDispatch();
