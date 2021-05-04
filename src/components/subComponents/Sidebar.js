@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Divider, List, ListItem, ListItemText, ListItemIcon, Avatar } from '@material-ui/core';
+import { Divider, List, ListItem, ListItemText, ListItemIcon, Avatar, IconButton } from '@material-ui/core';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import { Link, useHistory } from 'react-router-dom';
 import { theme } from '../../styles';
@@ -122,7 +122,9 @@ const Sidebar = ({ open, setOpen }) => {
               <Avatar src={user?.photoURL} alt={user?.email} />
               <p>{user?.email}</p>
             </div>
-            <Icon name="Sign out" onClick={() => signout()} />
+            <IconButton onClick={() => signout()}>
+              <Icon name="Sign out" />
+            </IconButton>
           </div>
         ) : (
           <p>
