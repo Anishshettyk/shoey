@@ -23,13 +23,16 @@ export const category = [
   {
     name: 'Women',
     link: '/women',
+    imageUrl: 'https://res.cloudinary.com/deshidm6k/image/upload/v1620038383/jane-palash-yimb1ePGs00-unsplash_idtqwu.jpg',
   },
   {
     name: 'Men',
     link: '/men',
+    imageUrl: 'https://res.cloudinary.com/deshidm6k/image/upload/v1620035255/anika-huizinga-MDsnUCaCDwo-unsplash_1_erhuea.jpg',
   },
   {
     name: 'Kids',
     link: '/kids',
+    imageUrl: 'https://res.cloudinary.com/deshidm6k/image/upload/v1620058118/pexels-allan-mas-5623675_zysgdd.jpg',
   },
 ];
