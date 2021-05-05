@@ -8,11 +8,13 @@ export { default as Sidebar } from './subComponents/Sidebar';
 export { default as Icon } from './subComponents/Icon';
 export { default as TopNavbar } from './subComponents/TopNavbar';
 export { default as BlockedRoute } from './subComponents/BlockedRoute';
+export { default as UserRoute } from './subComponents/UserRoute';
 
 //pages
 export { default as SignIn } from './pages/SignIn';
 export { default as SignUp } from './pages/SignUp';
 export { default as Home } from './pages/Home';
+export { default as Profile } from './pages/Profile';
 
 //page divisions
 export { default as CategoryDisplay } from './pageDivisions/CategoryDisplay';
