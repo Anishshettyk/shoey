@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { setUser } from '../redux';
 import Navbar from './Navbar';
 import styled from 'styled-components';
+import { getUserData } from '../lib/firestore/userData';
 
 const StyledContentBox = styled.section``;
 
@@ -13,7 +14,11 @@ const Layout = ({ children }) => {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
-        dispatch(setUser(user.providerData));
+        const setUserData = async () => {
+          const userDataRes = await getUserData(user.providerData[0]);
+          dispatch(setUser(userDataRes));
+        };
+        setUserData();
       }
     });
     return unsubscribe;

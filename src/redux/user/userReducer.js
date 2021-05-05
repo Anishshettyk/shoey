@@ -11,7 +11,7 @@ const userReducer = (state = initialState, action) => {
     case types.SET_USER:
       return {
         ...state,
-        userDetails: action.payload[0],
+        userDetails: { ...action.payload },
       };
     case types.SIGN_OUT_USER:
       return {

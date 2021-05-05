@@ -4,7 +4,6 @@ import { theme, media } from '../../styles';
 import { Link } from 'react-router-dom';
 import { category } from '../../utils';
 import { LazyImage } from '../index';
-import { Skeleton } from '@material-ui/lab';
 
 const { colors } = theme;
 
@@ -24,6 +23,7 @@ const CategoryContainer = styled.section`
       z-index: 0;
       width: 100%;
       height: 100%;
+      min-height: 300px;
 
       &:before {
         position: absolute;
@@ -95,21 +95,17 @@ const CategoryContainer = styled.section`
 const categoryDisplay = () => {
   return (
     <CategoryContainer>
-      {category.map((cat, i) =>
-        cat.imageUrl ? (
-          <Link to={cat.link} key={i} className="cat__item">
-            <div className="cat__image">
-              <LazyImage src={cat.imageUrl} alt={cat.name} />
-            </div>
-            <div className="cat__details">
-              <h4>{cat.name}</h4>
-              <span to={cat.link}>Shop now</span>
-            </div>
-          </Link>
-        ) : (
-          <Skeleton width="100%" height="100%" variant="rect" key={i} />
-        )
-      )}
+      {category.map((cat, i) => (
+        <Link to={cat.link} key={i} className="cat__item">
+          <div className="cat__image">
+            <LazyImage src={cat.imageUrl} alt={cat.name} />
+          </div>
+          <div className="cat__details">
+            <h4>{cat.name}</h4>
+            <span to={cat.link}>Shop now</span>
+          </div>
+        </Link>
+      ))}
     </CategoryContainer>
   );
 };

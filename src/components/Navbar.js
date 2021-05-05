@@ -104,7 +104,7 @@ const Navbar = () => {
   };
 
   const UserExistMenu = [
-    { name: 'Edit profile', link: '/profile', iconName: 'User', func: handleUserAccountClose },
+    { name: 'View profile', link: '/profile', iconName: 'User', func: handleUserAccountClose },
     { name: 'View cart', link: '/cart', iconName: 'Cart', func: handleUserAccountClose },
     { name: 'Sign out', link: '/', iconName: 'Sign out', func: signout },
   ];
