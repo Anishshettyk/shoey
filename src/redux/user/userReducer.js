@@ -3,7 +3,6 @@ import * as types from './userTypes';
 const initialState = {
   userDetails: {},
   shippingAddress: {},
-  contactDetails: {},
 };
 
 const userReducer = (state = initialState, action) => {

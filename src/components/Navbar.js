@@ -2,31 +2,41 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { theme, mixins, media } from '../styles';
 import logo from '../images/shoey_logo.svg';
-import { Button, ListItemText } from '@material-ui/core';
 import { Sidebar, TopNavbar, Icon } from './index';
 import { Link, useHistory } from 'react-router-dom';
 import { Pagelinks, category } from '../utils';
-import { Badge, IconButton, Tooltip, Menu, MenuItem, makeStyles, ListItemIcon } from '@material-ui/core';
+import {
+  Badge,
+  IconButton,
+  Tooltip,
+  Menu,
+  MenuItem,
+  makeStyles,
+  ListItemIcon,
+  Avatar,
+  Button,
+  ListItemText,
+  withStyles,
+} from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import { auth } from '../lib/firebase';
 import { signoutUser } from '../redux';
 
 import DehazeIcon from '@material-ui/icons/Dehaze';
 
-const { colors, navHeight, transitionTime } = theme;
+const { colors, transitionTime } = theme;
 
 const navLinks = [Pagelinks[0], ...category, Pagelinks[1], Pagelinks[3]];
 
 const StyledNavbar = styled.nav`
   width: 100%;
   z-index: 1000;
-  max-height: ${navHeight};
   background-color: ${colors.white};
   box-shadow: 0px 3px 3px -2px rgb(0 0 0 / 15%), 0px 3px 4px 0px rgb(0 0 0 / 10%), 0px 1px 8px 0px rgb(0 0 0 / 8%);
   .botton__navbar {
     ${mixins.spaceAround}
     align-items: center;
-    padding: 20px 10px;
+    padding: 0px 10px;
     .navbar__logo {
       width: 120px;
       height: 100%;
@@ -80,6 +90,34 @@ const useStyles = makeStyles((theme) => ({
     color: colors.black,
   },
 }));
+const StyledBadge = withStyles((theme) => ({
+  badge: {
+    backgroundColor: (props) => (props.user ? colors.green : colors.red),
+    color: (props) => (props.user ? colors.green : colors.red),
+    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+    '&::after': {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      borderRadius: '50%',
+      animation: '$ripple 1.2s infinite ease-in-out',
+      border: '1px solid currentColor',
+      content: '""',
+    },
+  },
+  '@keyframes ripple': {
+    '0%': {
+      transform: 'scale(.8)',
+      opacity: 1,
+    },
+    '100%': {
+      transform: 'scale(2.4)',
+      opacity: 0,
+    },
+  },
+}))(Badge);
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -88,7 +126,7 @@ const Navbar = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
-  const userId = useSelector((state) => state.user.userDetails.uid);
+  const user = useSelector((state) => state.user.userDetails);
 
   const handleUserAccountClick = (event) => {
     setOpenAccount(event.currentTarget);
@@ -152,15 +190,23 @@ const Navbar = () => {
               <Icon name="Search" />
             </IconButton>
           </Tooltip>
-          <Tooltip title={userId ? 'user signed in' : 'login or sign up'} aria-label="user account">
+          <Tooltip title={user?.uid ? `You signed in as ${user?.email}` : 'login or sign up'} aria-label="user account">
             <IconButton onClick={handleUserAccountClick}>
-              <Badge variant="dot" color={userId ? 'primary' : 'secondary'}>
-                <Icon name="User" />
-              </Badge>
+              <StyledBadge
+                variant="dot"
+                user={user?.uid}
+                overlap="circle"
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'right',
+                }}
+              >
+                <Avatar src={user?.photoURL} alt={user?.email} />
+              </StyledBadge>
             </IconButton>
           </Tooltip>
           <Menu anchorEl={openAccount} keepMounted open={Boolean(openAccount)} onClose={handleUserAccountClose}>
-            {userId
+            {user?.uid
               ? UserExistMenu.map((menu, i) => (
                   <Link to={menu.link} key={i}>
                     <MenuItem onClick={() => menu.func()}>

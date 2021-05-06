@@ -37,7 +37,6 @@ export const getUserData = async (userAuth) => {
   //if user return user details.
   if (snapshot.exists) {
     userData = snapshot.data();
-
     //otherwise save user details to database and return the data retrived.
   } else {
     userData = storeUserData(userAuth);
