@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, forwardRef } from 'react';
 import styled from 'styled-components';
-import { useSelector } from 'react-redux';
 import { theme } from '../../styles';
 import {
   Avatar,
@@ -13,17 +12,19 @@ import {
   DialogContentText,
   DialogTitle,
   Slide,
+  Backdrop,
+  CircularProgress,
 } from '@material-ui/core';
 import { formatSecondsToDate } from '../../utils';
 import { Link } from 'react-router-dom';
-import { deleteUserAccount } from '../../lib/firestore/userData';
-import { useDispatch } from 'react-redux';
-import { signoutUser } from '../../redux';
+import { deleteUserAccount, updateUserDetails, getUserData } from '../../lib/firestore/userData';
+import { useDispatch, useSelector } from 'react-redux';
+import { signoutUser, setUser } from '../../redux';
 import { deleteUser } from '../../lib/firebase';
 
 const { colors } = theme;
 
-const Transition = React.forwardRef(function Transition(props, ref) {
+const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
@@ -41,6 +42,11 @@ const useStyles = makeStyles((theme) => ({
       margin: theme.spacing(3),
       width: '80%',
     },
+  },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: colors.blue,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
   },
 }));
 
@@ -97,9 +103,8 @@ const UserDetailsContainer = styled.div`
 const UserShippingAddressContainer = styled.div``;
 
 const Profile = () => {
-  const {
-    userDetails: { displayName, email, phoneNumber, photoURL, createdAt },
-  } = useSelector((state) => state.user);
+  const { userDetails } = useSelector((state) => state.user);
+  const { displayName, email, phoneNumber, photoURL, createdAt } = userDetails;
 
   const dName = displayName ? displayName : '';
   const emailID = email ? email : '';
@@ -108,26 +113,23 @@ const Profile = () => {
   const [userName, setUserName] = useState(dName);
   const [userEmail, setUserEmail] = useState(emailID);
   const [userPhoneNumber, setUserPhoneNumber] = useState(pNumber);
-  const [userDetailsButtons, setUserDetailsButtons] = useState(false);
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [openBackdrop, setOpenBackdrop] = useState(false);
 
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const ToggleUserDetailsButton = () => {
-    if (displayName === userName && phoneNumber === userPhoneNumber && email === userEmail) {
-      setUserDetailsButtons(false);
-    } else {
-      setUserDetailsButtons(true);
-    }
-  };
-
   const handleClickOpen = () => {
     setOpen(true);
   };
-
   const handleClose = () => {
     setOpen(false);
+  };
+  const backdropOpen = () => {
+    setOpenBackdrop(!openBackdrop);
+  };
+  const backdropClose = () => {
+    setOpenBackdrop(false);
   };
 
   const DeleteUserAccount = async () => {
@@ -135,6 +137,18 @@ const Profile = () => {
     await deleteUserAccount(email);
     dispatch(signoutUser());
     await deleteUser();
+  };
+
+  const updateUserDetailsForm = async (event) => {
+    event.preventDefault();
+    const updatedDetails = {
+      displayName: userName,
+      phoneNumber: userPhoneNumber,
+    };
+    await updateUserDetails(email, updatedDetails);
+    const userDataRes = await getUserData(userDetails);
+    dispatch(setUser(userDataRes));
+    backdropClose();
   };
 
   return (
@@ -149,7 +163,7 @@ const Profile = () => {
               <Button variant="contained" color="primary">
                 {photoURL ? 'Upload new picture' : 'Add picture'}
               </Button>
-              <Button variant="contained" color="secondary" onClick={() => handleClickOpen()}>
+              <Button variant="contained" color="secondary" onClick={handleClickOpen}>
                 Delete Account
               </Button>
               <Dialog
@@ -177,8 +191,9 @@ const Profile = () => {
               </Dialog>
             </div>
           </div>
-          <div className={classes.inputContainer}>
+          <form className={classes.inputContainer} onSubmit={updateUserDetailsForm}>
             <TextField
+              type="text"
               label="Name"
               variant="outlined"
               color="primary"
@@ -186,7 +201,6 @@ const Profile = () => {
               value={userName}
               onChange={(event) => {
                 setUserName(event.target.value);
-                ToggleUserDetailsButton();
               }}
             />
             <TextField
@@ -197,10 +211,10 @@ const Profile = () => {
               value={userEmail}
               onChange={(event) => {
                 setUserEmail(event.target.value);
-                ToggleUserDetailsButton();
               }}
             />
             <TextField
+              type="number"
               label="Phone number"
               variant="outlined"
               color="primary"
@@ -208,27 +222,23 @@ const Profile = () => {
               value={userPhoneNumber}
               onChange={(event) => {
                 setUserPhoneNumber(event.target.value);
-                ToggleUserDetailsButton();
               }}
             />
             <Button color="primary" variant="outlined">
               Update Password
             </Button>
             <div className="user__details__button__container">
-              {userDetailsButtons ? (
-                <>
-                  <Button variant="contained" component={Link} to="/">
-                    Cancel
-                  </Button>
-                  <Button variant="contained" color="primary">
-                    Save
-                  </Button>
-                </>
-              ) : (
-                ''
-              )}
+              <Button variant="contained" component={Link} to="/">
+                Cancel
+              </Button>
+              <Button variant="contained" color="primary" type="submit" onClick={backdropOpen}>
+                Save
+              </Button>
+              <Backdrop className={classes.backdrop} open={openBackdrop}>
+                <CircularProgress color="inherit" />
+              </Backdrop>
             </div>
-          </div>
+          </form>
         </div>
       </UserDetailsContainer>
       <UserShippingAddressContainer>
