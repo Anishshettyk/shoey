@@ -2,7 +2,18 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 import { theme } from '../../styles';
-import { Avatar, Button, makeStyles, TextField } from '@material-ui/core';
+import {
+  Avatar,
+  Button,
+  makeStyles,
+  TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Slide,
+} from '@material-ui/core';
 import { formatSecondsToDate } from '../../utils';
 import { Link } from 'react-router-dom';
 import { deleteUserAccount } from '../../lib/firestore/userData';
@@ -11,6 +22,10 @@ import { signoutUser } from '../../redux';
 import { deleteUser } from '../../lib/firebase';
 
 const { colors } = theme;
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
@@ -94,6 +109,7 @@ const Profile = () => {
   const [userEmail, setUserEmail] = useState(emailID);
   const [userPhoneNumber, setUserPhoneNumber] = useState(pNumber);
   const [userDetailsButtons, setUserDetailsButtons] = useState(false);
+  const [open, setOpen] = React.useState(false);
 
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -106,7 +122,16 @@ const Profile = () => {
     }
   };
 
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const DeleteUserAccount = async () => {
+    handleClose();
     await deleteUserAccount(email);
     dispatch(signoutUser());
     await deleteUser();
@@ -124,9 +149,32 @@ const Profile = () => {
               <Button variant="contained" color="primary">
                 {photoURL ? 'Upload new picture' : 'Add picture'}
               </Button>
-              <Button variant="contained" color="secondary" onClick={() => DeleteUserAccount()}>
+              <Button variant="contained" color="secondary" onClick={() => handleClickOpen()}>
                 Delete Account
               </Button>
+              <Dialog
+                open={open}
+                TransitionComponent={Transition}
+                keepMounted
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-slide-title"
+                aria-describedby="alert-dialog-slide-description"
+              >
+                <DialogTitle id="alert-dialog-slide-title">{'Are you sure you want to delete account?'}</DialogTitle>
+                <DialogContent>
+                  <DialogContentText id="alert-dialog-slide-description">
+                    All the data like your cart, shipping address and products purchased will be lost.
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleClose} color="primary">
+                    Close
+                  </Button>
+                  <Button onClick={DeleteUserAccount} color="secondary">
+                    Delete account
+                  </Button>
+                </DialogActions>
+              </Dialog>
             </div>
           </div>
           <div className={classes.inputContainer}>
