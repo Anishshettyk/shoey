@@ -15,6 +15,7 @@ const app = firebase.initializeApp(firebaseConfig);
 
 export const auth = app.auth();
 export const db = app.firestore();
+export const userFinder = auth.currentUser;
 
 export const googleProvider = new firebase.auth.GoogleAuthProvider();
 export const githubProvider = new firebase.auth.GithubAuthProvider();
@@ -34,4 +35,12 @@ export const githubAuth = () => {
 export const signin = (email, password) => {
   return auth.signInWithEmailAndPassword(email, password);
 };
+
+export const deleteUser = async () => {
+  const user = auth.currentUser;
+  if (user) {
+    await user.delete();
+  }
+};
+
 export default app;

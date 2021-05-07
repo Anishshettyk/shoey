@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
-import { theme, mixins } from '../../styles';
+import { theme } from '../../styles';
 import { Avatar, Button, makeStyles, TextField } from '@material-ui/core';
 import { formatSecondsToDate } from '../../utils';
+import { Link } from 'react-router-dom';
+import { deleteUserAccount } from '../../lib/firestore/userData';
+import { useDispatch } from 'react-redux';
+import { signoutUser } from '../../redux';
+import { deleteUser } from '../../lib/firebase';
 
 const { colors } = theme;
 
@@ -41,8 +46,10 @@ const UserDetailsContainer = styled.div`
     grid-template-columns: 1fr 2fr;
     margin: 0px 60px;
     .left__user__data {
-      ${mixins.flexCenter};
+      display: flex;
+      align-items: center;
       flex-direction: column;
+      margin-top: 10vh;
       p {
         color: ${colors.grey2};
         font-weight: bold;
@@ -62,8 +69,11 @@ const UserDetailsContainer = styled.div`
       display: flex;
       align-items: center;
       justify-content: flex-end;
+      a {
+        text-transform: none;
+      }
       button {
-        margin-right: 10px;
+        margin-left: 10px;
         text-transform: none;
       }
     }
@@ -72,23 +82,34 @@ const UserDetailsContainer = styled.div`
 const UserShippingAddressContainer = styled.div``;
 
 const Profile = () => {
-  const { userDetails } = useSelector((state) => state.user);
+  const {
+    userDetails: { displayName, email, phoneNumber, photoURL, createdAt },
+  } = useSelector((state) => state.user);
 
-  const [userName, setUserName] = useState(userDetails?.displayName ? userDetails?.displayName : '');
-  const [userEmail, setUserEmail] = useState(userDetails?.email ? userDetails?.email : '');
-  const [userPhoneNumber, setUserPhoneNumber] = useState(userDetails?.phoneNumber ? userDetails?.phoneNumber : '');
+  const dName = displayName ? displayName : '';
+  const emailID = email ? email : '';
+  const pNumber = phoneNumber ? phoneNumber : '';
+
+  const [userName, setUserName] = useState(dName);
+  const [userEmail, setUserEmail] = useState(emailID);
+  const [userPhoneNumber, setUserPhoneNumber] = useState(pNumber);
   const [userDetailsButtons, setUserDetailsButtons] = useState(false);
 
   const classes = useStyles();
+  const dispatch = useDispatch();
 
   const ToggleUserDetailsButton = () => {
-    const { displayName, email, phoneNumber } = userDetails;
-
     if (displayName === userName && phoneNumber === userPhoneNumber && email === userEmail) {
       setUserDetailsButtons(false);
     } else {
       setUserDetailsButtons(true);
     }
+  };
+
+  const DeleteUserAccount = async () => {
+    await deleteUserAccount(email);
+    dispatch(signoutUser());
+    await deleteUser();
   };
 
   return (
@@ -97,13 +118,13 @@ const Profile = () => {
         <h1 className="heading">Your Details</h1>
         <div className="content__container">
           <div className="left__user__data">
-            <Avatar src={userDetails.photoURL} alt={userDetails.email} className={classes.avatar} />
-            <p>Joined on {formatSecondsToDate(userDetails.createdAt.seconds)}</p>
+            <Avatar src={photoURL} alt={email} className={classes.avatar} />
+            <p>Joined on {formatSecondsToDate(createdAt.seconds)}</p>
             <div className="user__button__container">
               <Button variant="contained" color="primary">
-                {userDetails.photoURL ? 'Upload new picture' : 'Add picture'}
+                {photoURL ? 'Upload new picture' : 'Add picture'}
               </Button>
-              <Button variant="contained" color="secondary">
+              <Button variant="contained" color="secondary" onClick={() => DeleteUserAccount()}>
                 Delete Account
               </Button>
             </div>
@@ -148,7 +169,9 @@ const Profile = () => {
             <div className="user__details__button__container">
               {userDetailsButtons ? (
                 <>
-                  <Button variant="contained">Cancel</Button>
+                  <Button variant="contained" component={Link} to="/">
+                    Cancel
+                  </Button>
                   <Button variant="contained" color="primary">
                     Save
                   </Button>

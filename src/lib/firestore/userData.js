@@ -20,7 +20,7 @@ export const storeUserData = async (userAuth) => {
       //after saving get that user details
       userData = getUserData(userAuth);
     } catch (err) {
-      console.log('error creating user : ', err.message);
+      console.error('error creating user : ', err.message);
     }
   }
   //return the user data after saving and retrieving.
@@ -43,4 +43,13 @@ export const getUserData = async (userAuth) => {
   }
 
   return userData;
+};
+
+export const deleteUserAccount = async (email) => {
+  try {
+    await db.doc(`users/${email}`).delete();
+    console.log(`user account of ${email} is deleted from database and records.`);
+  } catch (error) {
+    console.error('Error deleting user account returned', error);
+  }
 };
