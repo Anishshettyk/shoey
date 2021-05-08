@@ -20,7 +20,7 @@ export const storeUserData = async (userAuth) => {
       //after saving get that user details
       userData = getUserData(userAuth);
     } catch (err) {
-      console.error('error creating user : ', err.message);
+      console.error('error creating user returned=>', err.message);
     }
   }
   //return the user data after saving and retrieving.
@@ -50,7 +50,7 @@ export const deleteUserAccount = async (email) => {
     await db.doc(`users/${email}`).delete();
     console.log(`user account of ${email} is deleted from database and records.`);
   } catch (error) {
-    console.error('Error deleting user account returned', error);
+    console.error('Error deleting user account returned=>', error.message);
   }
 };
 
@@ -59,6 +59,6 @@ export const updateUserDetails = async (email, updateData) => {
     await db.doc(`users/${email}`).update({ ...updateData });
     console.log(`user account of ${email} is updated in database.`);
   } catch (error) {
-    console.error('Error deleting user account returned', error);
+    console.error('Error updating user account returned=>', error.message);
   }
 };

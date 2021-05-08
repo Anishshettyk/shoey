@@ -21,6 +21,7 @@ import { deleteUserAccount, updateUserDetails, getUserData } from '../../lib/fir
 import { useDispatch, useSelector } from 'react-redux';
 import { signoutUser, setUser } from '../../redux';
 import { deleteUser } from '../../lib/firebase';
+import { ProgressSpinner } from '../index';
 
 const { colors } = theme;
 
@@ -109,12 +110,15 @@ const Profile = () => {
   const dName = displayName ? displayName : '';
   const emailID = email ? email : '';
   const pNumber = phoneNumber ? phoneNumber : '';
+  const fileTypes = ['image/png', 'image/jpeg', 'image/jpg'];
 
   const [userName, setUserName] = useState(dName);
   const [userEmail, setUserEmail] = useState(emailID);
   const [userPhoneNumber, setUserPhoneNumber] = useState(pNumber);
   const [open, setOpen] = useState(false);
   const [openBackdrop, setOpenBackdrop] = useState(false);
+  const [file, setFile] = useState(null);
+  const [fileError, setFileError] = useState(null);
 
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -151,6 +155,18 @@ const Profile = () => {
     backdropClose();
   };
 
+  const handleUserPhotoUpload = (event) => {
+    const fileSelected = event.target.files[0];
+
+    if (fileSelected && fileTypes.includes(fileSelected.type)) {
+      setFile(fileSelected);
+      setFileError(null);
+    } else {
+      setFileError('please select a valid file type (png or jpeg).');
+      setFile(null);
+    }
+  };
+
   return (
     <ProfileContainer>
       <UserDetailsContainer>
@@ -159,10 +175,16 @@ const Profile = () => {
           <div className="left__user__data">
             <Avatar src={photoURL} alt={email} className={classes.avatar} />
             <p>Joined on {formatSecondsToDate(createdAt.seconds)}</p>
+            <div className="output">
+              {fileError && <div className="error">{fileError}</div>}
+              {file && <div className="file">{file.name}</div>}
+              {file && <ProgressSpinner file={file} setFile={setFile} userDetails={userDetails} />}
+            </div>
             <div className="user__button__container">
-              <Button variant="contained" color="primary">
-                {photoURL ? 'Upload new picture' : 'Add picture'}
-              </Button>
+              <label>
+                <input type="file" onChange={handleUserPhotoUpload} />
+                <span>+</span>
+              </label>
               <Button variant="contained" color="secondary" onClick={handleClickOpen}>
                 Delete Account
               </Button>
