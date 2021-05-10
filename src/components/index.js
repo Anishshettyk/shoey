@@ -9,7 +9,7 @@ export { default as Icon } from './subComponents/Icon';
 export { default as TopNavbar } from './subComponents/TopNavbar';
 export { default as BlockedRoute } from './subComponents/BlockedRoute';
 export { default as UserRoute } from './subComponents/UserRoute';
-export { default as ProgressSpinner } from './subComponents/ProgressSpinner';
+export { default as ProgressBar } from './subComponents/ProgressBar';
 
 //pages
 export { default as SignIn } from './pages/SignIn';
