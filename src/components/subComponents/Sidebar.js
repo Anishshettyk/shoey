@@ -6,7 +6,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { theme } from '../../styles';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
-import { signoutUser } from '../../redux';
+import { makeNotification, signoutUser } from '../../redux';
 import { auth } from '../../lib/firebase';
 import Icon from './Icon';
 import { Pagelinks, category } from '../../utils';
@@ -81,11 +81,13 @@ const Sidebar = ({ open, setOpen }) => {
   const history = useHistory();
   const user = useSelector((state) => state.user.userDetails);
   const dispatch = useDispatch();
+
   const signout = () => {
     auth.signOut();
     dispatch(signoutUser());
     setOpen(false);
     history.push('/');
+    dispatch(makeNotification({ message: `Signed out successfully`, variant: 'success' }));
   };
 
   return (

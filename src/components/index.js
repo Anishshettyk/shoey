@@ -10,6 +10,7 @@ export { default as TopNavbar } from './subComponents/TopNavbar';
 export { default as BlockedRoute } from './subComponents/BlockedRoute';
 export { default as UserRoute } from './subComponents/UserRoute';
 export { default as ProgressBar } from './subComponents/ProgressBar';
+export { default as SnackbarMaker } from './subComponents/SnackbarMaker';
 
 //pages
 export { default as SignIn } from './pages/SignIn';

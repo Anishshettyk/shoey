@@ -29,7 +29,7 @@ import { formatSecondsToDate } from '../../utils';
 import { Link } from 'react-router-dom';
 import { deleteUserAccount, updateUserDetails, getUserData } from '../../lib/firestore/userData';
 import { useDispatch, useSelector } from 'react-redux';
-import { signoutUser, setUser } from '../../redux';
+import { signoutUser, setUser, makeNotification } from '../../redux';
 import { deleteUser } from '../../lib/firebase';
 import { ProgressBar } from '../index';
 import PropTypes from 'prop-types';
@@ -277,9 +277,11 @@ const Profile = () => {
 
   const DeleteUserAccount = async () => {
     handleClose();
+    backdropOpen();
     await deleteUserAccount(email); //firestore data
     await deleteUserPic(email); //storage user pic
     await deleteUser(); //authentication delete
+    backdropClose();
     dispatch(signoutUser()); //sign out user and push to home page.
   };
 
@@ -303,6 +305,7 @@ const Profile = () => {
       setFile(fileSelected);
       setFileError(null);
     } else {
+      dispatch(makeNotification({ message: 'please select a valid file type (png or jpeg).', variant: 'error' }));
       setFileError('please select a valid file type (png or jpeg).');
       setFile(null);
     }

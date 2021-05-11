@@ -1,10 +1,10 @@
 import { combineReducers } from 'redux';
 import userReducer from './user/userReducer';
-import loadingReducer from './loading/loadingReducer';
+import notificationReducer from './notification/notificationReducer';
 
 const rootReducer = combineReducers({
-  loading: loadingReducer,
   user: userReducer,
+  notification: notificationReducer,
 });
 
 export default rootReducer;

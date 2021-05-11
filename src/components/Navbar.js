@@ -20,7 +20,7 @@ import {
 } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import { auth } from '../lib/firebase';
-import { signoutUser } from '../redux';
+import { signoutUser, makeNotification } from '../redux';
 
 import DehazeIcon from '@material-ui/icons/Dehaze';
 
@@ -139,6 +139,7 @@ const Navbar = () => {
     dispatch(signoutUser());
     history.push('/');
     handleUserAccountClose();
+    dispatch(makeNotification({ message: `Signed out successfully`, variant: 'success' }));
   };
 
   const UserExistMenu = [
