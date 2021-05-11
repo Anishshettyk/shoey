@@ -33,6 +33,7 @@ import { signoutUser, setUser } from '../../redux';
 import { deleteUser } from '../../lib/firebase';
 import { ProgressBar } from '../index';
 import PropTypes from 'prop-types';
+import { deleteUserPic } from '../../lib/storage/userData';
 
 const { colors, transitionTime } = theme;
 
@@ -168,6 +169,7 @@ const UserDetailsPanel = styled(TabPanel)`
   margin: 20px auto 20px;
   max-width: 60%;
   border: 1px solid ${colors.grey1};
+  padding: 20px;
   border-radius: 10px;
   .MuiBox-root-30 {
     padding: 0px;
@@ -275,9 +277,10 @@ const Profile = () => {
 
   const DeleteUserAccount = async () => {
     handleClose();
-    await deleteUserAccount(email);
-    dispatch(signoutUser());
-    await deleteUser();
+    await deleteUserAccount(email); //firestore data
+    await deleteUserPic(email); //storage user pic
+    await deleteUser(); //authentication delete
+    dispatch(signoutUser()); //sign out user and push to home page.
   };
 
   const updateUserDetailsForm = async (event) => {
@@ -330,7 +333,6 @@ const Profile = () => {
               <input type="file" onChange={handleUserPhotoUpload} />
               <span>{photoURL ? 'Upload new pic' : 'Upload pic'}</span>
             </label>
-            <Button variant="contained">Delete</Button>
           </div>
 
           <div className="output__file">

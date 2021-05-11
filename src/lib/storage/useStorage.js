@@ -13,7 +13,7 @@ const useStorage = (file, userDetails) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const storageRef = storage.ref(`/userPics/${email}-${file.name}`);
+    const storageRef = storage.ref(`/userPics/${email}`);
     const userRef = db.doc(`users/${email}`);
     storageRef.put(file).on(
       'state_changed',
