@@ -28,14 +28,14 @@ const mixins = {
     margin-top: ${navHeight};
   `,
   divider: css`
-    margin: 30px 0px 0px 0px;
+    margin: 20px 0px 20px 0px;
     text-align: center;
     position: relative;
     overflow: hidden;
     &:before {
       position: absolute;
-      width: 35%;
-      height: 2px;
+      width: 50%;
+      height: 1px;
       top: 50%;
       left: 60%;
       background-color: ${colors.grey1};
@@ -43,13 +43,18 @@ const mixins = {
     }
     &:after {
       position: absolute;
-      width: 35%;
-      height: 2px;
+      width: 50%;
+      height: 1px;
       top: 50%;
       right: 60%;
       background-color: ${colors.grey1};
       content: '';
     }
+  `,
+  shadow: css`
+    box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.2);
+    -webkit-box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.2);
   `,
   simpleButton: css`
     padding: 15px 40px;

@@ -3,6 +3,7 @@ import * as types from './notifcationTypes';
 const initialState = {
   message: null,
   varient: null,
+  duration: null,
 };
 
 const notificationReducer = (state = initialState, action) => {

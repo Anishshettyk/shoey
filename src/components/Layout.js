@@ -18,7 +18,7 @@ const Layout = ({ children }) => {
         const setUserData = async () => {
           const userDataRes = await getUserData(user.providerData[0]);
           dispatch(setUser(userDataRes));
-          dispatch(makeNotification({ message: `Signed in as ${userDataRes?.email}`, variant: 'success' }));
+          dispatch(makeNotification({ message: `Signed in as ${userDataRes?.email}`, variant: 'success', duration: 4000 }));
         };
         setUserData();
       }
@@ -29,7 +29,11 @@ const Layout = ({ children }) => {
     <main>
       <Navbar />
       <StyledContentBox>{children}</StyledContentBox>
-      {notification.message ? <SnackbarMaker message={notification.message} variant={notification.variant} /> : ''}
+      {notification.message ? (
+        <SnackbarMaker message={notification.message} variant={notification.variant} duration={notification.duration} />
+      ) : (
+        ''
+      )}
     </main>
   );
 };

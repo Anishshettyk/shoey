@@ -2,112 +2,138 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { mixins, theme, media } from '../../styles';
-import { Button, TextField, Paper, CircularProgress } from '@material-ui/core';
+import { Button, TextField, CircularProgress } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { LazyImage } from '../index';
 import { useHistory } from 'react-router-dom';
 import { googleAuth, githubAuth, signin } from '../../lib/firebase';
+import { useDispatch } from 'react-redux';
+import { makeNotification } from '../../redux';
 
 import googleIcon from '../../images/googleIcon.svg';
 import githubIcon from '../../images/github_icon.svg';
-import signInImage from '../../images/signIn.svg';
-import logo from '../../images/shoey_logo.svg';
+import shoey__icon from '../../images/shoey__icon.png';
 
 const { colors } = theme;
 
 const useStyles = makeStyles((theme) => ({
   form: {
     '& > *': {
-      margin: '15px 0px',
+      margin: '10px 0px',
     },
   },
   loadingSpinner: {
     margin: '0px auto',
+    textAlign: 'center',
   },
   buttonStyles: {
-    width: '30%',
-    minWidth: '200px',
-    padding: '15px 20px',
-  },
-  signInProvider: {
-    display: 'flex',
-    backgroundColor: 'transparent',
+    marginTop: 10,
     width: '100%',
-    margin: '30px 10px',
-    padding: '0px 20px',
-    cursor: 'pointer',
-    transition: 'all 0.175s',
-    '& img': {
-      maxWidth: '32px',
-      backgroundColor: 'transparent',
-    },
-    '&:hover': {
-      transform: 'translateY(-10px)',
-      backgroundColor: colors.grey3,
-    },
-    [theme.breakpoints.down('sm')]: {
-      '& h5': {
-        fontSize: '10px',
-      },
-    },
-  },
-  signInProviderText: {
-    marginLeft: '10px',
+    padding: '15px 20px',
+    fontWeight: '500',
+    color: colors.white,
+    letterSpacing: 1,
   },
 }));
 
 const SignInContainer = styled.main`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  ${media.tabletL`
-    display:block;
-  `}
-`;
-const ImageContainer = styled.section`
-  background-color: ${colors.grey3};
-  position: relative;
-  img {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
+  max-width: 500px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  .img__container {
+    padding: 20px;
+    margin-top: 1rem;
+    border-radius: 50%;
+    ${mixins.shadow};
+    .shoey__icon {
+      width: 50px;
+      height: 50px;
+    }
   }
-  ${media.tabletL`
-    display:none;
+
+  .auth__heading {
+    margin-top: 1rem;
+    color: ${colors.textColor};
+    font-size: 20px;
+    font-weight: 500;
+    span {
+      font-weight: 800;
+    }
+  }
+  ${media.phablet`
+  max-width:100%;
+  margin:0;
   `}
 `;
-const SignInFormContainer = styled.section`
-  margin: 30px 60px;
+const FormContainer = styled.section`
+  padding: 1rem 2rem;
 `;
+const AuthAltContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  p {
+    color: ${colors.textColor};
+    span {
+      font-weight: 700;
+    }
+    &:hover {
+      opacity: 0.7;
+    }
+    ${media.phablet`
+    font-size:13px;
+    `}
+  }
+`;
+
 const Divider = styled.p`
   ${mixins.divider};
 `;
-const SignInProvider = styled.div`
-  display: Flex;
-  justify-content: space-around;
-  ${media.phablet`
-    display:block;
-  `}
+const StyledTextField = styled(TextField)`
+  background-color: ${colors.grey3};
+`;
+const AuthProviderContainer = styled.div`
+  .container {
+    margin: 20px 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    ${mixins.shadow};
+    border-radius: 5px;
+    .logo {
+      width: 25px;
+      margin-right: 10px;
+    }
+    .text {
+      color: ${colors.textColor};
+    }
+    &:hover,
+    &:focus {
+      background-color: ${colors.grey3};
+    }
+  }
 `;
 
 const SignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
   const history = useHistory();
   const classes = useStyles();
-  const defaultErrorMessage = 'Error occured while signing in please try again.';
+  const dispatch = useDispatch();
 
   const signInForm = async (event) => {
     event.preventDefault();
-    setError('');
+
     setLoading(true);
     try {
       await signin(email, password);
       history.push('/');
     } catch (error) {
-      setError(error.message ? error.message : defaultErrorMessage);
+      dispatch(makeNotification({ message: error.message, variant: 'error', duration: null }));
     }
     setLoading(false);
   };
@@ -115,28 +141,82 @@ const SignIn = () => {
   const signInWithGoogle = async () => {
     setLoading(true);
     try {
-      setError('');
       await googleAuth();
       history.push('/');
     } catch (error) {
-      setError(error.message ? error.message : defaultErrorMessage);
+      dispatch(makeNotification({ message: error.message, variant: 'error', duration: null }));
     }
     setLoading(false);
   };
   const signInWithGithub = async () => {
     setLoading(true);
     try {
-      setError('');
       await githubAuth();
       history.push('/');
     } catch (error) {
-      setError(error.message ? error.message : defaultErrorMessage);
+      dispatch(makeNotification({ message: error.message, variant: 'error', duration: null }));
     }
     setLoading(false);
   };
   return (
     <SignInContainer>
-      <ImageContainer>
+      <div className="img__container">
+        <img src={shoey__icon} alt="shoey icon" className="shoey__icon" />
+      </div>
+      <h1 className="auth__heading">
+        <span>Sign in</span> to Shoey account.
+      </h1>
+      <FormContainer>
+        <form className={classes.form} onSubmit={signInForm}>
+          <StyledTextField
+            type="email"
+            onChange={(event) => setEmail(event.target.value)}
+            variant="outlined"
+            label="Email ID"
+            fullWidth
+            placeholder="Email ID (required)"
+          />
+          <StyledTextField
+            type="password"
+            onChange={(event) => setPassword(event.target.value)}
+            variant="outlined"
+            label="Password"
+            fullWidth
+            placeholder="Password (required)"
+          />
+          {loading ? (
+            <CircularProgress className={classes.loadingSpinner} />
+          ) : (
+            <Button className={classes.buttonStyles} type="submit" color="primary" variant="contained">
+              Sign in
+            </Button>
+          )}
+        </form>
+        <AuthAltContainer>
+          <Link to="/signup">
+            <p>
+              new here? <span>sign up</span>
+            </p>
+          </Link>
+          <Link to="/reset-password">
+            <p>
+              <span>Forgot your password?</span>
+            </p>
+          </Link>
+        </AuthAltContainer>
+        <Divider>Or</Divider>
+        <AuthProviderContainer>
+          <div className="container" onClick={signInWithGoogle}>
+            <img src={googleIcon} alt="google logo" className="logo" />
+            <h5 className="text">Sign in with Google</h5>
+          </div>
+          <div className="container" onClick={signInWithGithub}>
+            <img src={githubIcon} alt="github logo" className="logo" />
+            <h5 className="text">Sign in with Github</h5>
+          </div>
+        </AuthProviderContainer>
+      </FormContainer>
+      {/* <ImageContainer>
         <img src={signInImage} alt="sign in background" />
         <div className="company__info">
           <img src={logo} alt="shoey logo" />
@@ -190,7 +270,7 @@ const SignIn = () => {
             <h5 className={classes.signInProviderText}>Sign in with Github</h5>
           </Paper>
         </SignInProvider>
-      </SignInFormContainer>
+      </SignInFormContainer> */}
     </SignInContainer>
   );
 };

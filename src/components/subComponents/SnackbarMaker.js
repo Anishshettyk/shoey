@@ -6,9 +6,9 @@ const Alert = (props) => {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 };
 
-const SnackbarMaker = ({ message, variant }) => {
+const SnackbarMaker = ({ message, variant, duration = 3000 }) => {
   const [open, setOpen] = useState(false);
-
+  console.log(duration);
   useEffect(() => {
     handleClick();
   }, [message, variant]);
@@ -24,7 +24,7 @@ const SnackbarMaker = ({ message, variant }) => {
     setOpen(false);
   };
   return (
-    <Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>
+    <Snackbar open={open} autoHideDuration={duration === null ? duration : duration} onClose={handleClose}>
       <Alert onClose={handleClose} severity={variant}>
         {message}
       </Alert>
