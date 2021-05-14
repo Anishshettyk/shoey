@@ -1,6 +1,6 @@
 import React from 'react';
 import { GlobalStyle } from './styles';
-import { SignUp, Layout, Home, SignIn, BlockedRoute, UserRoute, Profile } from './components';
+import { SignUp, Layout, Home, SignIn, BlockedRoute, UserRoute, Profile, ResetPassword } from './components';
 import { MuiThemeProvider, StylesProvider } from '@material-ui/core/styles';
 import { MuiThemes } from './styles';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
@@ -17,8 +17,9 @@ function App() {
             <Layout>
               <Switch>
                 <BlockedRoute component={SignUp} path="/signup" exact />
-                <Route component={Home} path="/" exact />
                 <BlockedRoute component={SignIn} path="/signin" exact />
+                <BlockedRoute component={ResetPassword} path="/reset-password" exact />
+                <Route component={Home} path="/" exact />
                 <UserRoute component={Profile} path="/profile" exact />
               </Switch>
             </Layout>

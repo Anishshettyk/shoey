@@ -46,4 +46,8 @@ export const deleteUser = async () => {
   }
 };
 
+export const resetPassword = (email) => {
+  return auth.sendPasswordResetEmail(email);
+};
+
 export default app;

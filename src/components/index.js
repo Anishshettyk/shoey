@@ -15,6 +15,7 @@ export { default as SnackbarMaker } from './subComponents/SnackbarMaker';
 //pages
 export { default as SignIn } from './pages/SignIn';
 export { default as SignUp } from './pages/SignUp';
+export { default as ResetPassword } from './pages/ResetPassword';
 export { default as Home } from './pages/Home';
 export { default as Profile } from './pages/Profile';
 
