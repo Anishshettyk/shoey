@@ -216,61 +216,6 @@ const SignIn = () => {
           </div>
         </AuthProviderContainer>
       </FormContainer>
-      {/* <ImageContainer>
-        <img src={signInImage} alt="sign in background" />
-        <div className="company__info">
-          <img src={logo} alt="shoey logo" />
-          <p className="company_desc">A central hub to find a perfect sole.</p>
-        </div>
-      </ImageContainer>
-      <SignInFormContainer>
-        <p className="auth__message">Already a memeber?</p>
-        <h1 className="auth__heading">Sign in with shoey.</h1>
-        <p>
-          Don't have an account? <Link to="/signup">Sign up</Link>
-        </p>
-        <form className={classes.form} onSubmit={signInForm}>
-          <TextField
-            type="email"
-            onChange={(event) => setEmail(event.target.value)}
-            variant="outlined"
-            label="Email ID"
-            color="primary"
-            fullWidth
-          />
-          <TextField
-            type="password"
-            onChange={(event) => setPassword(event.target.value)}
-            variant="outlined"
-            label="Password"
-            color="primary"
-            margin="normal"
-            fullWidth
-          />
-          <p>
-            <Link to="/forgot-password">forgot password?</Link>
-          </p>
-          {error && <p className="error_message">{error}</p>}
-          {loading ? (
-            <CircularProgress className={classes.loadingSpinner} />
-          ) : (
-            <Button className={classes.buttonStyles} type="submit" color="primary" variant="contained">
-              Sign in
-            </Button>
-          )}
-        </form>
-        <Divider>Or</Divider>
-        <SignInProvider>
-          <Paper elevation={3} className={classes.signInProvider} onClick={signInWithGoogle}>
-            <LazyImage src={googleIcon} alt="google logo" className={classes.signUpProviderLogo} />
-            <h5 className={classes.signInProviderText}>Sign in with Google</h5>
-          </Paper>
-          <Paper elevation={3} className={classes.signInProvider} onClick={signInWithGithub}>
-            <LazyImage src={githubIcon} alt="github logo" className={classes.signUpProviderLogo} />
-            <h5 className={classes.signInProviderText}>Sign in with Github</h5>
-          </Paper>
-        </SignInProvider>
-      </SignInFormContainer> */}
     </SignInContainer>
   );
 };

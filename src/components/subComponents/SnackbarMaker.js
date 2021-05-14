@@ -8,7 +8,7 @@ const Alert = (props) => {
 
 const SnackbarMaker = ({ message, variant, duration = 3000 }) => {
   const [open, setOpen] = useState(false);
-  console.log(duration);
+
   useEffect(() => {
     handleClick();
   }, [message, variant]);
