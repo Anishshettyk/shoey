@@ -7,9 +7,14 @@ import styled from 'styled-components';
 import { getUserData } from '../lib/firestore/userData';
 
 const StyledMain = styled.main`
-  transition: all 0.4s ease-out 0s;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 `;
-const StyledContentBox = styled.section``;
+const StyledContentBox = styled.section`
+  padding-top: 95px;
+`;
 
 const Layout = ({ children }) => {
   const dispatch = useDispatch();

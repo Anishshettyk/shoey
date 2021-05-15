@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { theme, mixins, media } from '../styles';
 import logo from '../images/shoey_logo.svg';
 import { Sidebar, TopNavbar, Icon } from './index';
@@ -21,6 +21,7 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import { auth } from '../lib/firebase';
 import { signoutUser, makeNotification } from '../redux';
+import { useScrollDirection } from '../hooks';
 
 import DehazeIcon from '@material-ui/icons/Dehaze';
 
@@ -29,10 +30,25 @@ const { colors, transitionTime } = theme;
 const navLinks = [Pagelinks[0], ...category, Pagelinks[1], Pagelinks[3]];
 
 const StyledNavbar = styled.nav`
+  position: fixed;
   width: 100%;
   z-index: 1000;
   background-color: ${colors.white};
   box-shadow: 0px 3px 3px -2px rgb(0 0 0 / 15%), 0px 3px 4px 0px rgb(0 0 0 / 10%), 0px 1px 8px 0px rgb(0 0 0 / 8%);
+  transition: all 0.2s ease-out 0s;
+  ${(props) =>
+    props.setScrollDirection === 'up' &&
+    !props.scrollToTop &&
+    css`
+      transform: translateY(0px);
+      opacity: 0.95;
+    `};
+  ${(props) =>
+    props.setScrollDirection === 'down' &&
+    !props.scrollToTop &&
+    css`
+      transform: translateY(calc(100% * -1));
+    `};
   .botton__navbar {
     ${mixins.spaceAround}
     align-items: center;
@@ -122,7 +138,8 @@ const StyledBadge = withStyles((theme) => ({
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [openAccount, setOpenAccount] = useState(null);
-  const [fixNavbar, setFixNavbar] = useState(false);
+  const scrollDirection = useScrollDirection('down');
+  const [scrollToTop, setScrollToTop] = useState(false);
 
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -135,13 +152,9 @@ const Navbar = () => {
   const handleUserAccountClose = () => {
     setOpenAccount(null);
   };
-  const handleNavScroll = () => {
-    const offset = window.scrollY;
-    if (offset >= 200) {
-      setFixNavbar(true);
-    } else {
-      setFixNavbar(false);
-    }
+
+  const handleScroll = () => {
+    setScrollToTop(window.pageYOffset < 10);
   };
   const signout = () => {
     auth.signOut();
@@ -161,12 +174,15 @@ const Navbar = () => {
     { name: 'Sign up', link: '/signup', iconName: 'Sign up', func: handleUserAccountClose },
   ];
   useEffect(() => {
-    window.addEventListener('scroll', handleNavScroll);
-    return () => window.removeEventListener('scroll', handleNavScroll);
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   return (
-    <StyledNavbar className={fixNavbar ? 'fixed__navbar ' : ''}>
+    <StyledNavbar setScrollDirection={scrollDirection} scrollToTop={scrollToTop}>
       <TopNavbar />
       <div className={'botton__navbar'}>
         <SidebarButton onClick={() => setOpen(true)}>
