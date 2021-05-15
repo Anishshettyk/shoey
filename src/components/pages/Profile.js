@@ -283,6 +283,7 @@ const Profile = () => {
     await deleteUser(); //authentication delete
     backdropClose();
     dispatch(signoutUser()); //sign out user and push to home page.
+    dispatch(makeNotification({ message: 'Account deleted successfully.', variant: 'success', duration: 3000 }));
   };
 
   const updateUserDetailsForm = async (event) => {
@@ -292,10 +293,16 @@ const Profile = () => {
       phoneNumber: userPhoneNumber,
       gender: genderValue,
     };
-    await updateUserDetails(email, updatedDetails);
+    const resultType = await updateUserDetails(email, updatedDetails);
     const userDataRes = await getUserData(userDetails);
     dispatch(setUser(userDataRes));
     backdropClose();
+    if (resultType === 'success') {
+      dispatch(makeNotification({ message: 'Profile details updated successfully.', variant: 'success', duration: 3000 }));
+    }
+    if (resultType === 'error') {
+      dispatch(makeNotification({ message: 'Unexpected error occured. Please try again.', variant: 'error', duration: 3000 }));
+    }
   };
 
   const handleUserPhotoUpload = (event) => {
@@ -305,7 +312,7 @@ const Profile = () => {
       setFile(fileSelected);
       setFileError(null);
     } else {
-      dispatch(makeNotification({ message: 'please select a valid file type (png or jpeg).', variant: 'error' }));
+      dispatch(makeNotification({ message: 'please select a valid file type (png or jpeg).', variant: 'error', duration: 4000 }));
       setFileError('please select a valid file type (png or jpeg).');
       setFile(null);
     }

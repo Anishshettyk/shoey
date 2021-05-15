@@ -18,9 +18,7 @@ const { colors } = theme;
 const SignUpContainer = styled.main`
   max-width: 500px;
   margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  ${mixins.flexCenter};
   flex-direction: column;
   .img__container {
     padding: 20px;
@@ -77,9 +75,7 @@ const AuthAltContainer = styled.div`
 const AuthProviderContainer = styled.div`
   .container {
     margin: 20px 0px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    ${mixins.flexCenter};
     ${mixins.shadow};
     border-radius: 5px;
     .logo {

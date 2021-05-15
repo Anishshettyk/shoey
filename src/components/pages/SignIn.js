@@ -38,9 +38,7 @@ const useStyles = makeStyles((theme) => ({
 const SignInContainer = styled.main`
   max-width: 500px;
   margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  ${mixins.flexCenter};
   flex-direction: column;
   .img__container {
     padding: 20px;
@@ -59,6 +57,7 @@ const SignInContainer = styled.main`
     font-size: 20px;
     font-weight: 500;
     span {
+      font-size: 25px;
       font-weight: 800;
     }
   }
@@ -97,9 +96,7 @@ const StyledTextField = styled(TextField)`
 const AuthProviderContainer = styled.div`
   .container {
     margin: 20px 0px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    ${mixins.flexCenter};
     ${mixins.shadow};
     border-radius: 5px;
     .logo {

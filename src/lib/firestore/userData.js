@@ -55,10 +55,15 @@ export const deleteUserAccount = async (email) => {
 };
 
 export const updateUserDetails = async (email, updateData) => {
+  let outputType = '';
   try {
     await db.doc(`users/${email}`).update({ ...updateData });
     console.log(`user account of ${email} is updated in database.`);
+    outputType = 'success';
+    return outputType;
   } catch (error) {
     console.error('Error updating user account returned=>', error.message);
+    outputType = 'error';
+    return outputType;
   }
 };
