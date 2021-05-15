@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { theme, mixins, media } from '../styles';
 import logo from '../images/shoey_logo.svg';
@@ -122,6 +122,7 @@ const StyledBadge = withStyles((theme) => ({
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [openAccount, setOpenAccount] = useState(null);
+  const [fixNavbar, setFixNavbar] = useState(false);
 
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -133,6 +134,14 @@ const Navbar = () => {
   };
   const handleUserAccountClose = () => {
     setOpenAccount(null);
+  };
+  const handleNavScroll = () => {
+    const offset = window.scrollY;
+    if (offset >= 200) {
+      setFixNavbar(true);
+    } else {
+      setFixNavbar(false);
+    }
   };
   const signout = () => {
     auth.signOut();
@@ -151,11 +160,15 @@ const Navbar = () => {
     { name: 'Sign in', link: '/signin', iconName: 'Sign in', func: handleUserAccountClose },
     { name: 'Sign up', link: '/signup', iconName: 'Sign up', func: handleUserAccountClose },
   ];
+  useEffect(() => {
+    window.addEventListener('scroll', handleNavScroll);
+    return () => window.removeEventListener('scroll', handleNavScroll);
+  }, []);
 
   return (
-    <StyledNavbar>
+    <StyledNavbar className={fixNavbar ? 'fixed__navbar ' : ''}>
       <TopNavbar />
-      <div className="botton__navbar">
+      <div className={'botton__navbar'}>
         <SidebarButton onClick={() => setOpen(true)}>
           <DehazeIcon />
         </SidebarButton>

@@ -75,6 +75,13 @@ a{
     font-size: 40px;
     margin: 0;
 }
+.fixed__navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin:-2px 0px;
+  }
 
 `;
 

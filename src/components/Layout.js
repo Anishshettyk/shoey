@@ -6,6 +6,9 @@ import { Navbar, SnackbarMaker } from './index';
 import styled from 'styled-components';
 import { getUserData } from '../lib/firestore/userData';
 
+const StyledMain = styled.main`
+  transition: all 0.4s ease-out 0s;
+`;
 const StyledContentBox = styled.section``;
 
 const Layout = ({ children }) => {
@@ -26,7 +29,7 @@ const Layout = ({ children }) => {
     return unsubscribe;
   }, [dispatch]);
   return (
-    <main>
+    <StyledMain>
       <Navbar />
       <StyledContentBox>{children}</StyledContentBox>
       {notification.message ? (
@@ -34,7 +37,7 @@ const Layout = ({ children }) => {
       ) : (
         ''
       )}
-    </main>
+    </StyledMain>
   );
 };
 
