@@ -6,12 +6,12 @@ const Alert = (props) => {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 };
 
-const SnackbarMaker = ({ message, variant, duration = 3000 }) => {
+const SnackbarMaker = ({ message, variant, times, duration = 3000 }) => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     handleClick();
-  }, [message, variant]);
+  }, [message, variant, times]);
 
   const handleClick = () => {
     setOpen(true);

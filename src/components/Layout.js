@@ -38,7 +38,12 @@ const Layout = ({ children }) => {
       <Navbar />
       <StyledContentBox>{children}</StyledContentBox>
       {notification.message ? (
-        <SnackbarMaker message={notification.message} variant={notification.variant} duration={notification.duration} />
+        <SnackbarMaker
+          message={notification.message}
+          variant={notification.variant}
+          duration={notification.duration}
+          times={notification.times}
+        />
       ) : (
         ''
       )}
