@@ -7,6 +7,8 @@ import { AiOutlineHome } from 'react-icons/ai';
 import { BsPerson, BsSearch, BsFillPersonFill } from 'react-icons/bs';
 import { BiPhone } from 'react-icons/bi';
 import { FiFacebook, FiLinkedin, FiGithub, FiTwitter, FiCodepen, FiShoppingCart, FiUserCheck, FiUserPlus } from 'react-icons/fi';
+import { SiReact, SiRedux, SiFirebase, SiMaterialUi } from 'react-icons/si';
+import { RiExternalLinkLine } from 'react-icons/ri';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 const Icon = ({ name }) => {
@@ -45,6 +47,16 @@ const Icon = ({ name }) => {
       return <FiUserCheck />;
     case 'Sign up':
       return <FiUserPlus />;
+    case 'React':
+      return <SiReact />;
+    case 'Redux':
+      return <SiRedux />;
+    case 'Firebase':
+      return <SiFirebase />;
+    case 'Material UI':
+      return <SiMaterialUi />;
+    case 'External link':
+      return <RiExternalLinkLine />;
     default:
       return <p>please enter a valid name</p>;
   }

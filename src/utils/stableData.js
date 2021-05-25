@@ -36,3 +36,10 @@ export const category = [
     imageUrl: 'https://res.cloudinary.com/deshidm6k/image/upload/v1620058118/pexels-allan-mas-5623675_zysgdd.jpg',
   },
 ];
+
+export const techStack = [
+  { name: 'React', link: 'https://reactjs.org/' },
+  { name: 'Redux', link: 'https://redux.js.org/' },
+  { name: 'Firebase', link: 'https://firebase.google.com/' },
+  { name: 'Material UI', link: 'https://material-ui.com/' },
+];

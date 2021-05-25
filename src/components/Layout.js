@@ -5,6 +5,7 @@ import { setUser, makeNotification } from '../redux';
 import { Navbar, SnackbarMaker } from './index';
 import styled from 'styled-components';
 import { getUserData } from '../lib/firestore/userData';
+import Footer from './Footer';
 
 const StyledMain = styled.main`
   position: relative;
@@ -47,6 +48,7 @@ const Layout = ({ children }) => {
       ) : (
         ''
       )}
+      <Footer />
     </StyledMain>
   );
 };

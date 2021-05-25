@@ -27,7 +27,7 @@ import DehazeIcon from '@material-ui/icons/Dehaze';
 
 const { colors, transitionTime } = theme;
 
-const navLinks = [Pagelinks[0], ...category, Pagelinks[1], Pagelinks[3]];
+export const navLinks = [Pagelinks[0], ...category, Pagelinks[1], Pagelinks[3]];
 
 const StyledNavbar = styled.nav`
   position: fixed;
