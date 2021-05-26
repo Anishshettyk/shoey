@@ -82,6 +82,9 @@ a{
     right: 0;
     margin:-2px 0px;
   }
+.slim__heading{
+    margin:0;
+}
 
 `;
 
