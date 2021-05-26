@@ -18,6 +18,7 @@ export { default as SignUp } from './pages/SignUp';
 export { default as ResetPassword } from './pages/ResetPassword';
 export { default as Home } from './pages/Home';
 export { default as Profile } from './pages/Profile';
+export { default as MainCategory } from './pages/MainCategory';
 
 //page divisions
 export { default as CategoryDisplay } from './pageDivisions/CategoryDisplay';
