@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Breadcrumbs } from '@material-ui/core';
+import { Breadcrumbs, Checkbox } from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
 import { Link, useLocation } from 'react-router-dom';
 import { theme, mixins } from '../../styles';
@@ -47,7 +47,7 @@ const FilterContainer = styled.section`
     font-size: 1rem;
   }
   .filter__content__container {
-    h4 {
+    .filter__content__heading {
       padding: 5px 0px 10px 10px;
       color: ${colors.blue};
       font-weight: 600;
@@ -75,8 +75,16 @@ const FilterContainer = styled.section`
         }
       }
     }
+    .filter__price__container {
+      p {
+        font-size: 14px;
+        margin: 0px;
+        color: ${colors.textColor};
+      }
+    }
   }
 `;
+
 const ProductContainer = styled.section`
   box-shadow: ${mixins.shadow};
   border-radius: 10px;
@@ -84,17 +92,27 @@ const ProductContainer = styled.section`
 
 const MainCategory = () => {
   const [categories, setCategories] = useState(null);
+  const [products, setProducts] = useState(null);
+
   const path = useLocation();
   const pathName = path.pathname.split('/')[1];
-  useEffect(() => {
-    findRequiredCategory(pathName);
-  }, [pathName]);
 
-  const findRequiredCategory = async (mainCategoryName) => {
-    const allCategories = await commerce.categories.list();
-    const requiredCategories = allCategories.data.filter((category) => category.name.split(' ')[0] === mainCategoryName);
-    setCategories(requiredCategories);
-  };
+  useEffect(() => {
+    const findRequiredCategory = async (mainCategoryName) => {
+      const allCategories = await commerce.categories.list();
+      const requiredCategories = allCategories.data.filter((category) => category.name.split(' ')[0] === mainCategoryName);
+      setCategories(requiredCategories);
+    };
+
+    const retriveAllCategoryProducts = async () => {
+      const response = await commerce.products.list();
+      const filteredResponse = response?.data.filter((product) => product?.sku === pathName);
+      setProducts(filteredResponse);
+    };
+
+    findRequiredCategory(pathName);
+    retriveAllCategoryProducts();
+  }, [pathName]);
 
   const computeTotalProducts = (categories) => {
     const totalSumInACategory = categories
@@ -104,13 +122,53 @@ const MainCategory = () => {
       }, 0);
     return totalSumInACategory;
   };
-  console.log(categories);
+
+  const computeFilterPrice = (products, stepValue) => {
+    let filteredValues = [];
+    if (products?.length > 0) {
+      //finding min product value
+      const maxProductPrice = products
+        ?.map((product) => product.price.raw)
+        ?.reduce((prev, current) => {
+          return prev > current ? prev : current;
+        });
+
+      //finding max product value
+      const minProductPrice = products
+        ?.map((product) => product.price.raw)
+        ?.reduce((prev, current) => {
+          return prev < current ? prev : current;
+        });
+
+      //setting initial step value to min value
+      let stepFinalValue = minProductPrice;
+      while (stepFinalValue <= maxProductPrice) {
+        //pushing min max max step value to array
+        filteredValues.push({ minValue: stepFinalValue, maxValue: stepFinalValue + stepValue });
+        //incrementing step value with step
+        stepFinalValue = stepFinalValue + stepValue;
+      }
+      return filteredValues.map((filteredValue, i) => (
+        <p key={i}>
+          <Checkbox inputProps={{ 'aria-label': 'uncontrolled-checkbox' }} color="primary" /> Rs. {filteredValue.minValue} to Rs.{' '}
+          {filteredValue.maxValue}
+        </p>
+      ));
+    }
+  };
+
+  console.log(products);
   return (
     <StyledMainContainer>
-      <StyledBreadcrumbs aria-label="breadcrumb">
-        <Link to="/">HOME</Link>
-        <h4>{pathName}</h4>
-      </StyledBreadcrumbs>
+      {categories ? (
+        <StyledBreadcrumbs aria-label="breadcrumb">
+          <Link to="/">HOME</Link>
+          <h4>{pathName}</h4>
+        </StyledBreadcrumbs>
+      ) : (
+        <Skeleton variant="rect" width="20%" height={20} style={{ marginBottom: '10px' }} />
+      )}
+
       {categories ? (
         <h4 className="main__heading">
           {pathName} footware - <span>{computeTotalProducts(categories)} items</span>
@@ -123,7 +181,7 @@ const MainCategory = () => {
           <h5 className="filter__heading">Filters</h5>
           {categories ? (
             <div className="filter__content__container">
-              <h4 className="slim__heading">Categories</h4>
+              <h4 className="slim__heading filter__content__heading">Categories</h4>
               {categories?.map((category) => (
                 <Link key={category.id} to={category.slug} className="category__link">
                   <p>
@@ -133,8 +191,12 @@ const MainCategory = () => {
               ))}
             </div>
           ) : (
-            <SameSkeleton variant="react" width="90%" height="30px" limit={5} margin="10px" />
+            <SameSkeleton variant="rect" width="90%" height="30px" limit={5} margin="10px" />
           )}
+          <div className="filter__content__container">
+            <h4 className="slim__heading filter__content__heading">Price</h4>
+            <div className="filter__price__container">{computeFilterPrice(products, 2500)}</div>
+          </div>
         </FilterContainer>
         <ProductContainer></ProductContainer>
       </ContentContainer>
