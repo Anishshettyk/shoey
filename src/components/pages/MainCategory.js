@@ -5,7 +5,8 @@ import { Skeleton } from '@material-ui/lab';
 import { Link, useLocation } from 'react-router-dom';
 import { theme, mixins } from '../../styles';
 import commerce from '../../lib/commerce';
-import { Icon, SameSkeleton } from '../index';
+import { Icon, SameSkeleton, ProductOverview } from '../index';
+import { valueChopper } from '../../utils/';
 
 const { colors } = theme;
 const StyledMainContainer = styled.div`
@@ -77,9 +78,13 @@ const FilterContainer = styled.section`
     }
     .filter__price__container {
       p {
-        font-size: 14px;
+        font-size: 13px;
         margin: 0px;
         color: ${colors.textColor};
+        padding: 5px 10px;
+        span {
+          padding: 0;
+        }
       }
     }
   }
@@ -88,6 +93,48 @@ const FilterContainer = styled.section`
 const ProductContainer = styled.section`
   box-shadow: ${mixins.shadow};
   border-radius: 10px;
+  .product__banner {
+  }
+`;
+const ProductContentContainer = styled.div`
+  margin: 20px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-gap: 10px;
+  .product__card {
+    border-radius: 10px;
+    &:hover {
+      box-shadow: ${mixins.shadowSpread};
+      .product__content__container {
+        border-top: 3px solid ${colors.grey3};
+      }
+    }
+    .product__image__container {
+      min-height: 200px;
+      img {
+        width: 100%;
+        border-radius: 10px;
+      }
+    }
+    .product__content__container {
+      border-top: 3px solid transparent;
+      padding: 10px;
+      h3 {
+        font-size: 15px;
+        font-weight: 500;
+      }
+      h6 {
+        font-size: 14px;
+        font-weight: 500;
+      }
+      P {
+        font-size: 13px;
+        color: ${colors.darkGrey};
+        font-weight: 300;
+        margin-top: 2px;
+      }
+    }
+  }
 `;
 
 const MainCategory = () => {
@@ -193,12 +240,36 @@ const MainCategory = () => {
           ) : (
             <SameSkeleton variant="rect" width="90%" height="30px" limit={5} margin="10px" />
           )}
-          <div className="filter__content__container">
-            <h4 className="slim__heading filter__content__heading">Price</h4>
-            <div className="filter__price__container">{computeFilterPrice(products, 2500)}</div>
-          </div>
+          {products ? (
+            <div className="filter__content__container">
+              <h4 className="slim__heading filter__content__heading">Price</h4>
+              <div className="filter__price__container">{computeFilterPrice(products, 2500)}</div>
+            </div>
+          ) : (
+            <SameSkeleton variant="rect" width="90%" height="30px" limit={5} margin="10px" />
+          )}
         </FilterContainer>
-        <ProductContainer></ProductContainer>
+        <ProductContainer>
+          <div className="product__banner"></div>
+          <ProductContentContainer>
+            {products ? (
+              products?.map((product, i) => (
+                <div key={product.id} className="product__card">
+                  <div className="product__image__container">
+                    <img src={product.assets[0].url} alt="" />
+                  </div>
+                  <div className="product__content__container">
+                    <h3 className="slim__heading">{valueChopper(product.name, 23)}</h3>
+                    <p contentEditable="true" dangerouslySetInnerHTML={{ __html: valueChopper(product.description, 30) }} />
+                    <h6 className="slim__heading">Rs. {product.price.formatted}</h6>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <ProductOverview limit={20} />
+            )}
+          </ProductContentContainer>
+        </ProductContainer>
       </ContentContainer>
     </StyledMainContainer>
   );

@@ -79,7 +79,7 @@ const heroSection = () => {
         </h1>
         <h4>Find best in class sneakers for men with all variants and sizes</h4>
         <div className="button__container">
-          <Link to="/mens" className="shop__button">
+          <Link to="/men" className="shop__button">
             shop now
           </Link>
           <Link to="/about" className="aboutus__button">

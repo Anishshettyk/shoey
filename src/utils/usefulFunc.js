@@ -24,3 +24,12 @@ export const formatSecondsToDate = (secondsOptioned) => {
   let formatedDate = joinDate(date, format, '-');
   return formatedDate;
 };
+
+export const valueChopper = (value, maxValue) => {
+  if (value?.length >= maxValue) {
+    const choopedValue = value?.slice(0, maxValue);
+    return `${choopedValue}...`;
+  } else {
+    return value;
+  }
+};
