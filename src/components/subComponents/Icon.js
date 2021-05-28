@@ -6,7 +6,7 @@ import kids from '../../images/icons/kids.svg';
 import { AiOutlineHome } from 'react-icons/ai';
 import { BsPerson, BsSearch, BsFillPersonFill } from 'react-icons/bs';
 import { BiPhone, BiRightArrow } from 'react-icons/bi';
-import { FiFacebook, FiLinkedin, FiGithub, FiTwitter, FiCodepen, FiShoppingCart, FiUserCheck, FiUserPlus } from 'react-icons/fi';
+import { FiFacebook, FiLinkedin, FiGithub, FiTwitter, FiCodepen, FiShoppingCart, FiUserCheck, FiUserPlus, FiEye } from 'react-icons/fi';
 import { SiReact, SiRedux, SiFirebase, SiMaterialUi } from 'react-icons/si';
 import { RiExternalLinkLine } from 'react-icons/ri';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
@@ -59,6 +59,8 @@ const Icon = ({ name }) => {
       return <RiExternalLinkLine />;
     case 'right triangle':
       return <BiRightArrow />;
+    case 'eye':
+      return <FiEye />;
     default:
       return <p>please enter a valid name</p>;
   }

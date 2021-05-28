@@ -108,12 +108,6 @@ const ProductContentContainer = styled.div`
     width: 100%;
     overflow: hidden;
 
-    &:hover {
-      box-shadow: ${mixins.shadowSpread};
-      .slick-dots {
-        display: block !important;
-      }
-    }
     .product__image__container {
       img {
         width: 100%;
@@ -125,8 +119,10 @@ const ProductContentContainer = styled.div`
     .product__content__container {
       padding: 10px;
       h3 {
+        display: block;
         font-size: 15px;
         font-weight: 500;
+        padding: 7px 0px;
       }
       h6 {
         font-size: 14px;
@@ -138,13 +134,43 @@ const ProductContentContainer = styled.div`
         font-weight: 300;
         margin-top: 2px;
       }
+      .product__button {
+        display: none !important;
+        max-width: 90%;
+        margin: 0px auto;
+        display: block;
+        text-align: center;
+        padding: 7px 0px;
+        border: 1px solid ${colors.grey2};
+        border-radius: 2px;
+        color: ${colors.textColor};
+        font-size: 15px;
+        font-weight: 600;
+        &:hover {
+          border-color: ${colors.textColor};
+        }
+      }
+    }
+    &:hover {
+      box-shadow: ${mixins.shadowSpread};
+      .slick-dots {
+        display: block !important;
+      }
+      .product__content__container {
+        h3 {
+          display: none;
+        }
+        .product__button {
+          display: block !important;
+        }
+      }
     }
   }
 `;
 const StyledSlider = styled(Slider)`
   .slick-dots {
     display: none !important;
-    padding-bottom: 20px;
+    margin-bottom: 13px;
   }
 `;
 
@@ -163,6 +189,7 @@ const MainCategory = () => {
     slidesToShow: 1,
     slidesToScroll: 1,
   };
+  console.log(products);
 
   useEffect(() => {
     const findRequiredCategory = async (mainCategoryName) => {
@@ -224,18 +251,13 @@ const MainCategory = () => {
     }
   };
   const sliderOnMouseEnter = (i) => {
-    const timeout = setTimeout(() => {
-      sliderRef.current[i].slickNext();
-    }, 500);
     timerRef.current = setInterval(() => {
-      sliderRef.current[i].slickNext();
-    }, 2000);
-    return () => {
-      clearInterval(timeout);
-    };
+      sliderRef?.current[i]?.slickNext();
+    }, 1200);
   };
 
   const sliderOnMouseLeave = (i) => {
+    sliderRef?.current[i]?.slickGoTo(0);
     clearInterval(timerRef.current);
   };
 
@@ -304,6 +326,9 @@ const MainCategory = () => {
                   </StyledSlider>
                   <div className="product__content__container">
                     <h3 className="slim__heading">{valueChopper(product.name, 23)}</h3>
+                    <Link className="product__button" to={'/'}>
+                      View Product
+                    </Link>
                     <p contentEditable="true" dangerouslySetInnerHTML={{ __html: valueChopper(product.description, 30) }} />
                     <h6 className="slim__heading">Rs. {product.price.formatted}</h6>
                   </div>
