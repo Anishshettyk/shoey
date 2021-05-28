@@ -1,5 +1,7 @@
 import { createGlobalStyle } from 'styled-components';
 import theme from './theme';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 const { colors } = theme;
 const GlobalStyle = createGlobalStyle`

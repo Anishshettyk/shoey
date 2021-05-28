@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Breadcrumbs, Checkbox } from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
@@ -7,6 +7,7 @@ import { theme, mixins } from '../../styles';
 import commerce from '../../lib/commerce';
 import { Icon, SameSkeleton, ProductOverview } from '../index';
 import { valueChopper } from '../../utils/';
+import Slider from 'react-slick';
 
 const { colors } = theme;
 const StyledMainContainer = styled.div`
@@ -101,23 +102,27 @@ const ProductContentContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   grid-gap: 10px;
+
   .product__card {
     border-radius: 10px;
+    width: 100%;
+    overflow: hidden;
+
     &:hover {
       box-shadow: ${mixins.shadowSpread};
-      .product__content__container {
-        border-top: 3px solid ${colors.grey3};
+      .slick-dots {
+        display: block !important;
       }
     }
     .product__image__container {
-      min-height: 200px;
       img {
         width: 100%;
+        height: 100%;
         border-radius: 10px;
       }
     }
+
     .product__content__container {
-      border-top: 3px solid transparent;
       padding: 10px;
       h3 {
         font-size: 15px;
@@ -136,13 +141,28 @@ const ProductContentContainer = styled.div`
     }
   }
 `;
+const StyledSlider = styled(Slider)`
+  .slick-dots {
+    display: none !important;
+    padding-bottom: 20px;
+  }
+`;
 
 const MainCategory = () => {
   const [categories, setCategories] = useState(null);
   const [products, setProducts] = useState(null);
 
+  const sliderRef = useRef([]);
+  const timerRef = useRef(null);
   const path = useLocation();
   const pathName = path.pathname.split('/')[1];
+
+  let settings = {
+    dots: true,
+    infinite: true,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+  };
 
   useEffect(() => {
     const findRequiredCategory = async (mainCategoryName) => {
@@ -203,8 +223,22 @@ const MainCategory = () => {
       ));
     }
   };
+  const sliderOnMouseEnter = (i) => {
+    const timeout = setTimeout(() => {
+      sliderRef.current[i].slickNext();
+    }, 500);
+    timerRef.current = setInterval(() => {
+      sliderRef.current[i].slickNext();
+    }, 2000);
+    return () => {
+      clearInterval(timeout);
+    };
+  };
 
-  console.log(products);
+  const sliderOnMouseLeave = (i) => {
+    clearInterval(timerRef.current);
+  };
+
   return (
     <StyledMainContainer>
       {categories ? (
@@ -251,13 +285,23 @@ const MainCategory = () => {
         </FilterContainer>
         <ProductContainer>
           <div className="product__banner"></div>
+
           <ProductContentContainer>
             {products ? (
               products?.map((product, i) => (
-                <div key={product.id} className="product__card">
-                  <div className="product__image__container">
-                    <img src={product.assets[0].url} alt="" />
-                  </div>
+                <div
+                  key={product.id}
+                  className="product__card"
+                  onMouseEnter={() => sliderOnMouseEnter(i)}
+                  onMouseLeave={() => sliderOnMouseLeave(i)}
+                >
+                  <StyledSlider {...settings} ref={(element) => (sliderRef.current[i] = element)}>
+                    {product.assets.map(({ url, id, filename }) => (
+                      <div className="product__image__container" key={id}>
+                        <img src={url} alt={filename} />
+                      </div>
+                    ))}
+                  </StyledSlider>
                   <div className="product__content__container">
                     <h3 className="slim__heading">{valueChopper(product.name, 23)}</h3>
                     <p contentEditable="true" dangerouslySetInnerHTML={{ __html: valueChopper(product.description, 30) }} />
