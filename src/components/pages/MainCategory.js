@@ -3,9 +3,9 @@ import styled from 'styled-components';
 import { Breadcrumbs, Checkbox, FormControlLabel } from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
 import { Link, useLocation } from 'react-router-dom';
-import { theme, mixins } from '../../styles';
+import { theme, mixins, media } from '../../styles';
 import commerce from '../../lib/commerce';
-import { Icon, SameSkeleton, ProductOverview } from '../index';
+import { Icon, SameSkeleton } from '../index';
 import { valueChopper } from '../../utils/';
 import Slider from 'react-slick';
 
@@ -32,14 +32,18 @@ const StyledBreadcrumbs = styled(Breadcrumbs)`
 `;
 const ContentContainer = styled.div`
   margin-top: 10px;
-  height: 100vh;
+  min-height: 100vh;
   display: grid;
   grid-template-columns: 1fr 5fr;
   grid-gap: 10px;
+  ${media.tabletL`
+  display:block;
+  `}
 `;
 const FilterContainer = styled.section`
   box-shadow: ${mixins.shadow};
   border-radius: 10px;
+  min-width: 200px;
   .filter__heading {
     text-align: center;
     text-transform: uppercase;
@@ -54,9 +58,7 @@ const FilterContainer = styled.section`
       color: ${colors.blue};
       font-weight: 600;
       letter-spacing: 1px;
-      text-transform: uppercase;
-      border-bottom: 1px dashed ${colors.grey1};
-      border-top: 1px dashed ${colors.grey1};
+      border-top: 0.5px solid ${colors.grey1};
     }
     .category__link {
       color: ${colors.black};
@@ -84,10 +86,15 @@ const FilterContainer = styled.section`
         span {
           padding: 0;
           padding: 2px 1px;
+          font-size: 13px;
+          font-weight: 500;
         }
       }
     }
   }
+  ${media.tabletL`
+ display:none;
+  `}
 `;
 
 const ProductContainer = styled.section`
@@ -95,12 +102,29 @@ const ProductContainer = styled.section`
   border-radius: 10px;
   .product__banner {
   }
+  ${media.tabletL`
+  box-shadow:none;
+  `}
 `;
 const ProductContentContainer = styled.div`
   margin: 20px;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   grid-gap: 10px;
+  ${media.giant`
+  grid-template-columns: repeat(4, 1fr);
+  `}
+  ${media.desktop`
+  grid-template-columns: repeat(3, 1fr);
+  `}
+  ${media.tabletL`
+  grid-template-columns: repeat(2, 1fr);
+  `}
+  ${media.phablet`
+  grid-template-columns: repeat(1, 1fr);
+  margin:0px;
+  `}
+  
 
   .product__card {
     border-radius: 10px;
@@ -330,7 +354,7 @@ const MainCategory = () => {
                         color="primary"
                       />
                     }
-                    label={`Rs. ${price.minValue} - Rs. ${price.maxValue}`}
+                    label={`Rs. ${price.minValue} to Rs. ${price.maxValue}`}
                   />
                 ))}
               </div>
@@ -363,13 +387,13 @@ const MainCategory = () => {
                     <Link className="product__button" to={'/'}>
                       View Product
                     </Link>
-                    <p contentEditable="true" dangerouslySetInnerHTML={{ __html: valueChopper(product.description, 30) }} />
+                    <p contentEditable="false" dangerouslySetInnerHTML={{ __html: valueChopper(product.description, 60) }} />
                     <h6 className="slim__heading">Rs. {product.price.formatted}</h6>
                   </div>
                 </div>
               ))
             ) : (
-              <ProductOverview limit={20} />
+              <SameSkeleton limit={20} variant="rect" width="100%" height="300px" margin="0px" />
             )}
           </ProductContentContainer>
         </ProductContainer>
