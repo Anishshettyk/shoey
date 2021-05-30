@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { Breadcrumbs, Checkbox } from '@material-ui/core';
+import { Breadcrumbs, Checkbox, FormControlLabel } from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
 import { Link, useLocation } from 'react-router-dom';
 import { theme, mixins } from '../../styles';
@@ -78,13 +78,12 @@ const FilterContainer = styled.section`
       }
     }
     .filter__price__container {
-      p {
-        font-size: 13px;
+      label {
         margin: 0px;
         color: ${colors.textColor};
-        padding: 5px 10px;
         span {
           padding: 0;
+          padding: 2px 1px;
         }
       }
     }
@@ -109,6 +108,7 @@ const ProductContentContainer = styled.div`
     overflow: hidden;
 
     .product__image__container {
+      min-height: 200px;
       img {
         width: 100%;
         height: 100%;
@@ -177,6 +177,8 @@ const StyledSlider = styled(Slider)`
 const MainCategory = () => {
   const [categories, setCategories] = useState(null);
   const [products, setProducts] = useState(null);
+  const [priceFilters, setPriceFilters] = useState([]);
+  const [initialProducts, setInitialProducts] = useState(null);
 
   const sliderRef = useRef([]);
   const timerRef = useRef(null);
@@ -189,7 +191,6 @@ const MainCategory = () => {
     slidesToShow: 1,
     slidesToScroll: 1,
   };
-  console.log(products);
 
   useEffect(() => {
     const findRequiredCategory = async (mainCategoryName) => {
@@ -202,11 +203,19 @@ const MainCategory = () => {
       const response = await commerce.products.list();
       const filteredResponse = response?.data.filter((product) => product?.sku === pathName);
       setProducts(filteredResponse);
+      setInitialProducts(filteredResponse);
     };
 
     findRequiredCategory(pathName);
     retriveAllCategoryProducts();
   }, [pathName]);
+
+  useEffect(() => {
+    if (initialProducts?.length > 0) {
+      const res = computeFilterPrice(initialProducts, 2500);
+      setPriceFilters(res);
+    }
+  }, [initialProducts]);
 
   const computeTotalProducts = (categories) => {
     const totalSumInACategory = categories
@@ -236,18 +245,15 @@ const MainCategory = () => {
 
       //setting initial step value to min value
       let stepFinalValue = minProductPrice;
+      let index = 0;
       while (stepFinalValue <= maxProductPrice) {
         //pushing min max max step value to array
-        filteredValues.push({ minValue: stepFinalValue, maxValue: stepFinalValue + stepValue });
+        filteredValues.push({ minValue: stepFinalValue, maxValue: stepFinalValue + stepValue, checked: false, index: index });
         //incrementing step value with step
         stepFinalValue = stepFinalValue + stepValue;
+        index = index + 1;
       }
-      return filteredValues.map((filteredValue, i) => (
-        <p key={i}>
-          <Checkbox inputProps={{ 'aria-label': 'uncontrolled-checkbox' }} color="primary" /> Rs. {filteredValue.minValue} to Rs.{' '}
-          {filteredValue.maxValue}
-        </p>
-      ));
+      return filteredValues;
     }
   };
   const sliderOnMouseEnter = (i) => {
@@ -259,6 +265,19 @@ const MainCategory = () => {
   const sliderOnMouseLeave = (i) => {
     sliderRef?.current[i]?.slickGoTo(0);
     clearInterval(timerRef.current);
+  };
+  const handlePriceFilter = (index) => {
+    setProducts(initialProducts);
+    const clearChecked = priceFilters.map((price) => (price.index !== index ? { ...price, checked: false } : price));
+    const newArray = clearChecked.map((price) => (price.index === index ? { ...price, checked: !price.checked } : price));
+    setPriceFilters(newArray);
+    const selectedPriceFilter = newArray.filter((price) => price.checked === true);
+    if (selectedPriceFilter.length > 0) {
+      const reducedProduct = initialProducts.filter(
+        (product) => product.price.raw >= selectedPriceFilter[0].minValue && product.price.raw <= selectedPriceFilter[0].maxValue
+      );
+      setProducts(reducedProduct);
+    }
   };
 
   return (
@@ -299,7 +318,22 @@ const MainCategory = () => {
           {products ? (
             <div className="filter__content__container">
               <h4 className="slim__heading filter__content__heading">Price</h4>
-              <div className="filter__price__container">{computeFilterPrice(products, 2500)}</div>
+              <div className="filter__price__container">
+                {priceFilters?.map((price) => (
+                  <FormControlLabel
+                    key={price.index}
+                    control={
+                      <Checkbox
+                        checked={price.checked}
+                        onChange={() => handlePriceFilter(price.index)}
+                        name={`checked${price.index}`}
+                        color="primary"
+                      />
+                    }
+                    label={`Rs. ${price.minValue} - Rs. ${price.maxValue}`}
+                  />
+                ))}
+              </div>
             </div>
           ) : (
             <SameSkeleton variant="rect" width="90%" height="30px" limit={5} margin="10px" />
