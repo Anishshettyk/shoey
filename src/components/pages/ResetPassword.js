@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { resetPassword } from '../../lib/firebase';
 import { useDispatch } from 'react-redux';
 import { makeNotification } from '../../redux';
+import { Helmet } from 'react-helmet';
 
 import shoey__icon from '../../images/shoey__icon.png';
 
@@ -113,6 +114,9 @@ const ResetPassword = () => {
   };
   return (
     <ResetPasswordContainer>
+      <Helmet>
+        <title>Shoey - Forgot Password</title>
+      </Helmet>
       <div className="img__container">
         <img src={shoey__icon} alt="shoey icon" className="shoey__icon" />
       </div>

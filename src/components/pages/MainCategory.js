@@ -1,15 +1,30 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { Breadcrumbs, Checkbox, FormControlLabel } from '@material-ui/core';
+import { Breadcrumbs, Checkbox, FormControlLabel, makeStyles } from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
 import { Link, useLocation } from 'react-router-dom';
 import { theme, mixins, media } from '../../styles';
 import commerce from '../../lib/commerce';
-import { Icon, SameSkeleton } from '../index';
+import { SameSkeleton } from '../index';
 import { valueChopper } from '../../utils/';
 import Slider from 'react-slick';
 
 const { colors } = theme;
+
+const useStyles = makeStyles(() => ({
+  root: {
+    margin: 0,
+
+    '& .MuiFormControlLabel-label': {
+      fontSize: 14,
+      color: colors.textColor,
+    },
+    '& .MuiIconButton-root': {
+      padding: 3,
+    },
+  },
+}));
+
 const StyledMainContainer = styled.div`
   margin: 10px 20px;
   .main__heading {
@@ -53,43 +68,13 @@ const FilterContainer = styled.section`
     font-size: 1rem;
   }
   .filter__content__container {
+    margin-bottom: 15px;
     .filter__content__heading {
       padding: 5px 0px 10px 10px;
       color: ${colors.blue};
       font-weight: 600;
       letter-spacing: 1px;
       border-top: 0.5px solid ${colors.grey1};
-    }
-    .category__link {
-      color: ${colors.black};
-      font-size: 14px;
-      &:hover {
-        p {
-          opacity: 0.5;
-        }
-      }
-      p {
-        margin-left: 10px;
-        span {
-          opacity: 0.6;
-          font-weight: bold;
-        }
-        svg {
-          color: ${colors.blue};
-        }
-      }
-    }
-    .filter__price__container {
-      label {
-        margin: 0px;
-        color: ${colors.textColor};
-        span {
-          padding: 0;
-          padding: 2px 1px;
-          font-size: 13px;
-          font-weight: 500;
-        }
-      }
     }
   }
   ${media.tabletL`
@@ -208,6 +193,7 @@ const MainCategory = () => {
   const timerRef = useRef(null);
   const path = useLocation();
   const pathName = path.pathname.split('/')[1];
+  const classes = useStyles();
 
   let settings = {
     dots: true,
@@ -220,7 +206,8 @@ const MainCategory = () => {
     const findRequiredCategory = async (mainCategoryName) => {
       const allCategories = await commerce.categories.list();
       const requiredCategories = allCategories.data.filter((category) => category.name.split(' ')[0] === mainCategoryName);
-      setCategories(requiredCategories);
+      const modifiedCategories = requiredCategories.map((category) => ({ ...category, checked: false }));
+      setCategories(modifiedCategories);
     };
 
     const retriveAllCategoryProducts = async () => {
@@ -297,10 +284,24 @@ const MainCategory = () => {
     setPriceFilters(newArray);
     const selectedPriceFilter = newArray.filter((price) => price.checked === true);
     if (selectedPriceFilter.length > 0) {
-      const reducedProduct = initialProducts.filter(
+      const reducedProducts = initialProducts.filter(
         (product) => product.price.raw >= selectedPriceFilter[0].minValue && product.price.raw <= selectedPriceFilter[0].maxValue
       );
-      setProducts(reducedProduct);
+      setProducts(reducedProducts);
+    }
+  };
+
+  const handleCategoryFilter = (categorySelected) => {
+    setProducts(initialProducts);
+    const clearCategory = categories.map((category) => (category.id !== categorySelected.id ? { ...category, checked: false } : category));
+    const newCategory = clearCategory.map((category) =>
+      category.id === categorySelected.id ? { ...category, checked: !category.checked } : category
+    );
+    setCategories(newCategory);
+    const selectedCategoryFilter = newCategory.filter((category) => category.checked === true);
+    if (selectedCategoryFilter.length > 0) {
+      const reducedProducts = initialProducts.filter((product) => product.categories[0].id === selectedCategoryFilter[0].id);
+      setProducts(reducedProducts);
     }
   };
 
@@ -329,11 +330,19 @@ const MainCategory = () => {
             <div className="filter__content__container">
               <h4 className="slim__heading filter__content__heading">Categories</h4>
               {categories?.map((category) => (
-                <Link key={category.id} to={category.slug} className="category__link">
-                  <p>
-                    <Icon name="right triangle" /> {category.name.split('men')[1]} <span>({category.products})</span>
-                  </p>
-                </Link>
+                <FormControlLabel
+                  className={classes.root}
+                  key={category.id}
+                  control={
+                    <Checkbox
+                      checked={category.checked}
+                      onChange={() => handleCategoryFilter(category)}
+                      name={`${category.name.split('men')[1]}`}
+                      color="primary"
+                    />
+                  }
+                  label={`${category.name.split('men')[1]} (${category.products})`}
+                />
               ))}
             </div>
           ) : (
@@ -342,22 +351,22 @@ const MainCategory = () => {
           {products ? (
             <div className="filter__content__container">
               <h4 className="slim__heading filter__content__heading">Price</h4>
-              <div className="filter__price__container">
-                {priceFilters?.map((price) => (
-                  <FormControlLabel
-                    key={price.index}
-                    control={
-                      <Checkbox
-                        checked={price.checked}
-                        onChange={() => handlePriceFilter(price.index)}
-                        name={`checked${price.index}`}
-                        color="primary"
-                      />
-                    }
-                    label={`Rs. ${price.minValue} to Rs. ${price.maxValue}`}
-                  />
-                ))}
-              </div>
+
+              {priceFilters?.map((price) => (
+                <FormControlLabel
+                  className={classes.root}
+                  key={price.index}
+                  control={
+                    <Checkbox
+                      checked={price.checked}
+                      onChange={() => handlePriceFilter(price.index)}
+                      name={`checked${price.index}`}
+                      color="primary"
+                    />
+                  }
+                  label={`Rs. ${price.minValue} to Rs. ${price.maxValue}`}
+                />
+              ))}
             </div>
           ) : (
             <SameSkeleton variant="rect" width="90%" height="30px" limit={5} margin="10px" />

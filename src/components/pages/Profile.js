@@ -34,6 +34,7 @@ import { deleteUser } from '../../lib/firebase';
 import { ProgressBar } from '../index';
 import PropTypes from 'prop-types';
 import { deleteUserPic } from '../../lib/storage/userData';
+import { Helmet } from 'react-helmet';
 
 const { colors, transitionTime } = theme;
 
@@ -320,6 +321,9 @@ const Profile = () => {
 
   return (
     <ProfileContainer>
+      <Helmet>
+        <title>Shoey - Your Profile</title>
+      </Helmet>
       <UserInfoContainer>
         <Avatar src={photoURL} alt={email} className={classes.avatar} />
         <h1>Welcome, {displayName ? displayName : email}...</h1>

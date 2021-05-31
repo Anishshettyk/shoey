@@ -8,6 +8,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { googleAuth, githubAuth, signup } from '../../lib/firebase';
 import { useDispatch } from 'react-redux';
 import { makeNotification } from '../../redux';
+import { Helmet } from 'react-helmet';
 
 import googleIcon from '../../images/googleIcon.svg';
 import githubIcon from '../../images/github_icon.svg';
@@ -155,6 +156,9 @@ const SignUp = () => {
 
   return (
     <SignUpContainer>
+      <Helmet>
+        <title>Sign up to shoey</title>
+      </Helmet>
       <div className="img__container">
         <img src={shoey__icon} alt="shoey icon" className="shoey__icon" />
       </div>

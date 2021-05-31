@@ -22,7 +22,7 @@ body {
     width: 100%;
     max-width: 100%;
     background:white;
-    font-family: 'Lexend', sans-serif;
+    font-family: 'Roboto', sans-serif;
     color: ${colors.black},
 }
 
