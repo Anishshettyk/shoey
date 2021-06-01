@@ -4,6 +4,7 @@ import commerce from '../../lib/commerce';
 import styled from 'styled-components';
 import { theme, mixins } from '../../styles';
 import { Icon } from '../index';
+import { Helmet } from 'react-helmet';
 
 const { colors } = theme;
 const ProductContainer = styled.section`
@@ -49,7 +50,7 @@ const ProductActionContainer = styled.div`
       color: ${colors.textColor};
       letter-spacing: 0.7px;
       &:hover {
-        border: 1px solid ${colors.blue};
+        border: 1px solid ${colors.textColor};
         opacity: 0.9;
       }
     }
@@ -86,7 +87,7 @@ const ProductDetailsContainer = styled.div`
     letter-spacing: 1.5px;
     svg {
       margin-right: 10px;
-      font-size: 20px;
+      font-size: 25px;
     }
     span {
       opacity: 0.6;
@@ -118,15 +119,41 @@ const ProductDetailsContainer = styled.div`
       border: 1px solid ${colors.grey3};
       box-shadow: ${mixins.shadowSpread};
       transition: all 0.3s ease-out 0s;
+      position: relative;
       img {
         width: 100%;
         height: 100%;
         transition: all 0.3s ease-out 0s;
       }
+
+      .product__image__banner {
+        position: absolute;
+        content: '';
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(255, 255, 255, 0.4);
+        display: none;
+        p {
+          color: ${colors.white};
+          padding: 4px 8px;
+          background-color: ${colors.textColor};
+          border-radius: 20px;
+          font-size: 12px;
+        }
+      }
       &:hover {
         transform: translateY(-5px);
         img {
           transform: scale(1.15);
+        }
+        .product__image__banner {
+          display: flex;
         }
       }
     }
@@ -163,6 +190,9 @@ const Product = () => {
 
   return (
     <ProductContainer>
+      <Helmet>
+        <title>{`Shoey - ${product?.name ? product.name : 'View product'}`}</title>
+      </Helmet>
       <ProductActionContainer>
         <div className="product__action__image__container">
           <img src={imageToShow} alt="product display" />
@@ -197,6 +227,9 @@ const Product = () => {
               {product.assets.map((product, i) => (
                 <div className="product__image__container" key={i} onClick={() => changeMainImage(product)}>
                   <img src={product.url} alt={product.filename} />
+                  <div className="product__image__banner">
+                    <p>Cick to view</p>
+                  </div>
                 </div>
               ))}
             </div>
