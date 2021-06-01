@@ -5,10 +5,23 @@ import kids from '../../images/icons/kids.svg';
 // import { GrCart } from 'react-icons/gr';
 import { AiOutlineHome } from 'react-icons/ai';
 import { BsPerson, BsSearch, BsFillPersonFill } from 'react-icons/bs';
-import { BiPhone, BiRightArrow } from 'react-icons/bi';
-import { FiFacebook, FiLinkedin, FiGithub, FiTwitter, FiCodepen, FiShoppingCart, FiUserCheck, FiUserPlus, FiEye } from 'react-icons/fi';
+import { BiPhone, BiRightArrow, BiArrowBack } from 'react-icons/bi';
+import {
+  FiFacebook,
+  FiLinkedin,
+  FiGithub,
+  FiTwitter,
+  FiCodepen,
+  FiShoppingCart,
+  FiUserCheck,
+  FiUserPlus,
+  FiEye,
+  FiHeart,
+} from 'react-icons/fi';
 import { SiReact, SiRedux, SiFirebase, SiMaterialUi } from 'react-icons/si';
 import { RiExternalLinkLine } from 'react-icons/ri';
+import { GrGallery } from 'react-icons/gr';
+import { MdDescription } from 'react-icons/md';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 const Icon = ({ name }) => {
@@ -61,6 +74,14 @@ const Icon = ({ name }) => {
       return <BiRightArrow />;
     case 'eye':
       return <FiEye />;
+    case 'gallery':
+      return <GrGallery />;
+    case 'description':
+      return <MdDescription />;
+    case 'heart':
+      return <FiHeart />;
+    case 'arrowBack':
+      return <BiArrowBack />;
     default:
       return <p>please enter a valid name</p>;
   }

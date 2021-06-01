@@ -393,7 +393,7 @@ const MainCategory = () => {
                   </StyledSlider>
                   <div className="product__content__container">
                     <h3 className="slim__heading">{valueChopper(product.name, 23)}</h3>
-                    <Link className="product__button" to={'/'}>
+                    <Link className="product__button" to={`/${pathName}/${product.id}`}>
                       View Product
                     </Link>
                     <p contentEditable="false" dangerouslySetInnerHTML={{ __html: valueChopper(product.description, 60) }} />
