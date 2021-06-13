@@ -14,7 +14,6 @@ const { colors } = theme;
 const useStyles = makeStyles(() => ({
   root: {
     margin: 0,
-
     '& .MuiFormControlLabel-label': {
       fontSize: 14,
       color: colors.textColor,

@@ -6,6 +6,7 @@ import kids from '../../images/icons/kids.svg';
 import { AiOutlineHome } from 'react-icons/ai';
 import { BsPerson, BsSearch, BsFillPersonFill } from 'react-icons/bs';
 import { BiPhone, BiRightArrow, BiArrowBack } from 'react-icons/bi';
+import { CgSize } from 'react-icons/cg';
 import {
   FiFacebook,
   FiLinkedin,
@@ -82,6 +83,8 @@ const Icon = ({ name }) => {
       return <FiHeart />;
     case 'arrowBack':
       return <BiArrowBack />;
+    case 'size':
+      return <CgSize />;
     default:
       return <p>please enter a valid name</p>;
   }

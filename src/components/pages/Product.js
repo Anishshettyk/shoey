@@ -159,14 +159,40 @@ const ProductDetailsContainer = styled.div`
     }
   }
   .product__description {
-    font-size: 17px;
+    font-size: 15px;
     color: ${colors.textColor};
     opacity: 0.8;
+  }
+  .product__sizes {
+    display: grid;
+    grid-auto-rows: auto;
+    grid-auto-columns: max-content;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    text-align: center;
+    grid-gap: 20px;
+    .product__size {
+      padding: 12px;
+      border: 1px solid ${colors.grey1};
+      color: ${colors.textColor};
+      border-radius: 5px;
+      box-shadow: ${mixins.shadow};
+      cursor: pointer;
+      &:hover {
+        border-color: ${colors.textColor};
+      }
+    }
+    .size__checked {
+      background-color: ${colors.blue};
+      color: ${colors.white};
+      border: none;
+    }
   }
 `;
 
 const Product = () => {
   const [product, setProduct] = useState(null);
+  const [productSizes, setProductSizes] = useState(null);
+  const [productColors, setProductColors] = useState(null);
   const [imageToShow, setImageToShow] = useState(null);
 
   const path = useParams();
@@ -176,17 +202,41 @@ const Product = () => {
     if (path) fetchProductDeatils(path.product_id);
   }, [path]);
 
-  useEffect(() => {
-    if (product?.assets.length > 0) setImageToShow(product.assets[0].url);
-  }, [product]);
-
   const fetchProductDeatils = async (productID) => {
     const response = await commerce.products.retrieve(productID);
-    if (response) setProduct(response);
+    if (response) {
+      setProduct(response);
+      setImageToShow(response?.assets[0].url);
+      const requiredSizes = response?.variant_groups?.filter((variantGroup) => variantGroup.name === 'size');
+      const requiredColors = response?.variant_groups?.filter((variantGroup) => variantGroup.name === 'color')[0];
+
+      const modifiedSizes = requiredSizes[0]?.options.map((size) => ({ ...size, checked: false }));
+
+      const modifiedColors = requiredColors?.options?.map((option) => {
+        const productPic = response?.assets?.find((asset) => asset.id === option.assets.find((asset) => asset));
+        return { ...option, productPic };
+      });
+
+      setProductColors(modifiedColors);
+      setProductSizes(modifiedSizes);
+    }
   };
   const changeMainImage = (product) => {
     setImageToShow(product.url);
   };
+
+  const selectSize = (size) => {
+    const clearSizes = productSizes.map((individualSize) =>
+      individualSize.id !== size.id ? { ...individualSize, checked: false } : individualSize
+    );
+
+    setProductSizes(
+      clearSizes.map((individualSize) =>
+        individualSize.id === size.id ? { ...individualSize, checked: !individualSize.checked } : individualSize
+      )
+    );
+  };
+  console.log(productColors);
 
   return (
     <ProductContainer>
@@ -232,6 +282,23 @@ const Product = () => {
                   </div>
                 </div>
               ))}
+            </div>
+            <h5 className="product__section__heading">
+              <Icon name="size" />
+              Select size <span>({productSizes ? productSizes?.length : '0'})</span>
+            </h5>
+            <div className="product__sizes">
+              {productSizes
+                ? productSizes?.map((size) => (
+                    <div
+                      className={`product__size ${size.checked === true ? 'size__checked' : ''}`}
+                      key={size.id}
+                      onClick={() => selectSize(size)}
+                    >
+                      <p>{size.name}</p>
+                    </div>
+                  ))
+                : null}
             </div>
             <h5 className="product__section__heading">
               <Icon name="description" />
