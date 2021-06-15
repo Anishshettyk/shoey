@@ -11,6 +11,7 @@ export { default as BlockedRoute } from './subComponents/BlockedRoute';
 export { default as UserRoute } from './subComponents/UserRoute';
 export { default as ProgressBar } from './subComponents/ProgressBar';
 export { default as SnackbarMaker } from './subComponents/SnackbarMaker';
+export { default as Kawaii } from './subComponents/Kawaii';
 export * from './subComponents/Skeletons';
 
 //pages

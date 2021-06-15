@@ -13,7 +13,6 @@ import {
   DialogTitle,
   Slide,
   Backdrop,
-  CircularProgress,
   AppBar,
   withStyles,
   Box,
@@ -31,7 +30,7 @@ import { deleteUserAccount, updateUserDetails, getUserData } from '../../lib/fir
 import { useDispatch, useSelector } from 'react-redux';
 import { signoutUser, setUser, makeNotification } from '../../redux';
 import { deleteUser } from '../../lib/firebase';
-import { ProgressBar } from '../index';
+import { ProgressBar, Kawaii } from '../index';
 import PropTypes from 'prop-types';
 import { deleteUserPic } from '../../lib/storage/userData';
 import { Helmet } from 'react-helmet';
@@ -73,7 +72,7 @@ const useStyles = makeStyles((theme) => ({
   backdrop: {
     zIndex: theme.zIndex.drawer + 1,
     color: colors.blue,
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
   },
   appBar: {
     boxShadow: 'none',
@@ -394,7 +393,7 @@ const Profile = () => {
                   Cancel
                 </Button>
                 <Backdrop className={classes.backdrop} open={openBackdrop}>
-                  <CircularProgress color="inherit" />
+                  <Kawaii name="file" message="We are updating your details.." />
                 </Backdrop>
               </div>
             </form>
