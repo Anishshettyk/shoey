@@ -12,6 +12,7 @@ export { default as UserRoute } from './subComponents/UserRoute';
 export { default as ProgressBar } from './subComponents/ProgressBar';
 export { default as SnackbarMaker } from './subComponents/SnackbarMaker';
 export { default as Kawaii } from './subComponents/Kawaii';
+export { default as BackdropMaker } from './subComponents/BackdropMaker';
 export * from './subComponents/Skeletons';
 
 //pages

@@ -8,6 +8,7 @@ import { resetPassword } from '../../lib/firebase';
 import { useDispatch } from 'react-redux';
 import { makeNotification } from '../../redux';
 import { Helmet } from 'react-helmet';
+import { BackdropMaker, Kawaii } from '../index';
 
 import shoey__icon from '../../images/shoey__icon.png';
 
@@ -94,11 +95,19 @@ const StyledTextField = styled(TextField)`
 
 const ResetPassword = () => {
   const [email, setEmail] = useState('');
+  const [openBackdrop, setOpenBackdrop] = useState(false);
 
   const classes = useStyles();
   const dispatch = useDispatch();
+  const backdropOpen = () => {
+    setOpenBackdrop(!openBackdrop);
+  };
+  const backdropClose = () => {
+    setOpenBackdrop(false);
+  };
 
   const sendEmail = async () => {
+    backdropOpen();
     try {
       await resetPassword(email);
       dispatch(
@@ -111,6 +120,7 @@ const ResetPassword = () => {
     } catch (error) {
       dispatch(makeNotification({ message: error.message, variant: 'error', duration: null }));
     }
+    backdropClose();
   };
   return (
     <ResetPasswordContainer>
@@ -142,6 +152,9 @@ const ResetPassword = () => {
           Remember your password? <span>sign in</span>
         </p>
       </Link>
+      <BackdropMaker open={openBackdrop}>
+        <Kawaii name="browser" message="Sending email please wait..." />
+      </BackdropMaker>
     </ResetPasswordContainer>
   );
 };

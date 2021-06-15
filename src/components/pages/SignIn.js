@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { mixins, theme, media } from '../../styles';
-import { Button, TextField, CircularProgress } from '@material-ui/core';
+import { Button, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory } from 'react-router-dom';
 import { googleAuth, githubAuth, signin } from '../../lib/firebase';
 import { useDispatch } from 'react-redux';
 import { makeNotification } from '../../redux';
 import { Helmet } from 'react-helmet';
+import { BackdropMaker, Kawaii } from '../index';
 
 import googleIcon from '../../images/googleIcon.svg';
 import githubIcon from '../../images/github_icon.svg';
@@ -117,44 +118,51 @@ const AuthProviderContainer = styled.div`
 const SignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [openBackdrop, setOpenBackdrop] = useState(false);
 
   const history = useHistory();
   const classes = useStyles();
   const dispatch = useDispatch();
 
+  const backdropOpen = () => {
+    setOpenBackdrop(!openBackdrop);
+  };
+  const backdropClose = () => {
+    setOpenBackdrop(false);
+  };
+
   const signInForm = async (event) => {
     event.preventDefault();
 
-    setLoading(true);
+    backdropOpen();
     try {
       await signin(email, password);
       history.push('/');
     } catch (error) {
       dispatch(makeNotification({ message: error.message, variant: 'error', duration: null }));
     }
-    setLoading(false);
+    backdropClose();
   };
 
   const signInWithGoogle = async () => {
-    setLoading(true);
+    backdropOpen();
     try {
       await googleAuth();
       history.push('/');
     } catch (error) {
       dispatch(makeNotification({ message: error.message, variant: 'error', duration: null }));
     }
-    setLoading(false);
+    backdropClose();
   };
   const signInWithGithub = async () => {
-    setLoading(true);
+    backdropOpen();
     try {
       await githubAuth();
       history.push('/');
     } catch (error) {
       dispatch(makeNotification({ message: error.message, variant: 'error', duration: null }));
     }
-    setLoading(false);
+    backdropClose();
   };
   return (
     <SignInContainer>
@@ -185,13 +193,9 @@ const SignIn = () => {
             fullWidth
             placeholder="Password (required)"
           />
-          {loading ? (
-            <CircularProgress className={classes.loadingSpinner} />
-          ) : (
-            <Button className={classes.buttonStyles} type="submit" color="primary" variant="contained">
-              Sign in
-            </Button>
-          )}
+          <Button className={classes.buttonStyles} type="submit" color="primary" variant="contained">
+            Sign in
+          </Button>
         </form>
         <AuthAltContainer>
           <Link to="/signup">
@@ -217,6 +221,9 @@ const SignIn = () => {
           </div>
         </AuthProviderContainer>
       </FormContainer>
+      <BackdropMaker open={openBackdrop}>
+        <Kawaii name="browser" message="we are signing you in" />
+      </BackdropMaker>
     </SignInContainer>
   );
 };

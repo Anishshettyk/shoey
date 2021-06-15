@@ -12,7 +12,6 @@ import {
   DialogContentText,
   DialogTitle,
   Slide,
-  Backdrop,
   AppBar,
   withStyles,
   Box,
@@ -30,7 +29,7 @@ import { deleteUserAccount, updateUserDetails, getUserData } from '../../lib/fir
 import { useDispatch, useSelector } from 'react-redux';
 import { signoutUser, setUser, makeNotification } from '../../redux';
 import { deleteUser } from '../../lib/firebase';
-import { ProgressBar, Kawaii } from '../index';
+import { ProgressBar, Kawaii, BackdropMaker } from '../index';
 import PropTypes from 'prop-types';
 import { deleteUserPic } from '../../lib/storage/userData';
 import { Helmet } from 'react-helmet';
@@ -68,11 +67,6 @@ const useStyles = makeStyles((theme) => ({
   avatar: {
     width: theme.spacing(13),
     height: theme.spacing(13),
-  },
-  backdrop: {
-    zIndex: theme.zIndex.drawer + 1,
-    color: colors.blue,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
   },
   appBar: {
     boxShadow: 'none',
@@ -135,7 +129,11 @@ const ProfileContainer = styled.section`
     `}
   }
   .joined__on {
-    color: ${colors.blue};
+    color: ${colors.black};
+    padding: 5px 10px;
+    background-color: ${colors.green};
+    border-radius: 20px;
+    font-weight: 500;
   }
   .tab__heading {
     color: ${colors.blue};
@@ -392,9 +390,9 @@ const Profile = () => {
                 <Button variant="contained" component={Link} to="/">
                   Cancel
                 </Button>
-                <Backdrop className={classes.backdrop} open={openBackdrop}>
-                  <Kawaii name="file" message="We are updating your details.." />
-                </Backdrop>
+                <BackdropMaker open={openBackdrop}>
+                  <Kawaii name="file" message="We are working on it..." />
+                </BackdropMaker>
               </div>
             </form>
           </div>
