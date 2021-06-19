@@ -109,9 +109,12 @@ const ProductDetailsContainer = styled.div`
   }
   .product__images {
     margin-top: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
+    display: grid;
+    grid-auto-rows: auto;
+    grid-auto-columns: max-content;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+
+    grid-gap: 20px;
 
     .product__image__container {
       max-width: 150px;
@@ -154,6 +157,15 @@ const ProductDetailsContainer = styled.div`
         }
         .product__image__banner {
           display: flex;
+        }
+      }
+    }
+    .color__checked {
+      .product__image__banner {
+        display: flex;
+        p {
+          background-color: ${colors.blue};
+          font-weight: 500;
         }
       }
     }
@@ -214,15 +226,19 @@ const Product = () => {
 
       const modifiedColors = requiredColors?.options?.map((option) => {
         const productPic = response?.assets?.find((asset) => asset.id === option.assets.find((asset) => asset));
-        return { ...option, productPic };
+        return { ...option, productPic, checked: false };
       });
 
       setProductColors(modifiedColors);
       setProductSizes(modifiedSizes);
     }
   };
-  const changeMainImage = (product) => {
-    setImageToShow(product.url);
+  const selectColor = (selectedProduct) => {
+    setImageToShow(selectedProduct?.productPic?.url);
+    const clearSizes = productColors.map((product) => (product.id !== selectedProduct.id ? { ...product, checked: false } : product));
+    setProductColors(
+      clearSizes.map((product) => (product.id === selectedProduct.id ? { ...product, checked: !selectedProduct.checked } : product))
+    );
   };
 
   const selectSize = (size) => {
@@ -271,14 +287,18 @@ const Product = () => {
             <p className="product__tax">inclusive of all taxes</p>
             <h5 className="product__section__heading">
               <Icon name="gallery" />
-              Product gallery <span>({product.assets.length})</span>
+              Select color <span>({product.assets.length})</span>
             </h5>
             <div className="product__images">
-              {product.assets.map((product, i) => (
-                <div className="product__image__container" key={i} onClick={() => changeMainImage(product)}>
-                  <img src={product.url} alt={product.filename} />
+              {productColors?.map((product, i) => (
+                <div
+                  className={`product__image__container ${product.checked === true ? 'color__checked' : ''}`}
+                  key={i}
+                  onClick={() => selectColor(product)}
+                >
+                  <img src={product?.productPic?.url} alt={product?.productPic?.filename} />
                   <div className="product__image__banner">
-                    <p>Cick to view</p>
+                    <p>{product.checked ? `Selected` : 'Cick to select'}</p>
                   </div>
                 </div>
               ))}
