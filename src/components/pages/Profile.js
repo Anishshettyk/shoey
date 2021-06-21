@@ -390,9 +390,6 @@ const Profile = () => {
                 <Button variant="contained" component={Link} to="/">
                   Cancel
                 </Button>
-                <BackdropMaker open={openBackdrop}>
-                  <Kawaii name="file" message="We are working on it..." />
-                </BackdropMaker>
               </div>
             </form>
           </div>
@@ -428,6 +425,9 @@ const Profile = () => {
           </div>
         </UserDetailsPanel>
       </UserActionsContainer>
+      <BackdropMaker open={openBackdrop}>
+        <Kawaii name="file" message="We are working on it..." />
+      </BackdropMaker>
     </ProfileContainer>
   );
 };

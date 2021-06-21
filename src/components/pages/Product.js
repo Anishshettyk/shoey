@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useLocation } from 'react-router-dom';
+import { useParams, Link, useLocation, useHistory } from 'react-router-dom';
 import commerce from '../../lib/commerce';
 import styled from 'styled-components';
 import { theme, mixins } from '../../styles';
-import { Icon } from '../index';
+import { Icon, Kawaii, BackdropMaker } from '../index';
 import { Helmet } from 'react-helmet';
+import { addWishedProducts, getUserData } from '../../lib/firestore/userData';
+import { useSelector, useDispatch } from 'react-redux';
+import { makeNotification, setUser } from '../../redux';
 
 const { colors } = theme;
 const ProductContainer = styled.section`
@@ -113,7 +116,6 @@ const ProductDetailsContainer = styled.div`
     grid-auto-rows: auto;
     grid-auto-columns: max-content;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-
     grid-gap: 20px;
 
     .product__image__container {
@@ -206,9 +208,22 @@ const Product = () => {
   const [productSizes, setProductSizes] = useState(null);
   const [productColors, setProductColors] = useState(null);
   const [imageToShow, setImageToShow] = useState(null);
+  const [openBackdrop, setOpenBackdrop] = useState(false);
+  const [backdropMessage, setbackdropMessage] = useState('We are working on it...');
 
   const path = useParams();
   const location = useLocation();
+  const history = useHistory();
+  const dispatch = useDispatch();
+  const { userDetails } = useSelector((state) => state.user);
+  const { email, uid } = userDetails;
+
+  const backdropOpen = () => {
+    setOpenBackdrop(!openBackdrop);
+  };
+  const backdropClose = () => {
+    setOpenBackdrop(false);
+  };
 
   useEffect(() => {
     if (path) fetchProductDeatils(path.product_id);
@@ -252,7 +267,30 @@ const Product = () => {
       )
     );
   };
-  console.log(productColors);
+
+  const addProductToWishlist = async (email, productId) => {
+    //if user is present then only add product to wishlist
+    if (uid) {
+      setbackdropMessage('Adding to wishlist...');
+      backdropOpen();
+      //add product to wishlist
+      const response = await addWishedProducts(email, productId);
+      //retrive user details back
+      const userDataRes = await getUserData(userDetails);
+      dispatch(setUser(userDataRes));
+      backdropClose();
+      if (response.status === 'success') {
+        dispatch(makeNotification({ message: response.message, variant: response.status, duration: 1500 }));
+      }
+      if (response.status === 'error') {
+        dispatch(makeNotification({ message: response.message, variant: response.status, duration: 1500 }));
+      }
+      //otherwisw push to signup page
+    } else {
+      dispatch(makeNotification({ message: 'Please create account before adding product to wishlist', variant: 'info', duration: 3000 }));
+      history.push('/signup');
+    }
+  };
 
   return (
     <ProductContainer>
@@ -265,7 +303,7 @@ const Product = () => {
         </div>
 
         <div className="product__button__container">
-          <button className="product__wishlist__button">
+          <button className="product__wishlist__button" onClick={() => addProductToWishlist(email, product?.id)}>
             <Icon name="heart" />
             wishlist
           </button>
@@ -328,6 +366,9 @@ const Product = () => {
           </>
         ) : null}
       </ProductDetailsContainer>
+      <BackdropMaker open={openBackdrop}>
+        <Kawaii name="folder" mood="blissful" message={backdropMessage} />
+      </BackdropMaker>
     </ProductContainer>
   );
 };

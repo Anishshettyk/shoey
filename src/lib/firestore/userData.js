@@ -1,6 +1,7 @@
 // storeUserData and getUserData can be combined to a single function but it will be hard to read and bulky after combination.
 
 import { db } from '../firebase';
+import firebase from 'firebase/app';
 
 export const storeUserData = async (userAuth) => {
   let userData = {};
@@ -65,5 +66,19 @@ export const updateUserDetails = async (email, updateData) => {
     console.error('Error updating user account returned=>', error.message);
     outputType = 'error';
     return outputType;
+  }
+};
+
+export const addWishedProducts = async (email, wishedProduct) => {
+  let status = '';
+  try {
+    await db.doc(`users/${email}`).update({
+      wishlist: firebase.firestore.FieldValue.arrayUnion(wishedProduct),
+    });
+    status = 'success';
+    return { status, message: 'Product added to wishlist' };
+  } catch (error) {
+    status = 'error';
+    return { status, message: 'unexpected error occured, please try again!!' };
   }
 };

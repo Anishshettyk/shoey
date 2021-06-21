@@ -167,6 +167,7 @@ const Navbar = () => {
   const UserExistMenu = [
     { name: 'View profile', link: '/profile', iconName: 'User', func: handleUserAccountClose },
     { name: 'View cart', link: '/cart', iconName: 'Cart', func: handleUserAccountClose },
+    { name: 'Wishlist', link: '/wishlist', iconName: 'heart', func: handleUserAccountClose },
     { name: 'Sign out', link: '/', iconName: 'Sign out', func: signout },
   ];
   const UserNotExistMenu = [
@@ -215,11 +216,6 @@ const Navbar = () => {
         </NavLinkContainer>
 
         <div className={classes.NavOperationsContainer}>
-          <Tooltip title="Search" aria-label="Search">
-            <IconButton>
-              <Icon name="Search" />
-            </IconButton>
-          </Tooltip>
           <Tooltip title={user?.uid ? `You signed in as ${user?.email}` : 'login or sign up'} aria-label="user account">
             <IconButton onClick={handleUserAccountClick}>
               <StyledBadge
@@ -258,6 +254,18 @@ const Navbar = () => {
                   </Link>
                 ))}
           </Menu>
+          <Tooltip title="Search" aria-label="Search">
+            <IconButton>
+              <Icon name="Search" />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="wishlist" aria-label="wishlist">
+            <IconButton>
+              <Badge badgeContent={user?.wishlist?.length > 0 ? user?.wishlist?.length : 0} color="secondary">
+                <Icon name="heart" />
+              </Badge>
+            </IconButton>
+          </Tooltip>
           <Tooltip title="cart" aria-label="cart">
             <IconButton>
               <Badge badgeContent={1} color="primary">

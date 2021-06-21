@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Backpack, Browser, Cat, File } from 'react-kawaii';
+import { Backpack, Browser, Cat, File, Folder } from 'react-kawaii';
 import styled from 'styled-components';
 import { theme, media } from '../../styles';
 
@@ -15,6 +15,8 @@ const SelectKawaii = ({ name, size = 100, color, mood = 'excited' }) => {
       return <Cat size={size} color={color} mood={mood} />;
     case 'file':
       return <File size={size} color={color} mood={mood} />;
+    case 'folder':
+      return <Folder size={size} color={color} mood={mood} />;
     default:
       return <Browser size={size} color={color} mood={mood} />;
   }
