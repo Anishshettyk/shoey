@@ -82,3 +82,17 @@ export const addWishedProducts = async (email, wishedProduct) => {
     return { status, message: 'unexpected error occured, please try again!!' };
   }
 };
+
+export const removeWishedProducts = async (email, wishedProduct) => {
+  let status = '';
+  try {
+    await db.doc(`users/${email}`).update({
+      wishlist: firebase.firestore.FieldValue.arrayRemove(wishedProduct),
+    });
+    status = 'success';
+    return { status, message: 'Product removed from wishlist' };
+  } catch (error) {
+    status = 'error';
+    return { status, message: 'unexpected error occured, please try again!!' };
+  }
+};

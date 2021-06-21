@@ -5,9 +5,9 @@ import styled from 'styled-components';
 import { theme, mixins } from '../../styles';
 import { Icon, Kawaii, BackdropMaker } from '../index';
 import { Helmet } from 'react-helmet';
-import { addWishedProducts, getUserData } from '../../lib/firestore/userData';
+import { addWishedProducts, getUserData, removeWishedProducts } from '../../lib/firestore/userData';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeNotification, setUser } from '../../redux';
+import { makeNotification, setUser, pushUserBackTo } from '../../redux';
 
 const { colors } = theme;
 const ProductContainer = styled.section`
@@ -39,7 +39,6 @@ const ProductActionContainer = styled.div`
       border: none;
       outline: none;
       font-size: 16px;
-      text-transform: uppercase;
       letter-spacing: 0.4px;
       font-weight: 600;
       border-radius: 5px;
@@ -210,13 +209,14 @@ const Product = () => {
   const [imageToShow, setImageToShow] = useState(null);
   const [openBackdrop, setOpenBackdrop] = useState(false);
   const [backdropMessage, setbackdropMessage] = useState('We are working on it...');
+  const [wishlistedProduct, setWishlistedProduct] = useState(false);
 
   const path = useParams();
   const location = useLocation();
   const history = useHistory();
   const dispatch = useDispatch();
   const { userDetails } = useSelector((state) => state.user);
-  const { email, uid } = userDetails;
+  const { email, uid, wishlist } = userDetails;
 
   const backdropOpen = () => {
     setOpenBackdrop(!openBackdrop);
@@ -226,8 +226,25 @@ const Product = () => {
   };
 
   useEffect(() => {
-    if (path) fetchProductDeatils(path.product_id);
+    if (path) {
+      fetchProductDeatils(path.product_id);
+    }
   }, [path]);
+
+  useEffect(() => {
+    if (path) {
+      const checkWishlistHasProduct = (productId) => {
+        const filteredWishlist = wishlist?.filter((wishedProductId) => wishedProductId !== productId);
+        if (filteredWishlist?.length === wishlist?.length) {
+          setWishlistedProduct(false);
+        } else {
+          setWishlistedProduct(true);
+        }
+      };
+      checkWishlistHasProduct(path.product_id);
+    }
+  }, [path, wishlist]);
+  console.log(wishlistedProduct);
 
   const fetchProductDeatils = async (productID) => {
     const response = await commerce.products.retrieve(productID);
@@ -268,13 +285,19 @@ const Product = () => {
     );
   };
 
-  const addProductToWishlist = async (email, productId) => {
+  const manageProductWishlist = async (email, productId) => {
     //if user is present then only add product to wishlist
     if (uid) {
-      setbackdropMessage('Adding to wishlist...');
-      backdropOpen();
-      //add product to wishlist
-      const response = await addWishedProducts(email, productId);
+      let response;
+      if (wishlistedProduct) {
+        setbackdropMessage('Removing from wishlist...');
+        backdropOpen();
+        response = await removeWishedProducts(email, productId);
+      } else {
+        setbackdropMessage('Adding to wishlist...');
+        backdropOpen();
+        response = await addWishedProducts(email, productId);
+      }
       //retrive user details back
       const userDataRes = await getUserData(userDetails);
       dispatch(setUser(userDataRes));
@@ -285,8 +308,9 @@ const Product = () => {
       if (response.status === 'error') {
         dispatch(makeNotification({ message: response.message, variant: response.status, duration: 1500 }));
       }
-      //otherwisw push to signup page
+      //otherwise push to signup page
     } else {
+      dispatch(pushUserBackTo(location?.pathname));
       dispatch(makeNotification({ message: 'Please create account before adding product to wishlist', variant: 'info', duration: 3000 }));
       history.push('/signup');
     }
@@ -303,9 +327,9 @@ const Product = () => {
         </div>
 
         <div className="product__button__container">
-          <button className="product__wishlist__button" onClick={() => addProductToWishlist(email, product?.id)}>
+          <button className="product__wishlist__button" onClick={() => manageProductWishlist(email, product?.id)}>
             <Icon name="heart" />
-            wishlist
+            {wishlistedProduct ? 'Remove from wishlist' : 'Add to wishlist'}
           </button>
           <button className="product__cart__button">
             <Icon name="Cart" />
@@ -325,7 +349,7 @@ const Product = () => {
             <p className="product__tax">inclusive of all taxes</p>
             <h5 className="product__section__heading">
               <Icon name="gallery" />
-              Select color <span>({product.assets.length})</span>
+              Select color <span>({productColors ? productColors?.length : '0'})</span>
             </h5>
             <div className="product__images">
               {productColors?.map((product, i) => (

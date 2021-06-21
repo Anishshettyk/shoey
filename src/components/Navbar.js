@@ -260,11 +260,13 @@ const Navbar = () => {
             </IconButton>
           </Tooltip>
           <Tooltip title="wishlist" aria-label="wishlist">
-            <IconButton>
-              <Badge badgeContent={user?.wishlist?.length > 0 ? user?.wishlist?.length : 0} color="secondary">
-                <Icon name="heart" />
-              </Badge>
-            </IconButton>
+            <Link to="/wishlist">
+              <IconButton>
+                <Badge badgeContent={user?.wishlist?.length > 0 ? user?.wishlist?.length : 0} color="secondary">
+                  <Icon name="heart" />
+                </Badge>
+              </IconButton>
+            </Link>
           </Tooltip>
           <Tooltip title="cart" aria-label="cart">
             <IconButton>
