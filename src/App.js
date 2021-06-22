@@ -1,6 +1,18 @@
 import React from 'react';
 import { GlobalStyle } from './styles';
-import { SignUp, Layout, Home, SignIn, BlockedRoute, UserRoute, Profile, ResetPassword, MainCategory, Product } from './components';
+import {
+  SignUp,
+  Layout,
+  Home,
+  SignIn,
+  BlockedRoute,
+  UserRoute,
+  Profile,
+  ResetPassword,
+  MainCategory,
+  Product,
+  Wishlist,
+} from './components';
 import { MuiThemeProvider, StylesProvider } from '@material-ui/core/styles';
 import { MuiThemes } from './styles';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
@@ -23,6 +35,7 @@ function App() {
                 <Route component={MainCategory} exact={true} path={['/men', '/women', '/kids']} />
                 <Route component={Product} exact={true} path={['/men/:product_id', '/women/:product_id', '/kids/:product_id']} />
                 <UserRoute component={Profile} path="/profile" exact />
+                <UserRoute component={Wishlist} path="/wishlist" exact />
               </Switch>
             </Layout>
           </Router>

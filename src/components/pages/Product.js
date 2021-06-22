@@ -302,9 +302,6 @@ const Product = () => {
       const userDataRes = await getUserData(userDetails);
       dispatch(setUser(userDataRes));
       backdropClose();
-      if (response.status === 'success') {
-        dispatch(makeNotification({ message: response.message, variant: response.status, duration: 1500 }));
-      }
       if (response.status === 'error') {
         dispatch(makeNotification({ message: response.message, variant: response.status, duration: 1500 }));
       }

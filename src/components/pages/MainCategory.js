@@ -8,6 +8,7 @@ import commerce from '../../lib/commerce';
 import { SameSkeleton } from '../index';
 import { valueChopper } from '../../utils/';
 import Slider from 'react-slick';
+import { useSelector } from 'react-redux';
 
 const { colors } = theme;
 
@@ -193,6 +194,8 @@ const MainCategory = () => {
   const path = useLocation();
   const pathName = path.pathname.split('/')[1];
   const classes = useStyles();
+  const { allProducts } = useSelector((state) => state.products);
+  console.log(allProducts);
 
   let settings = {
     dots: true,
@@ -210,15 +213,16 @@ const MainCategory = () => {
     };
 
     const retriveAllCategoryProducts = async () => {
-      const response = await commerce.products.list();
-      const filteredResponse = response?.data.filter((product) => product?.sku === pathName);
-      setProducts(filteredResponse);
-      setInitialProducts(filteredResponse);
+      if (allProducts.length > 0) {
+        const filteredResponse = allProducts.filter((product) => product?.sku === pathName);
+        setProducts(filteredResponse);
+        setInitialProducts(filteredResponse);
+      }
     };
 
     findRequiredCategory(pathName);
     retriveAllCategoryProducts();
-  }, [pathName]);
+  }, [pathName, allProducts]);
 
   useEffect(() => {
     if (initialProducts?.length > 0) {

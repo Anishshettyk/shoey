@@ -262,7 +262,7 @@ const Navbar = () => {
           <Tooltip title="wishlist" aria-label="wishlist">
             <Link to="/wishlist">
               <IconButton>
-                <Badge badgeContent={user?.wishlist?.length > 0 ? user?.wishlist?.length : 0} color="secondary">
+                <Badge badgeContent={user?.wishlist?.length > 0 ? user?.wishlist?.length : 0} color="error" showZero={true}>
                   <Icon name="heart" />
                 </Badge>
               </IconButton>
@@ -270,7 +270,7 @@ const Navbar = () => {
           </Tooltip>
           <Tooltip title="cart" aria-label="cart">
             <IconButton>
-              <Badge badgeContent={1} color="primary">
+              <Badge badgeContent={0} color="primary" showZero={true}>
                 <Icon name="Cart" />
               </Badge>
             </IconButton>

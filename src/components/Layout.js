@@ -5,6 +5,7 @@ import { setUser, makeNotification } from '../redux';
 import { Navbar, SnackbarMaker } from './index';
 import styled from 'styled-components';
 import { getUserData } from '../lib/firestore/userData';
+import { UseAllProductsData } from '../functions/';
 
 const StyledMain = styled.main`
   position: relative;
@@ -33,6 +34,11 @@ const Layout = ({ children }) => {
     });
     return unsubscribe;
   }, [dispatch]);
+
+  useEffect(() => {
+    UseAllProductsData();
+  }, []);
+
   return (
     <StyledMain>
       <Navbar />

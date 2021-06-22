@@ -87,6 +87,10 @@ a{
 .slim__heading{
     margin:0;
 }
+.slim__tag{
+    margin:0;
+    padding:0;
+}
 
 `;
 
