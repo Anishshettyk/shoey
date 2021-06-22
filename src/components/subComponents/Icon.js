@@ -22,7 +22,7 @@ import {
 import { SiReact, SiRedux, SiFirebase, SiMaterialUi } from 'react-icons/si';
 import { RiExternalLinkLine } from 'react-icons/ri';
 import { GrGallery } from 'react-icons/gr';
-import { MdDescription } from 'react-icons/md';
+import { MdDescription, MdDelete } from 'react-icons/md';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 const Icon = ({ name }) => {
@@ -85,6 +85,8 @@ const Icon = ({ name }) => {
       return <BiArrowBack />;
     case 'size':
       return <CgSize />;
+    case 'delete':
+      return <MdDelete />;
     default:
       return <p>please enter a valid name</p>;
   }
