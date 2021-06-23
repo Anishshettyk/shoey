@@ -6,7 +6,7 @@ import { Button, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory } from 'react-router-dom';
 import { googleAuth, githubAuth, signin } from '../../lib/firebase';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { makeNotification } from '../../redux';
 import { Helmet } from 'react-helmet';
 import { BackdropMaker, Kawaii } from '../index';
@@ -123,7 +123,6 @@ const SignIn = () => {
   const history = useHistory();
   const classes = useStyles();
   const dispatch = useDispatch();
-  const pushLink = useSelector((state) => state.pushLink);
 
   const backdropOpen = () => {
     setOpenBackdrop(!openBackdrop);
@@ -138,7 +137,7 @@ const SignIn = () => {
     backdropOpen();
     try {
       await signin(email, password);
-      history.push(pushLink.link);
+      history.goBack();
     } catch (error) {
       dispatch(makeNotification({ message: error.message, variant: 'error', duration: null }));
     }
@@ -149,7 +148,7 @@ const SignIn = () => {
     backdropOpen();
     try {
       await googleAuth();
-      history.push(pushLink.link);
+      history.goBack();
     } catch (error) {
       dispatch(makeNotification({ message: error.message, variant: 'error', duration: null }));
     }
@@ -159,7 +158,7 @@ const SignIn = () => {
     backdropOpen();
     try {
       await githubAuth();
-      history.push(pushLink.link);
+      history.goBack();
     } catch (error) {
       dispatch(makeNotification({ message: error.message, variant: 'error', duration: null }));
     }

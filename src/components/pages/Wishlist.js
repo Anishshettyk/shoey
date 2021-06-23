@@ -149,7 +149,6 @@ const Wishlist = () => {
     backdropClose();
   };
 
-  console.log(wishlistedProducts);
   return (
     <WishlistContainer>
       <h1 className="slim__tag wishlist__heading">

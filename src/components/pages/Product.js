@@ -7,7 +7,7 @@ import { Icon, Kawaii, BackdropMaker } from '../index';
 import { Helmet } from 'react-helmet';
 import { addWishedProducts, getUserData, removeWishedProducts } from '../../lib/firestore/userData';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeNotification, setUser, pushUserBackTo } from '../../redux';
+import { makeNotification, setUser } from '../../redux';
 
 const { colors } = theme;
 const ProductContainer = styled.section`
@@ -307,7 +307,6 @@ const Product = () => {
       }
       //otherwise push to signup page
     } else {
-      dispatch(pushUserBackTo(location?.pathname));
       dispatch(makeNotification({ message: 'Please create account before adding product to wishlist', variant: 'info', duration: 3000 }));
       history.push('/signup');
     }

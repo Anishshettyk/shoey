@@ -159,7 +159,7 @@ const Navbar = () => {
   const signout = () => {
     auth.signOut();
     dispatch(signoutUser());
-    history.push('/');
+    history.goBack();
     handleUserAccountClose();
     dispatch(makeNotification({ message: `Signed out successfully`, variant: 'success' }));
   };
@@ -181,6 +181,15 @@ const Navbar = () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
+
+  const pushToWishlist = (uid) => {
+    if (uid) {
+      history.push('/wishlist');
+    } else {
+      dispatch(makeNotification({ message: 'Please sign in before viewing wishlist', variant: 'info', duration: 2000 }));
+      history.push('/signin');
+    }
+  };
 
   return (
     <StyledNavbar setScrollDirection={scrollDirection} scrollToTop={scrollToTop}>
@@ -260,13 +269,11 @@ const Navbar = () => {
             </IconButton>
           </Tooltip>
           <Tooltip title="wishlist" aria-label="wishlist">
-            <Link to="/wishlist">
-              <IconButton>
-                <Badge badgeContent={user?.wishlist?.length > 0 ? user?.wishlist?.length : 0} color="error" showZero={true}>
-                  <Icon name="heart" />
-                </Badge>
-              </IconButton>
-            </Link>
+            <IconButton onClick={() => pushToWishlist(user?.uid)}>
+              <Badge badgeContent={user?.wishlist?.length > 0 ? user?.wishlist?.length : 0} color="error" showZero={true}>
+                <Icon name="heart" />
+              </Badge>
+            </IconButton>
           </Tooltip>
           <Tooltip title="cart" aria-label="cart">
             <IconButton>

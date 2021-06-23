@@ -27,7 +27,7 @@ const Layout = ({ children }) => {
         const setUserData = async () => {
           const userDataRes = await getUserData(user.providerData[0]);
           dispatch(setUser(userDataRes));
-          dispatch(makeNotification({ message: `Signed in as ${userDataRes?.email}`, variant: 'success', duration: 4000 }));
+          dispatch(makeNotification({ message: `Signed in as ${userDataRes?.email}`, variant: 'success', duration: 2000 }));
         };
         setUserData();
       }
