@@ -195,7 +195,6 @@ const MainCategory = () => {
   const pathName = path.pathname.split('/')[1];
   const classes = useStyles();
   const { allProducts } = useSelector((state) => state.products);
-  console.log(allProducts);
 
   let settings = {
     dots: true,
@@ -340,11 +339,11 @@ const MainCategory = () => {
                     <Checkbox
                       checked={category.checked}
                       onChange={() => handleCategoryFilter(category)}
-                      name={`${category.name.split('men')[1]}`}
+                      name={`${category.name.split(pathName)[1]}`}
                       color="primary"
                     />
                   }
-                  label={`${category.name.split('men')[1]} (${category.products})`}
+                  label={`${category.name.split(pathName)[1]} (${category.products})`}
                 />
               ))}
             </div>

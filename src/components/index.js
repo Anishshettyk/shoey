@@ -24,6 +24,7 @@ export { default as Profile } from './pages/Profile';
 export { default as MainCategory } from './pages/MainCategory';
 export { default as Product } from './pages/Product';
 export { default as Wishlist } from './pages/Wishlist';
+export { default as Cart } from './pages/Cart';
 
 //page divisions
 export { default as CategoryDisplay } from './pageDivisions/CategoryDisplay';

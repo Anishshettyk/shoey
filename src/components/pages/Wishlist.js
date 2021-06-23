@@ -45,7 +45,7 @@ const WishlistContainer = styled.section`
   .wishlist__discription {
     margin-top: 10px;
     text-align: center;
-    color: ${colors.darkGrey};
+    color: ${colors.darkBlue};
   }
   ${media.netbook`
     max-width:60%;
@@ -152,7 +152,7 @@ const Wishlist = () => {
   return (
     <WishlistContainer>
       <h1 className="slim__tag wishlist__heading">
-        Your wishlist <span>({wishlist?.length > 0 ? wishlist?.length : '0'})</span>
+        Your wishlist <span>{wishlist?.length > 0 ? `(${wishlist?.length})` : null}</span>
       </h1>
       <p className="slim__tag wishlist__discription">View your wishlisted product here...</p>
       <WishlistedProductsContainer>
@@ -185,7 +185,7 @@ const Wishlist = () => {
       </WishlistedProductsContainer>
       {wishlist.length === 0 ? (
         <EmptyWishlist>
-          <h1>Your wishlist is empty</h1>
+          <Kawaii name="ghost" mood="blissful" message="Your wishlist is empty!" />
           <Link to="/men">Shop for men</Link>
         </EmptyWishlist>
       ) : (

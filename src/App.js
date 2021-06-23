@@ -12,6 +12,7 @@ import {
   MainCategory,
   Product,
   Wishlist,
+  Cart,
 } from './components';
 import { MuiThemeProvider, StylesProvider } from '@material-ui/core/styles';
 import { MuiThemes } from './styles';
@@ -36,6 +37,7 @@ function App() {
                 <Route component={Product} exact={true} path={['/men/:product_id', '/women/:product_id', '/kids/:product_id']} />
                 <UserRoute component={Profile} path="/profile" exact />
                 <UserRoute component={Wishlist} path="/wishlist" exact />
+                <UserRoute component={Cart} path="/cart" exact />
               </Switch>
             </Layout>
           </Router>

@@ -186,7 +186,15 @@ const Navbar = () => {
     if (uid) {
       history.push('/wishlist');
     } else {
-      dispatch(makeNotification({ message: 'Please sign in before viewing wishlist', variant: 'info', duration: 2000 }));
+      dispatch(makeNotification({ message: 'Please sign in before viewing wishlist', variant: 'info', duration: 2500 }));
+      history.push('/signin');
+    }
+  };
+  const pushToCart = (uid) => {
+    if (uid) {
+      history.push('/cart');
+    } else {
+      dispatch(makeNotification({ message: 'Please sign in before viewing cart', variant: 'info', duration: 2500 }));
       history.push('/signin');
     }
   };
@@ -276,7 +284,7 @@ const Navbar = () => {
             </IconButton>
           </Tooltip>
           <Tooltip title="cart" aria-label="cart">
-            <IconButton>
+            <IconButton onClick={() => pushToCart(user?.uid)}>
               <Badge badgeContent={0} color="primary" showZero={true}>
                 <Icon name="Cart" />
               </Badge>

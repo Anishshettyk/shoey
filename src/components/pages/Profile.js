@@ -310,7 +310,7 @@ const Profile = () => {
       setFile(fileSelected);
       setFileError(null);
     } else {
-      dispatch(makeNotification({ message: 'please select a valid file type (png or jpeg).', variant: 'error', duration: 4000 }));
+      dispatch(makeNotification({ message: 'please select a valid file type (png or jpeg).', variant: 'warning', duration: 4000 }));
       setFileError('please select a valid file type (png or jpeg).');
       setFile(null);
     }

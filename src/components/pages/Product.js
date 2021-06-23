@@ -244,17 +244,16 @@ const Product = () => {
       checkWishlistHasProduct(path.product_id);
     }
   }, [path, wishlist]);
-  console.log(wishlistedProduct);
 
   const fetchProductDeatils = async (productID) => {
     const response = await commerce.products.retrieve(productID);
     if (response) {
       setProduct(response);
       setImageToShow(response?.assets[0].url);
-      const requiredSizes = response?.variant_groups?.filter((variantGroup) => variantGroup.name === 'size');
+      const requiredSizes = response?.variant_groups?.filter((variantGroup) => variantGroup.name === 'size')[0];
       const requiredColors = response?.variant_groups?.filter((variantGroup) => variantGroup.name === 'color')[0];
 
-      const modifiedSizes = requiredSizes[0]?.options.map((size) => ({ ...size, checked: false }));
+      const modifiedSizes = requiredSizes?.options.map((size) => ({ ...size, checked: false }));
 
       const modifiedColors = requiredColors?.options?.map((option) => {
         const productPic = response?.assets?.find((asset) => asset.id === option.assets.find((asset) => asset));
@@ -273,14 +272,14 @@ const Product = () => {
     );
   };
 
-  const selectSize = (size) => {
+  const selectSize = (selectedSize) => {
     const clearSizes = productSizes.map((individualSize) =>
-      individualSize.id !== size.id ? { ...individualSize, checked: false } : individualSize
+      individualSize.id !== selectedSize.id ? { ...individualSize, checked: false } : individualSize
     );
 
     setProductSizes(
       clearSizes.map((individualSize) =>
-        individualSize.id === size.id ? { ...individualSize, checked: !individualSize.checked } : individualSize
+        individualSize.id === selectedSize.id ? { ...individualSize, checked: !individualSize.checked } : individualSize
       )
     );
   };
@@ -307,8 +306,41 @@ const Product = () => {
       }
       //otherwise push to signup page
     } else {
-      dispatch(makeNotification({ message: 'Please create account before adding product to wishlist', variant: 'info', duration: 3000 }));
-      history.push('/signup');
+      dispatch(makeNotification({ message: 'Please sign in before adding product to wishlist', variant: 'info', duration: 3000 }));
+      history.push('/signin');
+    }
+  };
+
+  const manageProductCart = async (email, productId) => {
+    const initialQuantity = 1;
+    if (uid) {
+      setbackdropMessage('Adding to cart...');
+      backdropOpen();
+      const selectedSize = productSizes?.filter((size) => size?.checked === true);
+      const selectedColor = productColors?.filter((size) => size?.checked === true);
+
+      if (selectedSize?.length !== 0 && selectedColor?.length !== 0) {
+        const sizeVarient = product?.variant_groups?.filter((variantGroup) => variantGroup.name === 'size')[0];
+        const colorVarient = product?.variant_groups?.filter((variantGroup) => variantGroup.name === 'color')[0];
+
+        const res = await commerce.cart.add(productId, initialQuantity, {
+          [sizeVarient?.id]: selectedSize[0]?.id,
+          [colorVarient?.id]: selectedColor[0]?.id,
+        });
+        console.log(res);
+      } else {
+        if (selectedSize.length === 0) {
+          dispatch(makeNotification({ message: 'Please select desired size', variant: 'warning', duration: 2000 }));
+        } else {
+          dispatch(makeNotification({ message: 'Please select desired color', variant: 'warning', duration: 2000 }));
+        }
+      }
+
+      // const res = await commerce.cart.empty();
+      backdropClose();
+    } else {
+      dispatch(makeNotification({ message: 'Please sign in before adding product to cart', variant: 'info', duration: 3000 }));
+      history.push('/signin');
     }
   };
 
@@ -327,7 +359,7 @@ const Product = () => {
             <Icon name="heart" />
             {wishlistedProduct ? 'Remove from wishlist' : 'Add to wishlist'}
           </button>
-          <button className="product__cart__button">
+          <button className="product__cart__button" onClick={() => manageProductCart(email, product?.id)}>
             <Icon name="Cart" />
             Add to cart
           </button>
