@@ -18,6 +18,8 @@ import {
   FiUserPlus,
   FiEye,
   FiHeart,
+  FiPlus,
+  FiMinus,
 } from 'react-icons/fi';
 import { SiReact, SiRedux, SiFirebase, SiMaterialUi } from 'react-icons/si';
 import { RiExternalLinkLine } from 'react-icons/ri';
@@ -87,6 +89,10 @@ const Icon = ({ name }) => {
       return <CgSize />;
     case 'delete':
       return <MdDelete />;
+    case 'plus':
+      return <FiPlus />;
+    case 'minus':
+      return <FiMinus />;
     default:
       return <p>please enter a valid name</p>;
   }

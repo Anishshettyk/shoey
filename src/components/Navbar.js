@@ -145,6 +145,7 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const user = useSelector((state) => state.user.userDetails);
+  const cart = useSelector((state) => state.cart.cartDetails);
 
   const handleUserAccountClick = (event) => {
     setOpenAccount(event.currentTarget);
@@ -278,14 +279,14 @@ const Navbar = () => {
           </Tooltip>
           <Tooltip title="wishlist" aria-label="wishlist">
             <IconButton onClick={() => pushToWishlist(user?.uid)}>
-              <Badge badgeContent={user?.wishlist?.length > 0 ? user?.wishlist?.length : 0} color="error" showZero={true}>
+              <Badge badgeContent={user?.wishlist?.length > 0 ? user?.wishlist?.length : 0} color="error">
                 <Icon name="heart" />
               </Badge>
             </IconButton>
           </Tooltip>
           <Tooltip title="cart" aria-label="cart">
             <IconButton onClick={() => pushToCart(user?.uid)}>
-              <Badge badgeContent={0} color="primary" showZero={true}>
+              <Badge badgeContent={cart?.total_items} color="primary">
                 <Icon name="Cart" />
               </Badge>
             </IconButton>

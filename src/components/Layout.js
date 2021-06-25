@@ -5,7 +5,7 @@ import { setUser, makeNotification } from '../redux';
 import { Navbar, SnackbarMaker } from './index';
 import styled from 'styled-components';
 import { getUserData } from '../lib/firestore/userData';
-import { UseAllProductsData } from '../functions/';
+import { UseAllProductsData, UseCartData } from '../functions/';
 
 const StyledMain = styled.main`
   position: relative;
@@ -37,6 +37,7 @@ const Layout = ({ children }) => {
 
   useEffect(() => {
     UseAllProductsData();
+    UseCartData();
   }, []);
 
   return (

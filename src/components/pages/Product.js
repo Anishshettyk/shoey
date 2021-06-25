@@ -7,7 +7,7 @@ import { Icon, Kawaii, BackdropMaker } from '../index';
 import { Helmet } from 'react-helmet';
 import { addWishedProducts, getUserData, removeWishedProducts } from '../../lib/firestore/userData';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeNotification, setUser } from '../../redux';
+import { makeNotification, setUser, storeToCart } from '../../redux';
 
 const { colors } = theme;
 const ProductContainer = styled.section`
@@ -311,7 +311,7 @@ const Product = () => {
     }
   };
 
-  const manageProductCart = async (email, productId) => {
+  const manageProductCart = async (productId) => {
     const initialQuantity = 1;
     if (uid) {
       setbackdropMessage('Adding to cart...');
@@ -327,7 +327,7 @@ const Product = () => {
           [sizeVarient?.id]: selectedSize[0]?.id,
           [colorVarient?.id]: selectedColor[0]?.id,
         });
-        console.log(res);
+        dispatch(storeToCart(res?.cart));
       } else {
         if (selectedSize.length === 0) {
           dispatch(makeNotification({ message: 'Please select desired size', variant: 'warning', duration: 2000 }));
@@ -359,7 +359,7 @@ const Product = () => {
             <Icon name="heart" />
             {wishlistedProduct ? 'Remove from wishlist' : 'Add to wishlist'}
           </button>
-          <button className="product__cart__button" onClick={() => manageProductCart(email, product?.id)}>
+          <button className="product__cart__button" onClick={() => manageProductCart(product?.id)}>
             <Icon name="Cart" />
             Add to cart
           </button>
