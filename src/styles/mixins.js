@@ -61,6 +61,11 @@ const mixins = {
     -webkit-box-shadow: 0px 1px 10px 0px rgba(0, 0, 0, 0.2);
     -moz-box-shadow: 0px 1px 10px 0px rgba(0, 0, 0, 0.2);
   `,
+  shadowSpreadHigh: css`
+    box-shadow: 0px 4px 10px 5px rgba(0, 0, 0, 0.2);
+    -webkit-box-shadow: 0px 4px 10px 5px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 0px 4px 10px 5px rgba(0, 0, 0, 0.2);
+  `,
   simpleButton: css`
     padding: 15px 40px;
     background-color: ${colors.blue};

@@ -217,6 +217,7 @@ const Product = () => {
   const dispatch = useDispatch();
   const { userDetails } = useSelector((state) => state.user);
   const { email, uid, wishlist } = userDetails;
+  console.log(product);
 
   const backdropOpen = () => {
     setOpenBackdrop(!openBackdrop);

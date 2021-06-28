@@ -20,10 +20,11 @@ import {
   FiHeart,
   FiPlus,
   FiMinus,
+  FiRefreshCw,
 } from 'react-icons/fi';
 import { SiReact, SiRedux, SiFirebase, SiMaterialUi } from 'react-icons/si';
 import { RiExternalLinkLine } from 'react-icons/ri';
-import { GrGallery } from 'react-icons/gr';
+import { GrGallery, GrClose } from 'react-icons/gr';
 import { MdDescription, MdDelete } from 'react-icons/md';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
@@ -93,6 +94,10 @@ const Icon = ({ name }) => {
       return <FiPlus />;
     case 'minus':
       return <FiMinus />;
+    case 'close':
+      return <GrClose />;
+    case 'refresh':
+      return <FiRefreshCw />;
     default:
       return <p>please enter a valid name</p>;
   }

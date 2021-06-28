@@ -1,20 +1,17 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { theme } from '../../styles';
+import { theme, mixins } from '../../styles';
 import { useSelector, useDispatch } from 'react-redux';
 import { Icon, Kawaii, BackdropMaker } from '../index';
 import commerce from '../../lib/commerce';
 import { storeToCart } from '../../redux';
+import { Tooltip } from '@material-ui/core';
 
 const { colors } = theme;
 const CartContainer = styled.section`
-  display: grid;
-  grid-template-columns: 3fr 1fr;
   min-height: 87vh;
-`;
-const CartProductsContainer = styled.div`
-  padding-top: 50px;
-  margin: 0px 50px;
+  margin: 30px 7%;
+
   .cart__products__headings {
     display: flex;
     align-items: center;
@@ -26,11 +23,13 @@ const CartProductsContainer = styled.div`
       font-weight: 600;
     }
   }
+`;
+const CartProductsContainer = styled.div`
+  margin: 0px 2%;
   .cart__products__heading__container {
-    margin-top: 30px;
+    margin: 30px 0px 20px;
     display: grid;
-    grid-template-columns: 3fr 1fr 1fr 1fr;
-    grid-gap: 10px;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
     .cart__product__sub__heading {
       color: ${colors.darkGrey};
       font-weight: bold;
@@ -43,12 +42,14 @@ const CartProductsContainer = styled.div`
     }
   }
   .cart__product {
-    margin-top: 20px;
     .cart__product__inside {
       display: grid;
-      grid-template-columns: 3fr 1fr 1fr 1fr;
-      grid-gap: 10px;
-      margin-bottom: 10px;
+      grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+      margin-bottom: 20px;
+      align-items: center;
+      padding: 10px 20px;
+      ${mixins.shadow};
+      border-radius: 10px;
       .cart__products__info {
         display: flex;
         .cart__product__photo {
@@ -61,8 +62,8 @@ const CartProductsContainer = styled.div`
         .cart__product__details {
           margin-left: 10px;
           align-items: flex-start;
-          justify-content: space-around;
           display: flex;
+          justify-content: space-around;
           flex-direction: column;
           .cart__product__varient {
             color: ${colors.darkBlue};
@@ -70,41 +71,34 @@ const CartProductsContainer = styled.div`
             font-size: 12px;
             font-weight: bold;
           }
-          .cart__product__remove {
-            border: none;
-            padding: 2px 10px;
-            font-size: 13px;
-            color: ${colors.blue};
-            background-color: transparent;
-            font-weight: 500;
-            cursor: pointer;
-            &:hover {
-              opacity: 0.7;
-            }
-          }
         }
       }
       .cart__products__quantity {
         display: flex;
         justify-content: center;
-        align-items: flex-start;
+        align-items: center;
+
         button {
+          cursor: pointer;
           border: none;
           background: transparent;
           font-size: 20px;
+          transition: all 0.3s ease-out 0s;
           svg {
             color: ${colors.black};
             font-weight: bold;
           }
           &:hover {
-            background-color: ${colors.grey3};
+            transform: scale(1.2);
+            color: ${colors.darkBlue};
           }
         }
         span {
-          margin: 0px 4px;
-          padding: 0px 7px;
-          border: 1px solid ${colors.grey2};
-          color: ${colors.darkGrey};
+          font-size: 20px;
+          margin: 0px 8px;
+          padding: 2px 8px;
+          font-weight: bold;
+          color: ${colors.blue};
         }
       }
       .cart__products__price {
@@ -121,16 +115,42 @@ const CartProductsContainer = styled.div`
           font-weight: bold;
         }
       }
+      .cart__product__remove {
+        border: none;
+        background-color: transparent;
+        font-weight: 500;
+        cursor: pointer;
+        &:hover {
+          opacity: 0.7;
+        }
+      }
     }
   }
-`;
-const CartSummaryContainer = styled.div`
-  background-color: ${colors.grey3};
-  padding: 50px 20px 0px 20px;
-
-  h1 {
-    padding-bottom: 20px;
-    border-bottom: 0.5px solid ${colors.grey1};
+  .cart__actions__button__container {
+    display: flex;
+    float: right;
+    align-items: center;
+    justify-content: flex-end;
+    .cart__action__button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: ${colors.black};
+      color: ${colors.white};
+      padding: 0px 17px;
+      font-size: 12px;
+      border-radius: 20px;
+      svg {
+        margin-right: 10px;
+      }
+      &:hover {
+        ${mixins.shadowSpreadHigh};
+      }
+    }
+    .empty__cart__button {
+      background-color: ${colors.red};
+      margin-left: 10px;
+    }
   }
 `;
 
@@ -168,7 +188,6 @@ const Cart = () => {
     backdropOpen();
     if (cartItemId) {
       const response = await commerce.cart.update(cartItemId, { quantity: quantity + 1 });
-      console.log(response);
       if (response.success) {
         dispatch(storeToCart(response?.cart));
       }
@@ -188,18 +207,41 @@ const Cart = () => {
     }
     backdropClose();
   };
+  const refreshCart = async () => {
+    setbackdropMessage('Refreshing cart...');
+    setBackdropMood('blissful');
+    backdropOpen();
+    const response = await commerce.cart.refresh();
+    if (response.success) {
+      dispatch(storeToCart(response?.cart));
+    }
+    backdropClose();
+  };
+  const emptyCart = async () => {
+    setbackdropMessage('Emptying cart...');
+    setBackdropMood('ko');
+    backdropOpen();
+    const response = await commerce.cart.empty();
+    if (response.success) {
+      dispatch(storeToCart(response?.cart));
+    }
+    backdropClose();
+  };
+
   return (
     <CartContainer>
+      <div className="cart__products__headings">
+        <h1 className="slim__heading">Shopping Cart</h1>
+        <h3 className="slim__heading">{cartDetails?.total_items} items</h3>
+      </div>
+
       <CartProductsContainer>
-        <div className="cart__products__headings">
-          <h1 className="slim__heading">Shopping Cart</h1>
-          <h3 className="slim__heading">{cartDetails?.total_items} items</h3>
-        </div>
         <div className="cart__products__heading__container">
           <span className="cart__product__sub__heading product__details">Product Details</span>
           <span className="cart__product__sub__heading">Quantity</span>
           <span className="cart__product__sub__heading">Price</span>
           <span className="cart__product__sub__heading">Total</span>
+          <span className="cart__product__sub__heading">Remove</span>
         </div>
         <div className="cart__product">
           {cartDetails?.line_items.map((product) => (
@@ -214,9 +256,6 @@ const Cart = () => {
                     {product?.selected_options[0]?.group_name} - {product?.selected_options[0]?.option_name} /{' '}
                     {product?.selected_options[1]?.group_name} - {product?.selected_options[1]?.option_name}
                   </p>
-                  <button className="cart__product__remove" onClick={() => removeFromCart(product?.id)}>
-                    Remove
-                  </button>
                 </div>
               </div>
               <div className="cart__products__quantity">
@@ -234,13 +273,30 @@ const Cart = () => {
               <div className="cart__products__total">
                 <span>{product?.line_total?.formatted_with_symbol}</span>
               </div>
+              <Tooltip title="Remove from cart" aria-label="Remove from cart">
+                <button className="cart__product__remove" onClick={() => removeFromCart(product?.id)}>
+                  <Icon name="close" />
+                </button>
+              </Tooltip>
             </div>
           ))}
         </div>
+        <div className="cart__actions__button__container">
+          <Tooltip title="Can't see what you are looking for" aria-label="refresh cart">
+            <div className="cart__action__button " onClick={() => refreshCart()}>
+              <Icon name="refresh" />
+              <p>Refresh cart</p>
+            </div>
+          </Tooltip>
+          <Tooltip title="Can't see what you are looking for" aria-label="refresh cart">
+            <div className="cart__action__button empty__cart__button" onClick={() => emptyCart()}>
+              <Icon name="delete" />
+              <p>Empty cart</p>
+            </div>
+          </Tooltip>
+        </div>
       </CartProductsContainer>
-      <CartSummaryContainer>
-        <h1 className="slim__heading">Order Summary</h1>
-      </CartSummaryContainer>
+
       <BackdropMaker open={openBackdrop}>
         <Kawaii name="folder" mood={backdropMood} message={backdropMessage} />
       </BackdropMaker>
