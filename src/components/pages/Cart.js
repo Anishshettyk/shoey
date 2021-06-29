@@ -4,7 +4,7 @@ import { theme, mixins } from '../../styles';
 import { useSelector, useDispatch } from 'react-redux';
 import { Icon, Kawaii, BackdropMaker } from '../index';
 import commerce from '../../lib/commerce';
-import { storeToCart } from '../../redux';
+import { storeToCart, makeNotification } from '../../redux';
 import { Tooltip } from '@material-ui/core';
 
 const { colors } = theme;
@@ -170,62 +170,97 @@ const Cart = () => {
   };
 
   const removeFromCart = async (cartItemId) => {
-    setbackdropMessage('Removing from cart...');
-    setBackdropMood('ko');
-    backdropOpen();
-    if (cartItemId) {
-      const response = await commerce.cart.remove(cartItemId);
-      if (response.success) {
-        dispatch(storeToCart(response?.cart));
+    try {
+      setbackdropMessage('Removing from cart...');
+      setBackdropMood('ko');
+      backdropOpen();
+      if (cartItemId) {
+        const response = await commerce.cart.remove(cartItemId);
+        if (response?.success) {
+          dispatch(storeToCart(response?.cart));
+        }
+      }
+      backdropClose();
+    } catch (error) {
+      if (error) {
+        backdropClose();
+        dispatch(makeNotification({ message: `Unexpected error occured. Please try again.`, variant: 'error', duration: 2000 }));
       }
     }
-    backdropClose();
   };
 
   const incrementCartItem = async (cartItemId, quantity) => {
-    setbackdropMessage('Please wait');
-    setBackdropMood('happy');
-    backdropOpen();
-    if (cartItemId) {
-      const response = await commerce.cart.update(cartItemId, { quantity: quantity + 1 });
-      if (response.success) {
-        dispatch(storeToCart(response?.cart));
+    try {
+      setbackdropMessage('Please wait');
+      setBackdropMood('happy');
+      backdropOpen();
+      if (cartItemId) {
+        const response = await commerce.cart.update(cartItemId, { quantity: quantity + 1 });
+        if (response?.success) {
+          dispatch(storeToCart(response?.cart));
+        }
+      }
+      backdropClose();
+    } catch (error) {
+      if (error) {
+        backdropClose();
+        dispatch(makeNotification({ message: `Unexpected error occured. Please try again.`, variant: 'error', duration: 2000 }));
       }
     }
-    backdropClose();
   };
 
   const decrementCartItem = async (cartItemId, quantity) => {
-    setbackdropMessage('Please wait');
-    setBackdropMood('happy');
-    backdropOpen();
-    if (cartItemId) {
-      const response = await commerce.cart.update(cartItemId, { quantity: quantity - 1 });
-      if (response.success) {
-        dispatch(storeToCart(response?.cart));
+    try {
+      setbackdropMessage('Please wait');
+      setBackdropMood('happy');
+      backdropOpen();
+      if (cartItemId) {
+        const response = await commerce.cart.update(cartItemId, { quantity: quantity - 1 });
+        if (response?.success) {
+          dispatch(storeToCart(response?.cart));
+        }
+      }
+      backdropClose();
+    } catch (error) {
+      if (error) {
+        backdropClose();
+        dispatch(makeNotification({ message: `Unexpected error occured. Please try again.`, variant: 'error', duration: 2000 }));
       }
     }
-    backdropClose();
   };
   const refreshCart = async () => {
-    setbackdropMessage('Refreshing cart...');
-    setBackdropMood('blissful');
-    backdropOpen();
-    const response = await commerce.cart.refresh();
-    if (response.success) {
-      dispatch(storeToCart(response?.cart));
+    try {
+      setbackdropMessage('Refreshing cart...');
+      setBackdropMood('blissful');
+      backdropOpen();
+      const response = await commerce.cart.refresh();
+      if (response?.success) {
+        dispatch(storeToCart(response?.cart));
+      }
+      backdropClose();
+    } catch (error) {
+      if (error) {
+        backdropClose();
+        dispatch(makeNotification({ message: `Unexpected error occured. Please try again.`, variant: 'error', duration: 2000 }));
+      }
     }
-    backdropClose();
   };
   const emptyCart = async () => {
-    setbackdropMessage('Emptying cart...');
-    setBackdropMood('ko');
-    backdropOpen();
-    const response = await commerce.cart.empty();
-    if (response.success) {
-      dispatch(storeToCart(response?.cart));
+    try {
+      setbackdropMessage('Emptying cart...');
+      setBackdropMood('ko');
+      backdropOpen();
+      const response = await commerce.cart.empty();
+      if (response?.success) {
+        dispatch(storeToCart(response?.cart));
+      }
+      backdropClose();
+    } catch (error) {
+      if (error) {
+        backdropClose();
+        dispatch(makeNotification({ message: `Unexpected error occured. Please try again.`, variant: 'error', duration: 2000 }));
+      }
     }
-    backdropClose();
   };
 
   return (
