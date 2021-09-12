@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import { theme, mixins } from '../../styles';
-import { useSelector, useDispatch } from 'react-redux';
-import { Icon, Kawaii, BackdropMaker } from '../index';
-import commerce from '../../lib/commerce';
-import { storeToCart, makeNotification } from '../../redux';
-import { Tooltip } from '@material-ui/core';
+import React, { useState } from "react";
+import styled from "styled-components";
+import { theme, mixins } from "../../styles";
+import { useSelector, useDispatch } from "react-redux";
+import { Icon, Kawaii, BackdropMaker } from "../index";
+import commerce from "../../lib/commerce";
+import { storeToCart, makeNotification } from "../../redux";
+import { Tooltip } from "@material-ui/core";
+import { Link } from "react-router-dom";
 
 const { colors } = theme;
 const CartContainer = styled.section`
@@ -154,10 +155,34 @@ const CartProductsContainer = styled.div`
   }
 `;
 
+const EmptyWishlist = styled.div`
+  ${mixins.flexColumn};
+  ${mixins.flexCenter};
+  ${mixins.shadowSpread};
+  margin-top: 30px;
+  padding: 20px 0px;
+  border-radius: 10px;
+  h1 {
+    color: ${colors.red};
+    font-weight: 900;
+  }
+  a {
+    padding: 10px 20px;
+    background-color: ${colors.lightBlue};
+    border-radius: 30px;
+    color: ${colors.blue};
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+`;
+
 const Cart = () => {
   const [openBackdrop, setOpenBackdrop] = useState(false);
-  const [backdropMessage, setbackdropMessage] = useState('We are working on it...');
-  const [backdropMood, setBackdropMood] = useState('blissful');
+  const [backdropMessage, setbackdropMessage] = useState(
+    "We are working on it..."
+  );
+  const [backdropMood, setBackdropMood] = useState("blissful");
 
   const { cartDetails } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
@@ -171,8 +196,8 @@ const Cart = () => {
 
   const removeFromCart = async (cartItemId) => {
     try {
-      setbackdropMessage('Removing from cart...');
-      setBackdropMood('ko');
+      setbackdropMessage("Removing from cart...");
+      setBackdropMood("ko");
       backdropOpen();
       if (cartItemId) {
         const response = await commerce.cart.remove(cartItemId);
@@ -184,18 +209,26 @@ const Cart = () => {
     } catch (error) {
       if (error) {
         backdropClose();
-        dispatch(makeNotification({ message: `Unexpected error occured. Please try again.`, variant: 'error', duration: 2000 }));
+        dispatch(
+          makeNotification({
+            message: `Unexpected error occured. Please try again.`,
+            variant: "error",
+            duration: 2000,
+          })
+        );
       }
     }
   };
 
   const incrementCartItem = async (cartItemId, quantity) => {
     try {
-      setbackdropMessage('Please wait');
-      setBackdropMood('happy');
+      setbackdropMessage("Please wait");
+      setBackdropMood("happy");
       backdropOpen();
       if (cartItemId) {
-        const response = await commerce.cart.update(cartItemId, { quantity: quantity + 1 });
+        const response = await commerce.cart.update(cartItemId, {
+          quantity: quantity + 1,
+        });
         if (response?.success) {
           dispatch(storeToCart(response?.cart));
         }
@@ -204,18 +237,26 @@ const Cart = () => {
     } catch (error) {
       if (error) {
         backdropClose();
-        dispatch(makeNotification({ message: `Unexpected error occured. Please try again.`, variant: 'error', duration: 2000 }));
+        dispatch(
+          makeNotification({
+            message: `Unexpected error occured. Please try again.`,
+            variant: "error",
+            duration: 2000,
+          })
+        );
       }
     }
   };
 
   const decrementCartItem = async (cartItemId, quantity) => {
     try {
-      setbackdropMessage('Please wait');
-      setBackdropMood('happy');
+      setbackdropMessage("Please wait");
+      setBackdropMood("happy");
       backdropOpen();
       if (cartItemId) {
-        const response = await commerce.cart.update(cartItemId, { quantity: quantity - 1 });
+        const response = await commerce.cart.update(cartItemId, {
+          quantity: quantity - 1,
+        });
         if (response?.success) {
           dispatch(storeToCart(response?.cart));
         }
@@ -224,33 +265,46 @@ const Cart = () => {
     } catch (error) {
       if (error) {
         backdropClose();
-        dispatch(makeNotification({ message: `Unexpected error occured. Please try again.`, variant: 'error', duration: 2000 }));
+        dispatch(
+          makeNotification({
+            message: `Unexpected error occured. Please try again.`,
+            variant: "error",
+            duration: 2000,
+          })
+        );
       }
     }
   };
   const refreshCart = async () => {
     try {
-      setbackdropMessage('Refreshing cart...');
-      setBackdropMood('blissful');
+      setbackdropMessage("refreshing cart...");
       backdropOpen();
-      const response = await commerce.cart.refresh();
-      if (response?.success) {
-        dispatch(storeToCart(response?.cart));
+      const response = await commerce.cart.retrieve();
+      if (response?.hasOwnProperty("id")) {
+        dispatch(storeToCart(response));
       }
       backdropClose();
     } catch (error) {
       if (error) {
         backdropClose();
-        dispatch(makeNotification({ message: `Unexpected error occured. Please try again.`, variant: 'error', duration: 2000 }));
+        dispatch(
+          makeNotification({
+            message: `Unexpected error occured. Please try again.`,
+            variant: "error",
+            duration: 2000,
+          })
+        );
       }
     }
   };
+
   const emptyCart = async () => {
     try {
-      setbackdropMessage('Emptying cart...');
-      setBackdropMood('ko');
+      setbackdropMessage("Emptying cart...");
+      setBackdropMood("ko");
       backdropOpen();
       const response = await commerce.cart.empty();
+
       if (response?.success) {
         dispatch(storeToCart(response?.cart));
       }
@@ -258,82 +312,127 @@ const Cart = () => {
     } catch (error) {
       if (error) {
         backdropClose();
-        dispatch(makeNotification({ message: `Unexpected error occured. Please try again.`, variant: 'error', duration: 2000 }));
+        dispatch(
+          makeNotification({
+            message: `Unexpected error occured. Please try again.`,
+            variant: "error",
+            duration: 2000,
+          })
+        );
       }
     }
   };
 
   return (
     <CartContainer>
-      <div className="cart__products__headings">
-        <h1 className="slim__heading">Shopping Cart</h1>
-        <h3 className="slim__heading">{cartDetails?.total_items} items</h3>
-      </div>
+      {cartDetails.total_items === 0 ? (
+        <EmptyWishlist>
+          <Kawaii name='ghost' mood='blissful' message='Your cart is empty!' />
+          <Link to='/men'>Shop for men</Link>
+        </EmptyWishlist>
+      ) : (
+        <>
+          <div className='cart__products__headings'>
+            <h1 className='slim__heading'>Shopping Cart</h1>
+            <h3 className='slim__heading'>{cartDetails?.total_items} items</h3>
+          </div>
 
-      <CartProductsContainer>
-        <div className="cart__products__heading__container">
-          <span className="cart__product__sub__heading product__details">Product Details</span>
-          <span className="cart__product__sub__heading">Quantity</span>
-          <span className="cart__product__sub__heading">Price</span>
-          <span className="cart__product__sub__heading">Total</span>
-          <span className="cart__product__sub__heading">Remove</span>
-        </div>
-        <div className="cart__product">
-          {cartDetails?.line_items.map((product) => (
-            <div className="cart__product__inside" key={product?.id}>
-              <div className="cart__products__info">
-                <div className="cart__product__photo">
-                  <img src={product?.variant?.assets[0]?.url} alt={product?.variant?.assets[0]?.fileName} />
+          <CartProductsContainer>
+            <div className='cart__products__heading__container'>
+              <span className='cart__product__sub__heading product__details'>
+                Product Details
+              </span>
+              <span className='cart__product__sub__heading'>Quantity</span>
+              <span className='cart__product__sub__heading'>Price</span>
+              <span className='cart__product__sub__heading'>Total</span>
+              <span className='cart__product__sub__heading'>Remove</span>
+            </div>
+            <div className='cart__product'>
+              {cartDetails?.line_items.map((product) => (
+                <div className='cart__product__inside' key={product?.id}>
+                  <div className='cart__products__info'>
+                    <div className='cart__product__photo'>
+                      <img
+                        src={product?.variant?.assets[0]?.url}
+                        alt={product?.variant?.assets[0]?.fileName}
+                      />
+                    </div>
+                    <div className='cart__product__details'>
+                      <h5 className='slim__heading'>{product?.name}</h5>
+                      <p className='cart__product__varient'>
+                        {product?.selected_options[0]?.group_name} -{" "}
+                        {product?.selected_options[0]?.option_name} /{" "}
+                        {product?.selected_options[1]?.group_name} -{" "}
+                        {product?.selected_options[1]?.option_name}
+                      </p>
+                    </div>
+                  </div>
+                  <div className='cart__products__quantity'>
+                    <button
+                      onClick={() =>
+                        incrementCartItem(product?.id, product?.quantity)
+                      }
+                    >
+                      <Icon name='plus' />
+                    </button>
+                    <span>{product?.quantity}</span>
+                    <button
+                      onClick={() =>
+                        decrementCartItem(product?.id, product?.quantity)
+                      }
+                    >
+                      <Icon name='minus' />
+                    </button>
+                  </div>
+                  <div className='cart__products__price'>
+                    <span>{product?.price?.formatted_with_symbol}</span>
+                  </div>
+                  <div className='cart__products__total'>
+                    <span>{product?.line_total?.formatted_with_symbol}</span>
+                  </div>
+                  <Tooltip
+                    title='Remove from cart'
+                    aria-label='Remove from cart'
+                  >
+                    <button
+                      className='cart__product__remove'
+                      onClick={() => removeFromCart(product?.id)}
+                    >
+                      <Icon name='close' />
+                    </button>
+                  </Tooltip>
                 </div>
-                <div className="cart__product__details">
-                  <h5 className="slim__heading">{product?.name}</h5>
-                  <p className="cart__product__varient">
-                    {product?.selected_options[0]?.group_name} - {product?.selected_options[0]?.option_name} /{' '}
-                    {product?.selected_options[1]?.group_name} - {product?.selected_options[1]?.option_name}
-                  </p>
+              ))}
+            </div>
+            <div className='cart__actions__button__container'>
+              <Tooltip
+                title="Can't see what you are looking for"
+                aria-label='refresh cart'
+              >
+                <div className='cart__action__button ' onClick={refreshCart}>
+                  <Icon name='refresh' />
+                  <p>Refresh cart</p>
                 </div>
-              </div>
-              <div className="cart__products__quantity">
-                <button onClick={() => incrementCartItem(product?.id, product?.quantity)}>
-                  <Icon name="plus" />
-                </button>
-                <span>{product?.quantity}</span>
-                <button onClick={() => decrementCartItem(product?.id, product?.quantity)}>
-                  <Icon name="minus" />
-                </button>
-              </div>
-              <div className="cart__products__price">
-                <span>{product?.price?.formatted_with_symbol}</span>
-              </div>
-              <div className="cart__products__total">
-                <span>{product?.line_total?.formatted_with_symbol}</span>
-              </div>
-              <Tooltip title="Remove from cart" aria-label="Remove from cart">
-                <button className="cart__product__remove" onClick={() => removeFromCart(product?.id)}>
-                  <Icon name="close" />
-                </button>
+              </Tooltip>
+              <Tooltip
+                title="Can't see what you are looking for"
+                aria-label='refresh cart'
+              >
+                <div
+                  className='cart__action__button empty__cart__button'
+                  onClick={() => emptyCart()}
+                >
+                  <Icon name='delete' />
+                  <p>Empty cart</p>
+                </div>
               </Tooltip>
             </div>
-          ))}
-        </div>
-        <div className="cart__actions__button__container">
-          <Tooltip title="Can't see what you are looking for" aria-label="refresh cart">
-            <div className="cart__action__button " onClick={() => refreshCart()}>
-              <Icon name="refresh" />
-              <p>Refresh cart</p>
-            </div>
-          </Tooltip>
-          <Tooltip title="Can't see what you are looking for" aria-label="refresh cart">
-            <div className="cart__action__button empty__cart__button" onClick={() => emptyCart()}>
-              <Icon name="delete" />
-              <p>Empty cart</p>
-            </div>
-          </Tooltip>
-        </div>
-      </CartProductsContainer>
+          </CartProductsContainer>
+        </>
+      )}
 
       <BackdropMaker open={openBackdrop}>
-        <Kawaii name="folder" mood={backdropMood} message={backdropMessage} />
+        <Kawaii name='folder' mood={backdropMood} message={backdropMessage} />
       </BackdropMaker>
     </CartContainer>
   );

@@ -1,13 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link, useLocation, useHistory } from 'react-router-dom';
-import commerce from '../../lib/commerce';
-import styled from 'styled-components';
-import { theme, mixins } from '../../styles';
-import { Icon, Kawaii, BackdropMaker } from '../index';
-import { Helmet } from 'react-helmet';
-import { addWishedProducts, getUserData, removeWishedProducts } from '../../lib/firestore/userData';
-import { useSelector, useDispatch } from 'react-redux';
-import { makeNotification, setUser, storeToCart } from '../../redux';
+import React, { useState, useEffect } from "react";
+import { useParams, Link, useLocation, useHistory } from "react-router-dom";
+import commerce from "../../lib/commerce";
+import styled from "styled-components";
+import { theme, mixins } from "../../styles";
+import { Icon, Kawaii, BackdropMaker } from "../index";
+import { Helmet } from "react-helmet";
+import {
+  addWishedProducts,
+  getUserData,
+  removeWishedProducts,
+} from "../../lib/firestore/userData";
+import { useSelector, useDispatch } from "react-redux";
+import { makeNotification, setUser, storeToCart } from "../../redux";
+import { Skeleton } from "@material-ui/lab";
 
 const { colors } = theme;
 const ProductContainer = styled.section`
@@ -132,7 +137,7 @@ const ProductDetailsContainer = styled.div`
 
       .product__image__banner {
         position: absolute;
-        content: '';
+        content: "";
         top: 0;
         left: 0;
         width: 100%;
@@ -208,7 +213,9 @@ const Product = () => {
   const [productColors, setProductColors] = useState(null);
   const [imageToShow, setImageToShow] = useState(null);
   const [openBackdrop, setOpenBackdrop] = useState(false);
-  const [backdropMessage, setbackdropMessage] = useState('We are working on it...');
+  const [backdropMessage, setbackdropMessage] = useState(
+    "We are working on it..."
+  );
   const [wishlistedProduct, setWishlistedProduct] = useState(false);
 
   const path = useParams();
@@ -235,7 +242,9 @@ const Product = () => {
   useEffect(() => {
     if (path) {
       const checkWishlistHasProduct = (productId) => {
-        const filteredWishlist = wishlist?.filter((wishedProductId) => wishedProductId !== productId);
+        const filteredWishlist = wishlist?.filter(
+          (wishedProductId) => wishedProductId !== productId
+        );
         if (filteredWishlist?.length === wishlist?.length) {
           setWishlistedProduct(false);
         } else {
@@ -251,13 +260,22 @@ const Product = () => {
     if (response) {
       setProduct(response);
       setImageToShow(response?.assets[0].url);
-      const requiredSizes = response?.variant_groups?.filter((variantGroup) => variantGroup.name === 'size')[0];
-      const requiredColors = response?.variant_groups?.filter((variantGroup) => variantGroup.name === 'color')[0];
+      const requiredSizes = response?.variant_groups?.filter(
+        (variantGroup) => variantGroup.name === "size"
+      )[0];
+      const requiredColors = response?.variant_groups?.filter(
+        (variantGroup) => variantGroup.name === "color"
+      )[0];
 
-      const modifiedSizes = requiredSizes?.options.map((size) => ({ ...size, checked: false }));
+      const modifiedSizes = requiredSizes?.options.map((size) => ({
+        ...size,
+        checked: false,
+      }));
 
       const modifiedColors = requiredColors?.options?.map((option) => {
-        const productPic = response?.assets?.find((asset) => asset.id === option.assets.find((asset) => asset));
+        const productPic = response?.assets?.find(
+          (asset) => asset.id === option.assets.find((asset) => asset)
+        );
         return { ...option, productPic, checked: false };
       });
 
@@ -267,20 +285,32 @@ const Product = () => {
   };
   const selectColor = (selectedProduct) => {
     setImageToShow(selectedProduct?.productPic?.url);
-    const clearSizes = productColors.map((product) => (product.id !== selectedProduct.id ? { ...product, checked: false } : product));
+    const clearSizes = productColors.map((product) =>
+      product.id !== selectedProduct.id
+        ? { ...product, checked: false }
+        : product
+    );
     setProductColors(
-      clearSizes.map((product) => (product.id === selectedProduct.id ? { ...product, checked: !selectedProduct.checked } : product))
+      clearSizes.map((product) =>
+        product.id === selectedProduct.id
+          ? { ...product, checked: !selectedProduct.checked }
+          : product
+      )
     );
   };
 
   const selectSize = (selectedSize) => {
     const clearSizes = productSizes.map((individualSize) =>
-      individualSize.id !== selectedSize.id ? { ...individualSize, checked: false } : individualSize
+      individualSize.id !== selectedSize.id
+        ? { ...individualSize, checked: false }
+        : individualSize
     );
 
     setProductSizes(
       clearSizes.map((individualSize) =>
-        individualSize.id === selectedSize.id ? { ...individualSize, checked: !individualSize.checked } : individualSize
+        individualSize.id === selectedSize.id
+          ? { ...individualSize, checked: !individualSize.checked }
+          : individualSize
       )
     );
   };
@@ -290,11 +320,11 @@ const Product = () => {
     if (uid) {
       let response;
       if (wishlistedProduct) {
-        setbackdropMessage('Removing from wishlist...');
+        setbackdropMessage("Removing from wishlist...");
         backdropOpen();
         response = await removeWishedProducts(email, productId);
       } else {
-        setbackdropMessage('Adding to wishlist...');
+        setbackdropMessage("Adding to wishlist...");
         backdropOpen();
         response = await addWishedProducts(email, productId);
       }
@@ -302,27 +332,47 @@ const Product = () => {
       const userDataRes = await getUserData(userDetails);
       dispatch(setUser(userDataRes));
       backdropClose();
-      if (response.status === 'error') {
-        dispatch(makeNotification({ message: response.message, variant: response.status, duration: 1500 }));
+      if (response.status === "error") {
+        dispatch(
+          makeNotification({
+            message: response.message,
+            variant: response.status,
+            duration: 1500,
+          })
+        );
       }
       //otherwise push to signup page
     } else {
-      dispatch(makeNotification({ message: 'Please sign in before adding product to wishlist', variant: 'info', duration: 3000 }));
-      history.push('/signin');
+      dispatch(
+        makeNotification({
+          message: "Please sign in before adding product to wishlist",
+          variant: "info",
+          duration: 3000,
+        })
+      );
+      history.push("/signin");
     }
   };
 
   const manageProductCart = async (productId) => {
     const initialQuantity = 1;
     if (uid) {
-      setbackdropMessage('Adding to cart...');
+      setbackdropMessage("Adding to cart...");
       backdropOpen();
-      const selectedSize = productSizes?.filter((size) => size?.checked === true);
-      const selectedColor = productColors?.filter((size) => size?.checked === true);
+      const selectedSize = productSizes?.filter(
+        (size) => size?.checked === true
+      );
+      const selectedColor = productColors?.filter(
+        (size) => size?.checked === true
+      );
 
       if (selectedSize?.length !== 0 && selectedColor?.length !== 0) {
-        const sizeVarient = product?.variant_groups?.filter((variantGroup) => variantGroup.name === 'size')[0];
-        const colorVarient = product?.variant_groups?.filter((variantGroup) => variantGroup.name === 'color')[0];
+        const sizeVarient = product?.variant_groups?.filter(
+          (variantGroup) => variantGroup.name === "size"
+        )[0];
+        const colorVarient = product?.variant_groups?.filter(
+          (variantGroup) => variantGroup.name === "color"
+        )[0];
 
         const res = await commerce.cart.add(productId, initialQuantity, {
           [sizeVarient?.id]: selectedSize[0]?.id,
@@ -331,78 +381,129 @@ const Product = () => {
         dispatch(storeToCart(res?.cart));
       } else {
         if (selectedSize.length === 0) {
-          dispatch(makeNotification({ message: 'Please select desired size', variant: 'warning', duration: 2000 }));
+          dispatch(
+            makeNotification({
+              message: "Please select desired size",
+              variant: "warning",
+              duration: 2000,
+            })
+          );
         } else {
-          dispatch(makeNotification({ message: 'Please select desired color', variant: 'warning', duration: 2000 }));
+          dispatch(
+            makeNotification({
+              message: "Please select desired color",
+              variant: "warning",
+              duration: 2000,
+            })
+          );
         }
       }
 
       // const res = await commerce.cart.empty();
       backdropClose();
     } else {
-      dispatch(makeNotification({ message: 'Please sign in before adding product to cart', variant: 'info', duration: 3000 }));
-      history.push('/signin');
+      dispatch(
+        makeNotification({
+          message: "Please sign in before adding product to cart",
+          variant: "info",
+          duration: 3000,
+        })
+      );
+      history.push("/signin");
     }
   };
 
   return (
     <ProductContainer>
       <Helmet>
-        <title>{`Shoey - ${product?.name ? product.name : 'View product'}`}</title>
+        <title>{`Shoey - ${
+          product === null ? "View product" : product.name
+        }`}</title>
       </Helmet>
       <ProductActionContainer>
-        <div className="product__action__image__container">
-          <img src={imageToShow} alt="product display" />
+        <div className='product__action__image__container'>
+          {imageToShow === null ? (
+            <Skeleton width='100%' height='100%' />
+          ) : (
+            <img src={imageToShow} alt='product display' />
+          )}
         </div>
 
-        <div className="product__button__container">
-          <button className="product__wishlist__button" onClick={() => manageProductWishlist(email, product?.id)}>
-            <Icon name="heart" />
-            {wishlistedProduct ? 'Remove from wishlist' : 'Add to wishlist'}
-          </button>
-          <button className="product__cart__button" onClick={() => manageProductCart(product?.id)}>
-            <Icon name="Cart" />
-            Add to cart
-          </button>
+        <div className='product__button__container'>
+          {product === null ? (
+            <Skeleton width='100%' height='70px' />
+          ) : (
+            <button
+              className='product__wishlist__button'
+              onClick={() => manageProductWishlist(email, product.id)}
+            >
+              <Icon name='heart' />
+              {wishlistedProduct ? "Remove from wishlist" : "Add to wishlist"}
+            </button>
+          )}
+          {product === null ? (
+            <Skeleton width='100%' height='70px' />
+          ) : (
+            <button
+              className='product__cart__button'
+              onClick={() => manageProductCart(product.id)}
+            >
+              <Icon name='Cart' />
+              Add to cart
+            </button>
+          )}
         </div>
       </ProductActionContainer>
       <ProductDetailsContainer>
         {product ? (
           <>
-            <Link to={`/${location?.pathname?.split('/')[1]}`} className="product__back__link">
-              <Icon name="arrowBack" />
+            <Link
+              to={`/${location.pathname.split("/")[1]}`}
+              className='product__back__link'
+            >
+              <Icon name='arrowBack' />
               Back to shopping list
             </Link>
-            <h1 className="product__title">{product.name}</h1>
-            <h2 className="product__price">Rs. {product.price.formatted}</h2>
-            <p className="product__tax">inclusive of all taxes</p>
-            <h5 className="product__section__heading">
-              <Icon name="gallery" />
-              Select color <span>({productColors ? productColors?.length : '0'})</span>
+
+            <h1 className='product__title'>{product.name}</h1>
+            <h2 className='product__price'>Rs. {product.price.formatted}</h2>
+            <p className='product__tax'>inclusive of all taxes</p>
+            <h5 className='product__section__heading'>
+              <Icon name='gallery' />
+              Select color{" "}
+              <span>({productColors ? productColors?.length : "0"})</span>
             </h5>
-            <div className="product__images">
+            <div className='product__images'>
               {productColors?.map((product, i) => (
                 <div
-                  className={`product__image__container ${product.checked === true ? 'color__checked' : ''}`}
+                  className={`product__image__container ${
+                    product.checked === true ? "color__checked" : ""
+                  }`}
                   key={i}
                   onClick={() => selectColor(product)}
                 >
-                  <img src={product?.productPic?.url} alt={product?.productPic?.filename} />
-                  <div className="product__image__banner">
-                    <p>{product.checked ? `Selected` : 'Cick to select'}</p>
+                  <img
+                    src={product.productPic.url}
+                    alt={product.productPic.filename}
+                  />
+                  <div className='product__image__banner'>
+                    <p>{product.checked ? `Selected` : "Cick to select"}</p>
                   </div>
                 </div>
               ))}
             </div>
-            <h5 className="product__section__heading">
-              <Icon name="size" />
-              Select size <span>({productSizes ? productSizes?.length : '0'})</span>
+            <h5 className='product__section__heading'>
+              <Icon name='size' />
+              Select size{" "}
+              <span>({productSizes ? productSizes.length : "0"})</span>
             </h5>
-            <div className="product__sizes">
+            <div className='product__sizes'>
               {productSizes
-                ? productSizes?.map((size) => (
+                ? productSizes.map((size) => (
                     <div
-                      className={`product__size ${size.checked === true ? 'size__checked' : ''}`}
+                      className={`product__size ${
+                        size.checked === true ? "size__checked" : ""
+                      }`}
                       key={size.id}
                       onClick={() => selectSize(size)}
                     >
@@ -411,16 +512,20 @@ const Product = () => {
                   ))
                 : null}
             </div>
-            <h5 className="product__section__heading">
-              <Icon name="description" />
+            <h5 className='product__section__heading'>
+              <Icon name='description' />
               Product description
             </h5>
-            <p className="product__description" contentEditable="false" dangerouslySetInnerHTML={{ __html: product.description }} />
+            <p
+              className='product__description'
+              contentEditable='false'
+              dangerouslySetInnerHTML={{ __html: product.description }}
+            />
           </>
         ) : null}
       </ProductDetailsContainer>
       <BackdropMaker open={openBackdrop}>
-        <Kawaii name="folder" mood="blissful" message={backdropMessage} />
+        <Kawaii name='folder' mood='blissful' message={backdropMessage} />
       </BackdropMaker>
     </ProductContainer>
   );
