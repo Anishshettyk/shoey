@@ -1,7 +1,8 @@
-import * as types from './cartTypes';
+import * as types from "./cartTypes";
 
 const initialState = {
   cartDetails: {},
+  cartToken: {},
 };
 
 const cartReducer = (state = initialState, action) => {
@@ -10,6 +11,11 @@ const cartReducer = (state = initialState, action) => {
       return {
         ...state,
         cartDetails: { ...action.payload },
+      };
+    case types.STORE_CART_TOKEN:
+      return {
+        ...state,
+        cartToken: { ...action.payload },
       };
     default:
       return state;

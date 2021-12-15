@@ -4,9 +4,17 @@ import { theme, mixins } from "../../styles";
 import { useSelector, useDispatch } from "react-redux";
 import { Icon, Kawaii, BackdropMaker } from "../index";
 import commerce from "../../lib/commerce";
-import { storeToCart, makeNotification } from "../../redux";
+import {
+  storeToCart,
+  storeCartToken,
+  makeNotification,
+  setPaymentPending,
+  setProfileTab,
+} from "../../redux";
 import { Tooltip } from "@material-ui/core";
 import { Link } from "react-router-dom";
+import { Button } from "@material-ui/core";
+import { useHistory } from "react-router-dom";
 
 const { colors } = theme;
 const CartContainer = styled.section`
@@ -177,6 +185,47 @@ const EmptyWishlist = styled.div`
   }
 `;
 
+const CartSummary = styled.section`
+  margin: 90px auto 0px;
+  ${mixins.flexCenter};
+  ${mixins.shadow}
+  max-width:400px;
+  h1 {
+    text-align: center;
+    font-size: 22px;
+  }
+  ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+    flex-direction: column;
+    min-width: 300px;
+    li {
+      margin-bottom: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      span {
+        font-weight: 500;
+
+        &:first-child {
+          color: ${colors.darkGrey};
+        }
+      }
+      .total__summary {
+        font-size: 22px;
+        font-weight: bold;
+        color: ${colors.blue};
+      }
+    }
+  }
+  .pay__button {
+    width: 100%;
+    margin: 20px 0px;
+  }
+`;
+
 const Cart = () => {
   const [openBackdrop, setOpenBackdrop] = useState(false);
   const [backdropMessage, setbackdropMessage] = useState(
@@ -185,7 +234,9 @@ const Cart = () => {
   const [backdropMood, setBackdropMood] = useState("blissful");
 
   const { cartDetails } = useSelector((state) => state.cart);
+  const { userDetails } = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const backdropOpen = () => {
     setOpenBackdrop(!openBackdrop);
@@ -323,6 +374,43 @@ const Cart = () => {
     }
   };
 
+  const actionOnPayment = async () => {
+    if (!userDetails?.shippingAddress?.length > 0) {
+      //make notification to add shipping addShipping address
+      dispatch(
+        makeNotification({
+          message: "Please add shipping address",
+          variant: "info",
+          duration: 3000,
+        })
+      );
+      //set pending payment
+      dispatch(setPaymentPending(true));
+      // set tab value to shipping address
+      dispatch(setProfileTab(1));
+      //push user to shipping address page
+      history.push("/profile");
+    } else {
+      try {
+        const token = await commerce.checkout.generateToken(cartDetails.id, {
+          type: "cart",
+        });
+
+        if (token?.id) {
+          dispatch(storeCartToken(token));
+        }
+      } catch {
+        dispatch(
+          makeNotification({
+            message: "Unexpected error occured. Please try again.",
+            variant: "error",
+            duration: 2000,
+          })
+        );
+      }
+    }
+  };
+
   return (
     <CartContainer>
       {cartDetails.total_items === 0 ? (
@@ -428,6 +516,36 @@ const Cart = () => {
               </Tooltip>
             </div>
           </CartProductsContainer>
+          <CartSummary>
+            <div className='cart__summary__heading'>
+              <h1>Summary</h1>
+              <ul>
+                <li>
+                  <span>Subtotal</span>
+                  <span>{cartDetails?.subtotal?.formatted_with_symbol}</span>
+                </li>
+                <li>
+                  <span>Shipping cost</span>
+                  <span>₹0.00</span>
+                </li>
+                <li>
+                  <span>Total</span>
+                  <span className='total__summary'>
+                    {cartDetails?.subtotal?.formatted_with_symbol}
+                  </span>
+                </li>
+              </ul>
+              <Button
+                variant='contained'
+                color='primary'
+                className='pay__button'
+                onClick={actionOnPayment}
+              >
+                {" "}
+                Pay {cartDetails?.subtotal?.formatted_with_symbol}
+              </Button>
+            </div>
+          </CartSummary>
         </>
       )}
 

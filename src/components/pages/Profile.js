@@ -1,6 +1,6 @@
-import React, { useState, forwardRef } from 'react';
-import styled from 'styled-components';
-import { theme, mixins, media } from '../../styles';
+import React, { useState, forwardRef, useEffect } from "react";
+import styled from "styled-components";
+import { theme, mixins, media } from "../../styles";
 import {
   Avatar,
   Button,
@@ -22,29 +22,50 @@ import {
   FormControlLabel,
   RadioGroup,
   Radio,
-} from '@material-ui/core';
-import { formatSecondsToDate } from '../../utils';
-import { Link } from 'react-router-dom';
-import { deleteUserAccount, updateUserDetails, getUserData } from '../../lib/firestore/userData';
-import { useDispatch, useSelector } from 'react-redux';
-import { signoutUser, setUser, makeNotification } from '../../redux';
-import { deleteUser } from '../../lib/firebase';
-import { ProgressBar, Kawaii, BackdropMaker } from '../index';
-import PropTypes from 'prop-types';
-import { deleteUserPic } from '../../lib/storage/userData';
-import { Helmet } from 'react-helmet';
+  Select,
+  InputLabel,
+  MenuItem,
+} from "@material-ui/core";
+import { formatSecondsToDate } from "../../utils";
+import { Link } from "react-router-dom";
+import {
+  deleteUserAccount,
+  updateUserDetails,
+  getUserData,
+  addShippingAddress,
+} from "../../lib/firestore/userData";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  signoutUser,
+  setUser,
+  makeNotification,
+  setProfileTab,
+} from "../../redux";
+import { deleteUser } from "../../lib/firebase";
+import { ProgressBar, Kawaii, BackdropMaker } from "../index";
+import PropTypes from "prop-types";
+import { deleteUserPic } from "../../lib/storage/userData";
+import { Helmet } from "react-helmet";
+import commerce from "../../lib/commerce";
+import { useHistory } from "react-router-dom";
 
 const { colors, transitionTime } = theme;
 
 const Transition = forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
+  return <Slide direction='up' ref={ref} {...props} />;
 });
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
   return (
-    <div role="tabpanel" hidden={value !== index} id={`simple-tabpanel-${index}`} aria-labelledby={`simple-tab-${index}`} {...other}>
+    <div
+      role='tabpanel'
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
       {value === index && <Box p={3}>{children}</Box>}
     </div>
   );
@@ -59,7 +80,7 @@ TabPanel.propTypes = {
 function a11yProps(index) {
   return {
     id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
   };
 }
 
@@ -69,30 +90,30 @@ const useStyles = makeStyles((theme) => ({
     height: theme.spacing(13),
   },
   appBar: {
-    boxShadow: 'none',
+    boxShadow: "none",
   },
   gender: {
-    marginTop: '20px',
+    marginTop: "20px",
   },
 }));
 
 const StyledAppBar = withStyles({
   root: {
-    backgroundColor: 'transparent',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "transparent",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
 })((props) => <AppBar {...props} />);
 
 const StyledTabs = withStyles({
   indicator: {
-    display: 'flex',
-    justifyContent: 'center',
-    backgroundColor: 'transparent',
-    '& > span': {
-      maxWidth: '90%',
-      width: '100%',
+    display: "flex",
+    justifyContent: "center",
+    backgroundColor: "transparent",
+    "& > span": {
+      maxWidth: "90%",
+      width: "100%",
       backgroundColor: colors.blue,
     },
   },
@@ -100,19 +121,19 @@ const StyledTabs = withStyles({
 
 const StyledTab = withStyles((theme) => ({
   root: {
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
     color: colors.black,
     fontWeight: theme.typography.fontWeightBold,
     fontSize: theme.typography.pxToRem(13),
     marginRight: theme.spacing(1),
-    padding: '10px 20px',
+    padding: "10px 20px",
     backgroundColor: colors.grey3,
-    '&:focus': {
+    "&:focus": {
       opacity: 1,
     },
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down("sm")]: {
       fontSize: theme.typography.pxToRem(10),
-      padding: '5px 10px',
+      padding: "5px 10px",
     },
   },
 }))((props) => <Tab disableRipple {...props} />);
@@ -234,13 +255,30 @@ const UserDetailsPanel = styled(TabPanel)`
 `;
 
 const Profile = () => {
-  const { userDetails } = useSelector((state) => state.user);
-  const { displayName, email, phoneNumber, photoURL, createdAt, gender } = userDetails;
+  const { userDetails, profileTab, paymentPending } = useSelector(
+    (state) => state.user
+  );
+  const { displayName, email, phoneNumber, photoURL, createdAt, gender } =
+    userDetails;
 
-  const dName = displayName ? displayName : '';
-  const pNumber = phoneNumber ? phoneNumber : '';
-  const initialGender = gender ? gender : '';
-  const fileTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+  const checkDetailsExist = (data, type) => {
+    let dataToResolve;
+    if (data?.shippingAddress) {
+      dataToResolve = data.shippingAddress[0];
+      if (dataToResolve[type]) {
+        return dataToResolve[type];
+      } else {
+        return "";
+      }
+    } else {
+      return "";
+    }
+  };
+
+  const dName = displayName ? displayName : "";
+  const pNumber = phoneNumber ? phoneNumber : "";
+  const initialGender = gender ? gender : "";
+  const fileTypes = ["image/png", "image/jpeg", "image/jpg"];
 
   const [userName, setUserName] = useState(dName);
   const [userPhoneNumber, setUserPhoneNumber] = useState(pNumber);
@@ -248,11 +286,64 @@ const Profile = () => {
   const [openBackdrop, setOpenBackdrop] = useState(false);
   const [file, setFile] = useState(null);
   const [fileError, setFileError] = useState(null);
-  const [tabNumber, setTabNumber] = useState(0);
+  const [tabNumber, setTabNumber] = useState(profileTab ? profileTab : 0);
   const [genderValue, setGenderValue] = useState(initialGender);
+
+  //shipping address
+  const [address, setAddress] = useState(
+    checkDetailsExist(userDetails, "address")
+  );
+  const [landmark, setLandmark] = useState(
+    checkDetailsExist(userDetails, "landmark")
+  );
+  const [pincode, setPincode] = useState(
+    checkDetailsExist(userDetails, "pincode")
+  );
+  const [countries, setCountries] = useState([]);
+  const [country, setCountry] = useState(
+    checkDetailsExist(userDetails, "country")
+  );
+  const [subDivisions, setSubDivisions] = useState([]);
+  const [subDivision, setSubDivision] = useState(
+    checkDetailsExist(userDetails, "subDivison")
+  );
 
   const classes = useStyles();
   const dispatch = useDispatch();
+  const history = useHistory();
+
+  //get all country details
+  useEffect(() => {
+    const getCountries = async () => {
+      try {
+        const data = await commerce.services.localeListCountries();
+        if (data && data?.countries) {
+          setCountries(data.countries);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getCountries();
+  }, []);
+
+  useEffect(() => {
+    const getCountrySubDivisions = async (countryCode) => {
+      try {
+        const data = await commerce.services.localeListSubdivisions(
+          countryCode
+        );
+        if (data && data?.subdivisions) {
+          setSubDivisions(data.subdivisions);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    if (country !== null && country.length > 0) {
+      getCountrySubDivisions(country);
+    }
+  }, [country]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -268,6 +359,7 @@ const Profile = () => {
   };
   const handleTabChange = (event, newValue) => {
     setTabNumber(newValue);
+    dispatch(setProfileTab(newValue));
   };
   const handleUserGender = (event) => {
     setGenderValue(event.target.value);
@@ -281,7 +373,13 @@ const Profile = () => {
     await deleteUser(); //authentication delete
     backdropClose();
     dispatch(signoutUser()); //sign out user and push to home page.
-    dispatch(makeNotification({ message: 'Account deleted successfully.', variant: 'success', duration: 3000 }));
+    dispatch(
+      makeNotification({
+        message: "Account deleted successfully.",
+        variant: "success",
+        duration: 3000,
+      })
+    );
   };
 
   const updateUserDetailsForm = async (event) => {
@@ -295,11 +393,23 @@ const Profile = () => {
     const userDataRes = await getUserData(userDetails);
     dispatch(setUser(userDataRes));
     backdropClose();
-    if (resultType === 'success') {
-      dispatch(makeNotification({ message: 'Profile details updated successfully.', variant: 'success', duration: 3000 }));
+    if (resultType === "success") {
+      dispatch(
+        makeNotification({
+          message: "Profile details updated successfully.",
+          variant: "success",
+          duration: 3000,
+        })
+      );
     }
-    if (resultType === 'error') {
-      dispatch(makeNotification({ message: 'Unexpected error occured. Please try again.', variant: 'error', duration: 3000 }));
+    if (resultType === "error") {
+      dispatch(
+        makeNotification({
+          message: "Unexpected error occured. Please try again.",
+          variant: "error",
+          duration: 3000,
+        })
+      );
     }
   };
 
@@ -310,9 +420,56 @@ const Profile = () => {
       setFile(fileSelected);
       setFileError(null);
     } else {
-      dispatch(makeNotification({ message: 'please select a valid file type (png or jpeg).', variant: 'warning', duration: 4000 }));
-      setFileError('please select a valid file type (png or jpeg).');
+      dispatch(
+        makeNotification({
+          message: "please select a valid file type (png or jpeg).",
+          variant: "warning",
+          duration: 4000,
+        })
+      );
+      setFileError("please select a valid file type (png or jpeg).");
       setFile(null);
+    }
+  };
+
+  const saveShippingAddress = async () => {
+    let response;
+    response = await addShippingAddress(email, {
+      address,
+      landmark,
+      pincode,
+      country,
+      subDivision,
+    });
+    if (response.status === "success") {
+      dispatch(
+        makeNotification({
+          message: response.message,
+          variant: "success",
+          duration: 2000,
+        })
+      );
+      //retrive user details back
+      const userDataRes = await getUserData(userDetails);
+      dispatch(setUser(userDataRes));
+      if (paymentPending) {
+        history.push("/cart");
+        dispatch(
+          makeNotification({
+            message: "proceed with payment",
+            variant: "info",
+            duration: 2000,
+          })
+        );
+      }
+    } else {
+      dispatch(
+        makeNotification({
+          message: response.message,
+          variant: "error",
+          duration: 2000,
+        })
+      );
     }
   };
 
@@ -324,40 +481,59 @@ const Profile = () => {
       <UserInfoContainer>
         <Avatar src={photoURL} alt={email} className={classes.avatar} />
         <h1>Welcome, {displayName ? displayName : email}...</h1>
-        <p className="joined__on"> Joined on {formatSecondsToDate(createdAt.seconds)}</p>
-        <p className="profile__para">Manage your info, shipping address to make Shoey work better for you.</p>
+        <p className='joined__on'>
+          {" "}
+          Joined on {formatSecondsToDate(createdAt.seconds)}
+        </p>
+        <p className='profile__para'>
+          Manage your info, shipping address to make Shoey work better for you.
+        </p>
       </UserInfoContainer>
       <UserActionsContainer>
-        <StyledAppBar position="static" className={classes.appBar}>
-          <StyledTabs aria-label="User actions tab" className={classes.tab} value={tabNumber} onChange={handleTabChange}>
-            <StyledTab label="User Details" {...a11yProps(0)} />
-            <StyledTab label="Shipping Address" {...a11yProps(1)} />
-            <StyledTab label="Change Password" {...a11yProps(2)} />
+        <StyledAppBar position='static' className={classes.appBar}>
+          <StyledTabs
+            aria-label='User actions tab'
+            className={classes.tab}
+            value={tabNumber}
+            onChange={handleTabChange}
+          >
+            <StyledTab label='User Details' {...a11yProps(0)} />
+            <StyledTab label='Shipping Address' {...a11yProps(1)} />
+            <StyledTab label='Change Password' {...a11yProps(2)} />
           </StyledTabs>
         </StyledAppBar>
         <UserDetailsPanel value={tabNumber} index={0}>
-          <h1 className="tab__heading">Personal info</h1>
-          <p className="profile__para">Basic info, like your name and photo, that you use on Shoey services.</p>
-          <div className="user__pic__container">
+          <h1 className='tab__heading'>Personal info</h1>
+          <p className='profile__para'>
+            Basic info, like your name and photo, that you use on Shoey
+            services.
+          </p>
+          <div className='user__pic__container'>
             <Avatar src={photoURL} alt={email} className={classes.avatar} />
             <label>
-              <input type="file" onChange={handleUserPhotoUpload} />
-              <span>{photoURL ? 'Upload new pic' : 'Upload pic'}</span>
+              <input type='file' onChange={handleUserPhotoUpload} />
+              <span>{photoURL ? "Upload new pic" : "Upload pic"}</span>
             </label>
           </div>
 
-          <div className="output__file">
-            {fileError && <div className="error_message">{fileError}</div>}
-            {file && <div className="file__name">File name: {file.name}</div>}
-            {file && <ProgressBar file={file} setFile={setFile} userDetails={userDetails} />}
+          <div className='output__file'>
+            {fileError && <div className='error_message'>{fileError}</div>}
+            {file && <div className='file__name'>File name: {file.name}</div>}
+            {file && (
+              <ProgressBar
+                file={file}
+                setFile={setFile}
+                userDetails={userDetails}
+              />
+            )}
           </div>
-          <div className="user__details__container">
+          <div className='user__details__container'>
             <form onSubmit={updateUserDetailsForm}>
               <TextField
-                type="text"
-                label="Name"
-                variant="outlined"
-                color="primary"
+                type='text'
+                label='Name'
+                variant='outlined'
+                color='primary'
                 fullWidth
                 value={userName}
                 onChange={(event) => {
@@ -365,38 +541,66 @@ const Profile = () => {
                 }}
               />
               <TextField
-                type="number"
-                label="Phone number"
-                variant="outlined"
-                color="primary"
+                type='number'
+                label='Phone number'
+                variant='outlined'
+                color='primary'
                 fullWidth
                 value={userPhoneNumber}
                 onChange={(event) => {
                   setUserPhoneNumber(event.target.value);
                 }}
               />
-              <FormControl component="fieldset" className={classes.gender}>
-                <FormLabel component="legend">Gender</FormLabel>
-                <RadioGroup aria-label="gender" name="gender1" value={genderValue} onChange={handleUserGender}>
-                  <FormControlLabel value="female" control={<Radio color="primary" />} label="Female" />
-                  <FormControlLabel value="male" control={<Radio color="primary" />} label="Male" />
-                  <FormControlLabel value="other" control={<Radio color="primary" />} label="Other" />
+              <FormControl component='fieldset' className={classes.gender}>
+                <FormLabel component='legend'>Gender</FormLabel>
+                <RadioGroup
+                  aria-label='gender'
+                  name='gender1'
+                  value={genderValue}
+                  onChange={handleUserGender}
+                >
+                  <FormControlLabel
+                    value='female'
+                    control={<Radio color='primary' />}
+                    label='Female'
+                  />
+                  <FormControlLabel
+                    value='male'
+                    control={<Radio color='primary' />}
+                    label='Male'
+                  />
+                  <FormControlLabel
+                    value='other'
+                    control={<Radio color='primary' />}
+                    label='Other'
+                  />
                 </RadioGroup>
               </FormControl>
-              <div className="user__details__submit">
-                <Button variant="contained" color="primary" type="submit" onClick={backdropOpen}>
+              <div className='user__details__submit'>
+                <Button
+                  variant='contained'
+                  color='primary'
+                  type='submit'
+                  onClick={backdropOpen}
+                >
                   Save
                 </Button>
-                <Button variant="contained" component={Link} to="/">
+                <Button variant='contained' component={Link} to='/'>
                   Cancel
                 </Button>
               </div>
             </form>
           </div>
-          <div className="user__password__reset__container">
-            <h1 className="tab__heading">Close Account</h1>
-            <p className="profile__para">Delete your account and account data .</p>
-            <Button variant="contained" color="secondary" onClick={handleClickOpen}>
+          <div className='user__password__reset__container'>
+            <h1 className='tab__heading'>Close Account</h1>
+            <p className='profile__para'>
+              Delete your account and account data .
+            </p>
+            <Button
+              variant='contained'
+              color='secondary'
+              onClick={handleClickOpen}
+            >
               Delete Account
             </Button>
             <Dialog
@@ -404,29 +608,118 @@ const Profile = () => {
               TransitionComponent={Transition}
               keepMounted
               onClose={handleClose}
-              aria-labelledby="alert-dialog-slide-title"
-              aria-describedby="alert-dialog-slide-description"
+              aria-labelledby='alert-dialog-slide-title'
+              aria-describedby='alert-dialog-slide-description'
             >
-              <DialogTitle id="alert-dialog-slide-title">{'Are you sure you want to delete account?'}</DialogTitle>
+              <DialogTitle id='alert-dialog-slide-title'>
+                {"Are you sure you want to delete account?"}
+              </DialogTitle>
               <DialogContent>
-                <DialogContentText id="alert-dialog-slide-description">
-                  All the data like your cart, shipping address and products purchased will be lost.
+                <DialogContentText id='alert-dialog-slide-description'>
+                  All the data like your cart, shipping address and products
+                  purchased will be lost.
                 </DialogContentText>
               </DialogContent>
               <DialogActions>
-                <Button onClick={handleClose} color="primary">
+                <Button onClick={handleClose} color='primary'>
                   Close
                 </Button>
-                <Button onClick={DeleteUserAccount} color="secondary">
+                <Button onClick={DeleteUserAccount} color='secondary'>
                   Delete account
                 </Button>
               </DialogActions>
             </Dialog>
           </div>
         </UserDetailsPanel>
+        <UserDetailsPanel value={tabNumber} index={1}>
+          <h1 className='tab__heading'>Shipping address</h1>
+          <p className='profile__para'>
+            Please add your shipping address, so that we can ship your orders.
+          </p>
+          <form className='user__details__container'>
+            <TextField
+              type='text'
+              label='Address'
+              variant='outlined'
+              color='primary'
+              fullWidth
+              value={address}
+              multiline
+              rows={4}
+              onChange={(event) => {
+                setAddress(event.target.value);
+              }}
+            />
+            <TextField
+              type='text'
+              label='Landmark'
+              variant='outlined'
+              color='primary'
+              fullWidth
+              value={landmark}
+              onChange={(event) => {
+                setLandmark(event.target.value);
+              }}
+            />
+            <TextField
+              type='number'
+              label='Pincode'
+              variant='outlined'
+              color='primary'
+              fullWidth
+              value={pincode}
+              onChange={(event) => {
+                setPincode(event.target.value);
+              }}
+            />
+            <FormControl fullWidth variant='outlined'>
+              <InputLabel id='demo-simple-select-label'>Country</InputLabel>
+              <Select
+                value={country}
+                onChange={(event) => setCountry(event.target.value)}
+                fullWidth
+                variant='outlined'
+                labelId='demo-simple-select-label'
+              >
+                {Object.entries(countries).map((country) => (
+                  <MenuItem key={country[0]} value={country[0]}>
+                    {country[1]}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl fullWidth variant='outlined'>
+              <InputLabel id='country_label'>Sub-division</InputLabel>
+              <Select
+                labelId='country_label'
+                id='contry_select'
+                value={subDivision}
+                onChange={(event) => setSubDivision(event.target.value)}
+                fullWidth
+                variant='outlined'
+              >
+                {Object.entries(subDivisions).map((subDiv) => (
+                  <MenuItem key={subDiv[0]} value={subDiv[0]}>
+                    {subDiv[1]}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <Button
+              color='primary'
+              variant='contained'
+              onClick={saveShippingAddress}
+            >
+              {userDetails?.shippingAddress?.length > 0
+                ? "Save address"
+                : "Add address"}
+            </Button>
+          </form>
+        </UserDetailsPanel>
       </UserActionsContainer>
       <BackdropMaker open={openBackdrop}>
-        <Kawaii name="file" message="We are working on it..." />
+        <Kawaii name='file' message='We are working on it...' />
       </BackdropMaker>
     </ProfileContainer>
   );

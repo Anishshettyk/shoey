@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
-import { auth } from '../lib/firebase';
-import { useDispatch, useSelector } from 'react-redux';
-import { setUser, makeNotification } from '../redux';
-import { Navbar, SnackbarMaker } from './index';
-import styled from 'styled-components';
-import { getUserData } from '../lib/firestore/userData';
-import { UseAllProductsData, UseCartData } from '../functions/';
+import React, { useEffect } from "react";
+import { auth } from "../lib/firebase";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser, makeNotification } from "../redux";
+import { Navbar, SnackbarMaker } from "./index";
+import styled from "styled-components";
+import { getUserData } from "../lib/firestore/userData";
+import { UseAllProductsData, UseCartData } from "../functions";
 
 const StyledMain = styled.main`
   position: relative;
@@ -27,7 +27,13 @@ const Layout = ({ children }) => {
         const setUserData = async () => {
           const userDataRes = await getUserData(user.providerData[0]);
           dispatch(setUser(userDataRes));
-          dispatch(makeNotification({ message: `Signed in as ${userDataRes?.email}`, variant: 'success', duration: 2000 }));
+          dispatch(
+            makeNotification({
+              message: `Signed in as ${userDataRes?.email}`,
+              variant: "success",
+              duration: 2000,
+            })
+          );
         };
         setUserData();
       }
@@ -52,7 +58,7 @@ const Layout = ({ children }) => {
           times={notification.times}
         />
       ) : (
-        ''
+        ""
       )}
     </StyledMain>
   );

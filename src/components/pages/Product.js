@@ -13,6 +13,7 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { makeNotification, setUser, storeToCart } from "../../redux";
 import { Skeleton } from "@material-ui/lab";
+import { FindYouMayAlsoLike } from "../../functions";
 
 const { colors } = theme;
 const ProductContainer = styled.section`
@@ -223,8 +224,8 @@ const Product = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const { userDetails } = useSelector((state) => state.user);
+  const { allProducts } = useSelector((state) => state.products);
   const { email, uid, wishlist } = userDetails;
-  console.log(product);
 
   const backdropOpen = () => {
     setOpenBackdrop(!openBackdrop);
@@ -236,8 +237,16 @@ const Product = () => {
   useEffect(() => {
     if (path) {
       fetchProductDeatils(path.product_id);
+      FindYouMayAlsoLike(path.product_id);
     }
   }, [path]);
+
+  useEffect(() => {
+    if (path.product_id && allProducts?.length > 0) {
+      const res = FindYouMayAlsoLike(path.product_id);
+      console.log(res);
+    }
+  }, [path, allProducts]);
 
   useEffect(() => {
     if (path) {

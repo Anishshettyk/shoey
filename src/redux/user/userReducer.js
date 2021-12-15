@@ -1,8 +1,9 @@
-import * as types from './userTypes';
+import * as types from "./userTypes";
 
 const initialState = {
   userDetails: {},
-  shippingAddress: {},
+  profileTab: 0,
+  paymentPending: false,
 };
 
 const userReducer = (state = initialState, action) => {
@@ -16,6 +17,16 @@ const userReducer = (state = initialState, action) => {
       return {
         ...state,
         userDetails: {},
+      };
+    case types.SET_PROFILE_TAB:
+      return {
+        ...state,
+        profileTab: action.payload,
+      };
+    case types.SET_PAYMENT_PENDING:
+      return {
+        ...state,
+        paymentPending: action.payload,
       };
     default:
       return state;

@@ -1,7 +1,7 @@
 // storeUserData and getUserData can be combined to a single function but it will be hard to read and bulky after combination.
 
-import { db } from '../firebase';
-import firebase from 'firebase/app';
+import { db } from "../firebase";
+import firebase from "firebase/app";
 
 export const storeUserData = async (userAuth) => {
   let userData = {};
@@ -17,11 +17,11 @@ export const storeUserData = async (userAuth) => {
 
     try {
       await userref.set({ ...userAuth, createdAt });
-      console.log('user data is saved to database');
+      console.log("user data is saved to database");
       //after saving get that user details
       userData = getUserData(userAuth);
     } catch (err) {
-      console.error('error creating user returned=>', err.message);
+      console.error("error creating user returned=>", err.message);
     }
   }
   //return the user data after saving and retrieving.
@@ -49,50 +49,67 @@ export const getUserData = async (userAuth) => {
 export const deleteUserAccount = async (email) => {
   try {
     await db.doc(`users/${email}`).delete();
-    console.log(`user account of ${email} is deleted from database and records.`);
+    console.log(
+      `user account of ${email} is deleted from database and records.`
+    );
   } catch (error) {
-    console.error('Error deleting user account returned=>', error.message);
+    console.error("Error deleting user account returned=>", error.message);
   }
 };
 
 export const updateUserDetails = async (email, updateData) => {
-  let outputType = '';
+  let outputType = "";
   try {
     await db.doc(`users/${email}`).update({ ...updateData });
     console.log(`user account of ${email} is updated in database.`);
-    outputType = 'success';
+    outputType = "success";
     return outputType;
   } catch (error) {
-    console.error('Error updating user account returned=>', error.message);
-    outputType = 'error';
+    console.error("Error updating user account returned=>", error.message);
+    outputType = "error";
     return outputType;
   }
 };
 
 export const addWishedProducts = async (email, wishedProduct) => {
-  let status = '';
+  let status = "";
   try {
     await db.doc(`users/${email}`).update({
       wishlist: firebase.firestore.FieldValue.arrayUnion(wishedProduct),
     });
-    status = 'success';
-    return { status, message: 'Product added to wishlist' };
+    status = "success";
+    return { status, message: "Product added to wishlist" };
   } catch (error) {
-    status = 'error';
-    return { status, message: 'unexpected error occured, please try again!!' };
+    status = "error";
+    return { status, message: "unexpected error occured, please try again!!" };
   }
 };
 
 export const removeWishedProducts = async (email, wishedProduct) => {
-  let status = '';
+  let status = "";
   try {
     await db.doc(`users/${email}`).update({
       wishlist: firebase.firestore.FieldValue.arrayRemove(wishedProduct),
     });
-    status = 'success';
-    return { status, message: 'Product removed from wishlist' };
+    status = "success";
+    return { status, message: "Product removed from wishlist" };
   } catch (error) {
-    status = 'error';
-    return { status, message: 'unexpected error occured, please try again!!' };
+    status = "error";
+    return { status, message: "unexpected error occured, please try again!!" };
+  }
+};
+
+export const addShippingAddress = async (email, shippingAddress) => {
+  let status = "";
+  try {
+    await db.doc(`users/${email}`).update({
+      shippingAddress:
+        firebase.firestore.FieldValue.arrayUnion(shippingAddress),
+    });
+    status = "success";
+    return { status, message: "Shipping address saved successfully" };
+  } catch (error) {
+    status = "error";
+    return { status, message: "unexpected error occured, please try again!!" };
   }
 };

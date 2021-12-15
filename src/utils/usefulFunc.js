@@ -15,13 +15,13 @@ export const formatSecondsToDate = (secondsOptioned) => {
   const date = new Date(secondsOptioned * 1000);
   const joinDate = (date, format, joinFormat) => {
     function formatDate(m) {
-      let f = new Intl.DateTimeFormat('en', m);
+      let f = new Intl.DateTimeFormat("en", m);
       return f.format(date);
     }
     return format.map(formatDate).join(joinFormat);
   };
-  let format = [{ day: 'numeric' }, { month: 'short' }, { year: 'numeric' }];
-  let formatedDate = joinDate(date, format, '-');
+  let format = [{ day: "numeric" }, { month: "short" }, { year: "numeric" }];
+  let formatedDate = joinDate(date, format, "-");
   return formatedDate;
 };
 
@@ -32,4 +32,12 @@ export const valueChopper = (value, maxValue) => {
   } else {
     return value;
   }
+};
+
+export const shuffleArray = (array) => {
+  for (const index of array.keys()) {
+    const randomNumber = Math.floor(Math.random() * (index + 1));
+    [array[index], array[randomNumber]] = [array[randomNumber], array[index]];
+  }
+  return array;
 };

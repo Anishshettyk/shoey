@@ -1,5 +1,5 @@
-import React from 'react';
-import { GlobalStyle } from './styles';
+import React from "react";
+import { GlobalStyle } from "./styles";
 import {
   SignUp,
   Layout,
@@ -13,12 +13,13 @@ import {
   Product,
   Wishlist,
   Cart,
-} from './components';
-import { MuiThemeProvider, StylesProvider } from '@material-ui/core/styles';
-import { MuiThemes } from './styles';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import { Provider } from 'react-redux';
-import store from './redux/store';
+  Shipping,
+} from "./components";
+import { MuiThemeProvider, StylesProvider } from "@material-ui/core/styles";
+import { MuiThemes } from "./styles";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { Provider } from "react-redux";
+import store from "./redux/store";
 
 function App() {
   return (
@@ -29,15 +30,36 @@ function App() {
             <GlobalStyle />
             <Layout>
               <Switch>
-                <BlockedRoute component={SignUp} path="/signup" exact />
-                <BlockedRoute component={SignIn} path="/signin" exact />
-                <BlockedRoute component={ResetPassword} path="/reset-password" exact />
-                <Route component={Home} path="/" exact />
-                <Route component={MainCategory} exact={true} path={['/men', '/women', '/kids']} />
-                <Route component={Product} exact={true} path={['/men/:product_id', '/women/:product_id', '/kids/:product_id']} />
-                <UserRoute component={Profile} path="/profile" exact />
-                <UserRoute component={Wishlist} path="/wishlist" exact />
-                <UserRoute component={Cart} path="/cart" exact />
+                <BlockedRoute component={SignUp} path='/signup' exact />
+                <BlockedRoute component={SignIn} path='/signin' exact />
+                <BlockedRoute
+                  component={ResetPassword}
+                  path='/reset-password'
+                  exact
+                />
+                <Route component={Home} path='/' exact />
+                <Route
+                  component={MainCategory}
+                  exact={true}
+                  path={["/men", "/women", "/kids"]}
+                />
+                <Route
+                  component={Product}
+                  exact={true}
+                  path={[
+                    "/men/:product_id",
+                    "/women/:product_id",
+                    "/kids/:product_id",
+                  ]}
+                />
+                <UserRoute component={Profile} path='/profile' exact />
+                <UserRoute component={Wishlist} path='/wishlist' exact />
+                <UserRoute component={Cart} path='/cart' exact />
+                <UserRoute
+                  component={Shipping}
+                  path='/shipping-address'
+                  exact
+                />
               </Switch>
             </Layout>
           </Router>
