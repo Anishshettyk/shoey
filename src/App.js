@@ -14,6 +14,7 @@ import {
   Wishlist,
   Cart,
   Shipping,
+  Payment,
 } from "./components";
 import { MuiThemeProvider, StylesProvider } from "@material-ui/core/styles";
 import { MuiThemes } from "./styles";
@@ -60,6 +61,7 @@ function App() {
                   path='/shipping-address'
                   exact
                 />
+                <UserRoute component={Payment} path='/payment' exact />
               </Switch>
             </Layout>
           </Router>

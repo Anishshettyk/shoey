@@ -398,6 +398,7 @@ const Cart = () => {
 
         if (token?.id) {
           dispatch(storeCartToken(token));
+          history.push("/payment");
         }
       } catch {
         dispatch(

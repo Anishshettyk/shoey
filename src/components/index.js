@@ -26,6 +26,7 @@ export { default as Product } from "./pages/Product";
 export { default as Wishlist } from "./pages/Wishlist";
 export { default as Cart } from "./pages/Cart";
 export { default as Shipping } from "./pages/Shipping";
+export { default as Payment } from "./pages/Payment";
 
 //page divisions
 export { default as CategoryDisplay } from "./pageDivisions/CategoryDisplay";
