@@ -499,7 +499,7 @@ const Profile = () => {
           >
             <StyledTab label='User Details' {...a11yProps(0)} />
             <StyledTab label='Shipping Address' {...a11yProps(1)} />
-            <StyledTab label='Change Password' {...a11yProps(2)} />
+            <StyledTab label='View orders' {...a11yProps(2)} />
           </StyledTabs>
         </StyledAppBar>
         <UserDetailsPanel value={tabNumber} index={0}>

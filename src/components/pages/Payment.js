@@ -3,9 +3,12 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { Icon } from "../../components";
 import { theme } from "../../styles";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Button, TextField } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import { Kawaii, BackdropMaker } from "../index";
+import { makeNotification, setProfileTab } from "../../redux";
+import { useHistory } from "react-router-dom";
 
 import payment__stock__image from "../../images/pngs/payment__stock.jpg";
 
@@ -124,12 +127,12 @@ const Payment = () => {
   const [expires, setExpires] = useState("");
   const [cvv, setCvv] = useState("");
   const [disabled, setDisabled] = useState(true);
+  const [openBackdrop, setOpenBackdrop] = useState(false);
 
+  const dispatch = useDispatch();
+  const history = useHistory();
   const { cartDetails } = useSelector((state) => state.cart);
-
   const classes = useStyles();
-
-  console.log(disabled);
 
   useEffect(() => {
     setDisabled(true);
@@ -144,86 +147,139 @@ const Payment = () => {
     }
   }, [cardNumber, cardName, expires, cvv]);
 
+  const handlePayment = () => {
+    setOpenBackdrop(true);
+    //start loader
+    //if card details are valid then process payment
+    if (cardNumber === "4242424242424242" && cvv === "311") {
+      setTimeout(() => {
+        setOpenBackdrop(false);
+        dispatch(
+          makeNotification({
+            message: `payment successful`,
+            variant: "success",
+            duration: 2000,
+          })
+        );
+        dispatch(setProfileTab(2));
+
+        setTimeout(() => {
+          dispatch(
+            makeNotification({
+              message: `You can view your order now`,
+              variant: "info",
+              duration: 2000,
+            })
+          );
+          history.push("/profile");
+        }, 2000);
+      }, 3000);
+    } else {
+      setTimeout(() => {
+        setOpenBackdrop(false);
+        dispatch(
+          makeNotification({
+            message: `card details are invalid`,
+            variant: "error",
+            duration: 2000,
+          })
+        );
+      }, 3000);
+    }
+    //else show error message and keep user in same page
+    //end loader
+  };
+
   return (
-    <PaymentContainer>
-      <PaymentImageContainer>
-        <img src={payment__stock__image} alt='upright shoe' />
-        <div className='overlap__content'>
-          <Link to='/cart'>
-            <Icon name='arrowBackSmall' />
-            <span>Back to cart</span>
-          </Link>
-          <div className='content__headings'>
-            <h1>
-              Shoey <br /> payment
-            </h1>
-            <h3>{cartDetails.subtotal.formatted_with_symbol}</h3>
+    <>
+      <PaymentContainer>
+        <PaymentImageContainer>
+          <img src={payment__stock__image} alt='upright shoe' />
+          <div className='overlap__content'>
+            <Link to='/cart'>
+              <Icon name='arrowBackSmall' />
+              <span>Back to cart</span>
+            </Link>
+            <div className='content__headings'>
+              <h1>
+                Shoey <br /> payment
+              </h1>
+              <h3>{cartDetails.subtotal.formatted_with_symbol}</h3>
+            </div>
           </div>
-        </div>
-      </PaymentImageContainer>
-      <PaymentDetails>
-        <div className='cart__summary__container'>
-          <h6>checkout summary</h6>
-          <div className='cart__summary'>
-            {cartDetails?.line_items.map((item) => (
-              <div className='cart__item' key={item?.id}>
-                <h6>{item?.name}</h6>
-                <p>
-                  {item?.price?.formatted_with_symbol} X {item?.quantity}
-                </p>
-              </div>
-            ))}
+        </PaymentImageContainer>
+        <PaymentDetails>
+          <div className='cart__summary__container'>
+            <h6>checkout summary</h6>
+            <div className='cart__summary'>
+              {cartDetails?.line_items.map((item) => (
+                <div className='cart__item' key={item?.id}>
+                  <h6>{item?.name}</h6>
+                  <p>
+                    {item?.price?.formatted_with_symbol} X {item?.quantity}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-        <div className={classes.root}>
-          <TextField
-            value={cardNumber}
-            onChange={(event) => setCardNumber(event.target.value)}
-            fullWidth
-            variant='outlined'
-            label='card number'
-            type='number'
-          />
-          <TextField
-            value={cardName}
-            onChange={(event) => setCardName(event.target.value)}
-            fullWidth
-            variant='outlined'
-            label='card holder name'
-            type='text'
-          />
-          <div className={classes.wrapper}>
+          <div className={classes.root}>
             <TextField
-              value={expires}
-              onChange={(event) => setExpires(event.target.value)}
+              value={cardNumber}
+              onChange={(event) => setCardNumber(event.target.value)}
               fullWidth
               variant='outlined'
-              label='Expires in (months)'
+              label='card number'
               type='number'
             />
             <TextField
-              value={cvv}
-              onChange={(event) => setCvv(event.target.value)}
+              value={cardName}
+              onChange={(event) => setCardName(event.target.value)}
               fullWidth
               variant='outlined'
-              label='cvv'
-              type='number'
+              label='card holder name'
+              type='text'
             />
+            <div className={classes.wrapper}>
+              <TextField
+                value={expires}
+                onChange={(event) => setExpires(event.target.value)}
+                fullWidth
+                variant='outlined'
+                label='Expires in (months)'
+                type='number'
+              />
+              <TextField
+                value={cvv}
+                onChange={(event) => setCvv(event.target.value)}
+                fullWidth
+                variant='outlined'
+                label='cvv'
+                type='number'
+              />
+            </div>
+            <div className='button__wrapper'>
+              <Button
+                fullWidth
+                variant='contained'
+                color='primary'
+                className={classes.button}
+                disabled={disabled}
+                onClick={handlePayment}
+              >
+                Pay {cartDetails.subtotal.formatted_with_symbol}
+              </Button>
+            </div>
           </div>
-          <div className='button__wrapper'>
-            <Button
-              fullWidth
-              variant='contained'
-              color='primary'
-              className={classes.button}
-              disabled={disabled}
-            >
-              Pay now
-            </Button>
-          </div>
-        </div>
-      </PaymentDetails>
-    </PaymentContainer>
+        </PaymentDetails>
+      </PaymentContainer>
+      <BackdropMaker open={openBackdrop}>
+        <Kawaii
+          name='folder'
+          mood='blissful'
+          message='processing your payment'
+        />
+      </BackdropMaker>
+    </>
   );
 };
 
