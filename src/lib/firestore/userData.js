@@ -113,3 +113,19 @@ export const addShippingAddress = async (email, shippingAddress) => {
     return { status, message: "unexpected error occured, please try again!!" };
   }
 };
+
+export const addOrderDetails = async (email, orderDetails) => {
+  let status = "";
+  try {
+    await db
+      .doc(`users/${email}`)
+      .update({
+        orderDetails: firebase.firestore.FieldValue.arrayUnion(orderDetails),
+      });
+    status = "success";
+    return { status };
+  } catch (error) {
+    status = "error";
+    return { status, error };
+  }
+};

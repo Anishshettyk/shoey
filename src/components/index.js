@@ -13,6 +13,7 @@ export { default as ProgressBar } from "./subComponents/ProgressBar";
 export { default as SnackbarMaker } from "./subComponents/SnackbarMaker";
 export { default as Kawaii } from "./subComponents/Kawaii";
 export { default as BackdropMaker } from "./subComponents/BackdropMaker";
+export { default as OrderDetails } from "./subComponents/OrderDetails";
 export * from "./subComponents/Skeletons";
 
 //pages

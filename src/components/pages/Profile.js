@@ -48,6 +48,7 @@ import { deleteUserPic } from "../../lib/storage/userData";
 import { Helmet } from "react-helmet";
 import commerce from "../../lib/commerce";
 import { useHistory } from "react-router-dom";
+import { OrderDetails } from "../index";
 
 const { colors, transitionTime } = theme;
 
@@ -716,6 +717,13 @@ const Profile = () => {
                 : "Add address"}
             </Button>
           </form>
+        </UserDetailsPanel>
+        <UserDetailsPanel
+          value={tabNumber}
+          index={2}
+          style={{ padding: "0px" }}
+        >
+          <OrderDetails orderDetails={userDetails?.orderDetails} />
         </UserDetailsPanel>
       </UserActionsContainer>
       <BackdropMaker open={openBackdrop}>

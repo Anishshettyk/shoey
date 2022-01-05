@@ -24,7 +24,7 @@ import {
   FiRefreshCw,
 } from "react-icons/fi";
 import { SiReact, SiRedux, SiFirebase, SiMaterialUi } from "react-icons/si";
-import { RiExternalLinkLine } from "react-icons/ri";
+import { RiExternalLinkLine, RiDeleteBinLine } from "react-icons/ri";
 import { GrGallery, GrClose } from "react-icons/gr";
 import { MdDescription, MdDelete } from "react-icons/md";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
@@ -101,6 +101,8 @@ const Icon = ({ name }) => {
       return <FiRefreshCw />;
     case "arrowBackSmall":
       return <IoIosArrowBack />;
+    case "deleteOutline":
+      return <RiDeleteBinLine />;
     default:
       return <p>please enter a valid name</p>;
   }

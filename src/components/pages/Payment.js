@@ -9,6 +9,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Kawaii, BackdropMaker } from "../index";
 import { makeNotification, setProfileTab } from "../../redux";
 import { useHistory } from "react-router-dom";
+import { addOrderDetails } from "../../lib/firestore/userData";
 
 import payment__stock__image from "../../images/pngs/payment__stock.jpg";
 
@@ -128,10 +129,12 @@ const Payment = () => {
   const [cvv, setCvv] = useState("");
   const [disabled, setDisabled] = useState(true);
   const [openBackdrop, setOpenBackdrop] = useState(false);
+  const [orderDetails, setOrderDetails] = useState([]);
 
   const dispatch = useDispatch();
   const history = useHistory();
   const { cartDetails } = useSelector((state) => state.cart);
+  const { userDetails } = useSelector((state) => state.user);
   const classes = useStyles();
 
   useEffect(() => {
@@ -147,12 +150,40 @@ const Payment = () => {
     }
   }, [cardNumber, cardName, expires, cvv]);
 
-  const handlePayment = () => {
+  useEffect(() => {
+    const qurateCartDetails = (cartDetails) => {
+      const modifiedDetails = cartDetails?.line_items?.map((lineItem) => {
+        const objectToStore = {
+          name: lineItem?.name,
+          quantity: lineItem?.quantity,
+          price: lineItem?.line_total?.formatted_with_symbol,
+          id: lineItem?.product_id,
+          imageurl: lineItem?.image?.url,
+          size: lineItem?.selected_options[0]?.option_name,
+          color: lineItem?.selected_options[1]?.option_name,
+        };
+        return objectToStore;
+      });
+
+      setOrderDetails({
+        date: Date.now(),
+        orders: modifiedDetails,
+        total: cartDetails?.subtotal?.formatted_with_symbol,
+      });
+    };
+
+    qurateCartDetails(cartDetails);
+  }, [cartDetails]);
+
+  const handlePayment = async () => {
     setOpenBackdrop(true);
+
     //start loader
     //if card details are valid then process payment
     if (cardNumber === "4242424242424242" && cvv === "311") {
-      setTimeout(() => {
+      const response = await addOrderDetails(userDetails.email, orderDetails);
+      console.log(response);
+      if (response.status === "success") {
         setOpenBackdrop(false);
         dispatch(
           makeNotification({
@@ -162,7 +193,6 @@ const Payment = () => {
           })
         );
         dispatch(setProfileTab(2));
-
         setTimeout(() => {
           dispatch(
             makeNotification({
@@ -173,7 +203,17 @@ const Payment = () => {
           );
           history.push("/profile");
         }, 2000);
-      }, 3000);
+      } else {
+        setOpenBackdrop(false);
+        dispatch(
+          makeNotification({
+            message: `Error occured in payment. please try again`,
+            variant: "error",
+            duration: 2000,
+          })
+        );
+      }
+      setOpenBackdrop(false);
     } else {
       setTimeout(() => {
         setOpenBackdrop(false);
