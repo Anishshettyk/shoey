@@ -7,9 +7,15 @@ import { useSelector, useDispatch } from "react-redux";
 import { Button, TextField } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Kawaii, BackdropMaker } from "../index";
-import { makeNotification, setProfileTab } from "../../redux";
+import {
+  makeNotification,
+  setProfileTab,
+  setUser,
+  storeToCart,
+} from "../../redux";
 import { useHistory } from "react-router-dom";
-import { addOrderDetails } from "../../lib/firestore/userData";
+import { addOrderDetails, getUserData } from "../../lib/firestore/userData";
+import commerce from "../../lib/commerce";
 
 import payment__stock__image from "../../images/pngs/payment__stock.jpg";
 
@@ -182,8 +188,17 @@ const Payment = () => {
     //if card details are valid then process payment
     if (cardNumber === "4242424242424242" && cvv === "311") {
       const response = await addOrderDetails(userDetails.email, orderDetails);
-      console.log(response);
-      if (response.status === "success") {
+      const userDetailsResponse = await getUserData(userDetails);
+      const cartResponse = await commerce.cart.empty();
+
+      if (
+        response.status === "success" &&
+        userDetailsResponse &&
+        cartResponse?.success
+      ) {
+        dispatch(setUser(userDetailsResponse));
+
+        dispatch(storeToCart(cartResponse?.cart));
         setOpenBackdrop(false);
         dispatch(
           makeNotification({

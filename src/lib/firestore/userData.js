@@ -117,13 +117,26 @@ export const addShippingAddress = async (email, shippingAddress) => {
 export const addOrderDetails = async (email, orderDetails) => {
   let status = "";
   try {
-    await db
-      .doc(`users/${email}`)
-      .update({
-        orderDetails: firebase.firestore.FieldValue.arrayUnion(orderDetails),
-      });
+    await db.doc(`users/${email}`).update({
+      orderDetails: firebase.firestore.FieldValue.arrayUnion(orderDetails),
+    });
     status = "success";
     return { status };
+  } catch (error) {
+    status = "error";
+    return { status, error };
+  }
+};
+
+export const deleteOrderDetails = async (email, orderDetails) => {
+  let status = "";
+  try {
+    await db.doc(`users/${email}`).update({
+      orderDetails: firebase.firestore.FieldValue.arrayRemove(orderDetails),
+    });
+
+    status = "success";
+    return { status, message: "Your order has been deleted" };
   } catch (error) {
     status = "error";
     return { status, error };
