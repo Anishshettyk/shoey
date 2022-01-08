@@ -269,6 +269,7 @@ const Product = () => {
 
   const fetchProductDeatils = async (productID) => {
     const response = await commerce.products.retrieve(productID);
+    console.log(response);
     if (response) {
       setProduct(response);
       setImageToShow(response?.assets[0].url);
@@ -286,7 +287,7 @@ const Product = () => {
 
       const modifiedColors = requiredColors?.options?.map((option) => {
         const productPic = response?.assets?.find(
-          (asset) => asset.id === option.assets.find((asset) => asset)
+          (asset) => asset.filename.split(".")[0] === option.name
         );
         return { ...option, productPic, checked: false };
       });
@@ -424,6 +425,7 @@ const Product = () => {
       history.push("/signin");
     }
   };
+  console.log(product);
 
   return (
     <>
@@ -496,8 +498,8 @@ const Product = () => {
                     onClick={() => selectColor(product)}
                   >
                     <img
-                      src={product.productPic.url}
-                      alt={product.productPic.filename}
+                      src={product?.productPic?.url}
+                      alt={product?.productPic?.filename}
                     />
                     <div className='product__image__banner'>
                       <p>{product.checked ? `Selected` : "Cick to select"}</p>
