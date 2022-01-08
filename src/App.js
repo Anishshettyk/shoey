@@ -47,11 +47,7 @@ function App() {
                 <Route
                   component={Product}
                   exact={true}
-                  path={[
-                    "/men/:product_id",
-                    "/women/:product_id",
-                    "/kids/:product_id",
-                  ]}
+                  path={"/:category/:product_id"}
                 />
                 <UserRoute component={Profile} path='/profile' exact />
                 <UserRoute component={Wishlist} path='/wishlist' exact />

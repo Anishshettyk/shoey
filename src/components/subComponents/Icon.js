@@ -27,6 +27,7 @@ import { SiReact, SiRedux, SiFirebase, SiMaterialUi } from "react-icons/si";
 import { RiExternalLinkLine, RiDeleteBinLine } from "react-icons/ri";
 import { GrGallery, GrClose } from "react-icons/gr";
 import { MdDescription, MdDelete } from "react-icons/md";
+import { SiGoogleanalytics } from "react-icons/si";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 
 const Icon = ({ name }) => {
@@ -103,6 +104,8 @@ const Icon = ({ name }) => {
       return <IoIosArrowBack />;
     case "deleteOutline":
       return <RiDeleteBinLine />;
+    case "analytics":
+      return <SiGoogleanalytics />;
     default:
       return <p>please enter a valid name</p>;
   }

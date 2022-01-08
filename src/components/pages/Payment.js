@@ -149,7 +149,7 @@ const Payment = () => {
       cardNumber.length === 16 &&
       cardName.length > 0 &&
       expires > 0 &&
-      expires < 12 &&
+      expires < 36 &&
       cvv.length === 3
     ) {
       setDisabled(false);
@@ -167,6 +167,7 @@ const Payment = () => {
           imageurl: lineItem?.image?.url,
           size: lineItem?.selected_options[0]?.option_name,
           color: lineItem?.selected_options[1]?.option_name,
+          category: lineItem?.sku,
         };
         return objectToStore;
       });

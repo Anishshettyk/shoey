@@ -14,6 +14,7 @@ export { default as SnackbarMaker } from "./subComponents/SnackbarMaker";
 export { default as Kawaii } from "./subComponents/Kawaii";
 export { default as BackdropMaker } from "./subComponents/BackdropMaker";
 export { default as OrderDetails } from "./subComponents/OrderDetails";
+export { default as YouMayAlsoLike } from "./subComponents/YouMayAlsoLike";
 export * from "./subComponents/Skeletons";
 
 //pages

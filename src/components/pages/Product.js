@@ -3,7 +3,7 @@ import { useParams, Link, useLocation, useHistory } from "react-router-dom";
 import commerce from "../../lib/commerce";
 import styled from "styled-components";
 import { theme, mixins } from "../../styles";
-import { Icon, Kawaii, BackdropMaker } from "../index";
+import { Icon, Kawaii, BackdropMaker, YouMayAlsoLike } from "../index";
 import { Helmet } from "react-helmet";
 import {
   addWishedProducts,
@@ -218,6 +218,7 @@ const Product = () => {
     "We are working on it..."
   );
   const [wishlistedProduct, setWishlistedProduct] = useState(false);
+  const [recommendProduct, setRecommendProduct] = useState([]);
 
   const path = useParams();
   const location = useLocation();
@@ -243,10 +244,12 @@ const Product = () => {
 
   useEffect(() => {
     if (path.product_id && allProducts?.length > 0) {
-      const res = FindYouMayAlsoLike(path.product_id);
-      console.log(res);
+      const res = FindYouMayAlsoLike(path.product_id, path.category);
+      if (res) {
+        setRecommendProduct(res);
+      }
     }
-  }, [path, allProducts]);
+  }, [path, allProducts, product]);
 
   useEffect(() => {
     if (path) {
@@ -423,120 +426,124 @@ const Product = () => {
   };
 
   return (
-    <ProductContainer>
-      <Helmet>
-        <title>{`Shoey - ${
-          product === null ? "View product" : product.name
-        }`}</title>
-      </Helmet>
-      <ProductActionContainer>
-        <div className='product__action__image__container'>
-          {imageToShow === null ? (
-            <Skeleton width='100%' height='100%' />
-          ) : (
-            <img src={imageToShow} alt='product display' />
-          )}
-        </div>
+    <>
+      <ProductContainer>
+        <Helmet>
+          <title>{`Shoey - ${
+            product === null ? "View product" : product.name
+          }`}</title>
+        </Helmet>
+        <ProductActionContainer>
+          <div className='product__action__image__container'>
+            {imageToShow === null ? (
+              <Skeleton width='100%' height='100%' />
+            ) : (
+              <img src={imageToShow} alt='product display' />
+            )}
+          </div>
 
-        <div className='product__button__container'>
-          {product === null ? (
-            <Skeleton width='100%' height='70px' />
-          ) : (
-            <button
-              className='product__wishlist__button'
-              onClick={() => manageProductWishlist(email, product.id)}
-            >
-              <Icon name='heart' />
-              {wishlistedProduct ? "Remove from wishlist" : "Add to wishlist"}
-            </button>
-          )}
-          {product === null ? (
-            <Skeleton width='100%' height='70px' />
-          ) : (
-            <button
-              className='product__cart__button'
-              onClick={() => manageProductCart(product.id)}
-            >
-              <Icon name='Cart' />
-              Add to cart
-            </button>
-          )}
-        </div>
-      </ProductActionContainer>
-      <ProductDetailsContainer>
-        {product ? (
-          <>
-            <Link
-              to={`/${location.pathname.split("/")[1]}`}
-              className='product__back__link'
-            >
-              <Icon name='arrowBack' />
-              Back to shopping list
-            </Link>
+          <div className='product__button__container'>
+            {product === null ? (
+              <Skeleton width='100%' height='70px' />
+            ) : (
+              <button
+                className='product__wishlist__button'
+                onClick={() => manageProductWishlist(email, product.id)}
+              >
+                <Icon name='heart' />
+                {wishlistedProduct ? "Remove from wishlist" : "Add to wishlist"}
+              </button>
+            )}
+            {product === null ? (
+              <Skeleton width='100%' height='70px' />
+            ) : (
+              <button
+                className='product__cart__button'
+                onClick={() => manageProductCart(product.id)}
+              >
+                <Icon name='Cart' />
+                Add to cart
+              </button>
+            )}
+          </div>
+        </ProductActionContainer>
+        <ProductDetailsContainer>
+          {product ? (
+            <>
+              <Link
+                to={`/${location.pathname.split("/")[1]}`}
+                className='product__back__link'
+              >
+                <Icon name='arrowBack' />
+                Back to shopping list
+              </Link>
 
-            <h1 className='product__title'>{product.name}</h1>
-            <h2 className='product__price'>Rs. {product.price.formatted}</h2>
-            <p className='product__tax'>inclusive of all taxes</p>
-            <h5 className='product__section__heading'>
-              <Icon name='gallery' />
-              Select color{" "}
-              <span>({productColors ? productColors?.length : "0"})</span>
-            </h5>
-            <div className='product__images'>
-              {productColors?.map((product, i) => (
-                <div
-                  className={`product__image__container ${
-                    product.checked === true ? "color__checked" : ""
-                  }`}
-                  key={i}
-                  onClick={() => selectColor(product)}
-                >
-                  <img
-                    src={product.productPic.url}
-                    alt={product.productPic.filename}
-                  />
-                  <div className='product__image__banner'>
-                    <p>{product.checked ? `Selected` : "Cick to select"}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <h5 className='product__section__heading'>
-              <Icon name='size' />
-              Select size{" "}
-              <span>({productSizes ? productSizes.length : "0"})</span>
-            </h5>
-            <div className='product__sizes'>
-              {productSizes
-                ? productSizes.map((size) => (
-                    <div
-                      className={`product__size ${
-                        size.checked === true ? "size__checked" : ""
-                      }`}
-                      key={size.id}
-                      onClick={() => selectSize(size)}
-                    >
-                      <p>{size.name}</p>
+              <h1 className='product__title'>{product.name}</h1>
+              <h2 className='product__price'>Rs. {product.price.formatted}</h2>
+              <p className='product__tax'>inclusive of all taxes</p>
+              <h5 className='product__section__heading'>
+                <Icon name='gallery' />
+                Select color{" "}
+                <span>({productColors ? productColors?.length : "0"})</span>
+              </h5>
+              <div className='product__images'>
+                {productColors?.map((product, i) => (
+                  <div
+                    className={`product__image__container ${
+                      product.checked === true ? "color__checked" : ""
+                    }`}
+                    key={i}
+                    onClick={() => selectColor(product)}
+                  >
+                    <img
+                      src={product.productPic.url}
+                      alt={product.productPic.filename}
+                    />
+                    <div className='product__image__banner'>
+                      <p>{product.checked ? `Selected` : "Cick to select"}</p>
                     </div>
-                  ))
-                : null}
-            </div>
-            <h5 className='product__section__heading'>
-              <Icon name='description' />
-              Product description
-            </h5>
-            <p
-              className='product__description'
-              contentEditable='false'
-              dangerouslySetInnerHTML={{ __html: product.description }}
-            />
-          </>
-        ) : null}
-      </ProductDetailsContainer>
-      <BackdropMaker open={openBackdrop}>
-        <Kawaii name='folder' mood='blissful' message={backdropMessage} />
-      </BackdropMaker>
-    </ProductContainer>
+                  </div>
+                ))}
+              </div>
+              <h5 className='product__section__heading'>
+                <Icon name='size' />
+                Select size{" "}
+                <span>({productSizes ? productSizes.length : "0"})</span>
+              </h5>
+              <div className='product__sizes'>
+                {productSizes
+                  ? productSizes.map((size) => (
+                      <div
+                        className={`product__size ${
+                          size.checked === true ? "size__checked" : ""
+                        }`}
+                        key={size.id}
+                        onClick={() => selectSize(size)}
+                      >
+                        <p>{size.name}</p>
+                      </div>
+                    ))
+                  : null}
+              </div>
+              <h5 className='product__section__heading'>
+                <Icon name='description' />
+                Product description
+              </h5>
+              <p
+                className='product__description'
+                contentEditable='false'
+                dangerouslySetInnerHTML={{ __html: product.description }}
+              />
+            </>
+          ) : null}
+        </ProductDetailsContainer>
+
+        <BackdropMaker open={openBackdrop}>
+          <Kawaii name='folder' mood='blissful' message={backdropMessage} />
+        </BackdropMaker>
+      </ProductContainer>
+      <YouMayAlsoLike recommendProduct={recommendProduct} />
+    </>
   );
 };
 

@@ -1,25 +1,30 @@
-import React, { useState, useEffect, useRef } from 'react';
-import styled from 'styled-components';
-import { Breadcrumbs, Checkbox, FormControlLabel, makeStyles } from '@material-ui/core';
-import { Skeleton } from '@material-ui/lab';
-import { Link, useLocation } from 'react-router-dom';
-import { theme, mixins, media } from '../../styles';
-import commerce from '../../lib/commerce';
-import { SameSkeleton } from '../index';
-import { valueChopper } from '../../utils/';
-import Slider from 'react-slick';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect, useRef } from "react";
+import styled from "styled-components";
+import {
+  Breadcrumbs,
+  Checkbox,
+  FormControlLabel,
+  makeStyles,
+} from "@material-ui/core";
+import { Skeleton } from "@material-ui/lab";
+import { Link, useLocation } from "react-router-dom";
+import { theme, mixins, media } from "../../styles";
+import commerce from "../../lib/commerce";
+import { SameSkeleton } from "../index";
+import { valueChopper } from "../../utils/";
+import Slider from "react-slick";
+import { useSelector } from "react-redux";
 
 const { colors } = theme;
 
 const useStyles = makeStyles(() => ({
   root: {
     margin: 0,
-    '& .MuiFormControlLabel-label': {
+    "& .MuiFormControlLabel-label": {
       fontSize: 14,
       color: colors.textColor,
     },
-    '& .MuiIconButton-root': {
+    "& .MuiIconButton-root": {
       padding: 3,
     },
   },
@@ -85,8 +90,7 @@ const FilterContainer = styled.section`
 const ProductContainer = styled.section`
   box-shadow: ${mixins.shadow};
   border-radius: 10px;
-  .product__banner {
-  }
+
   ${media.tabletL`
   box-shadow:none;
   `}
@@ -192,7 +196,7 @@ const MainCategory = () => {
   const sliderRef = useRef([]);
   const timerRef = useRef(null);
   const path = useLocation();
-  const pathName = path.pathname.split('/')[1];
+  const pathName = path.pathname.split("/")[1];
   const classes = useStyles();
   const { allProducts } = useSelector((state) => state.products);
 
@@ -206,14 +210,21 @@ const MainCategory = () => {
   useEffect(() => {
     const findRequiredCategory = async (mainCategoryName) => {
       const allCategories = await commerce.categories.list();
-      const requiredCategories = allCategories.data.filter((category) => category.name.split(' ')[0] === mainCategoryName);
-      const modifiedCategories = requiredCategories.map((category) => ({ ...category, checked: false }));
+      const requiredCategories = allCategories.data.filter(
+        (category) => category.name.split(" ")[0] === mainCategoryName
+      );
+      const modifiedCategories = requiredCategories.map((category) => ({
+        ...category,
+        checked: false,
+      }));
       setCategories(modifiedCategories);
     };
 
     const retriveAllCategoryProducts = async () => {
       if (allProducts.length > 0) {
-        const filteredResponse = allProducts.filter((product) => product?.sku === pathName);
+        const filteredResponse = allProducts.filter(
+          (product) => product?.sku === pathName
+        );
         setProducts(filteredResponse);
         setInitialProducts(filteredResponse);
       }
@@ -261,7 +272,12 @@ const MainCategory = () => {
       let index = 0;
       while (stepFinalValue <= maxProductPrice) {
         //pushing min max max step value to array
-        filteredValues.push({ minValue: stepFinalValue, maxValue: stepFinalValue + stepValue, checked: false, index: index });
+        filteredValues.push({
+          minValue: stepFinalValue,
+          maxValue: stepFinalValue + stepValue,
+          checked: false,
+          index: index,
+        });
         //incrementing step value with step
         stepFinalValue = stepFinalValue + stepValue;
         index = index + 1;
@@ -281,13 +297,21 @@ const MainCategory = () => {
   };
   const handlePriceFilter = (index) => {
     setProducts(initialProducts);
-    const clearChecked = priceFilters.map((price) => (price.index !== index ? { ...price, checked: false } : price));
-    const newArray = clearChecked.map((price) => (price.index === index ? { ...price, checked: !price.checked } : price));
+    const clearChecked = priceFilters.map((price) =>
+      price.index !== index ? { ...price, checked: false } : price
+    );
+    const newArray = clearChecked.map((price) =>
+      price.index === index ? { ...price, checked: !price.checked } : price
+    );
     setPriceFilters(newArray);
-    const selectedPriceFilter = newArray.filter((price) => price.checked === true);
+    const selectedPriceFilter = newArray.filter(
+      (price) => price.checked === true
+    );
     if (selectedPriceFilter.length > 0) {
       const reducedProducts = initialProducts.filter(
-        (product) => product.price.raw >= selectedPriceFilter[0].minValue && product.price.raw <= selectedPriceFilter[0].maxValue
+        (product) =>
+          product.price.raw >= selectedPriceFilter[0].minValue &&
+          product.price.raw <= selectedPriceFilter[0].maxValue
       );
       setProducts(reducedProducts);
     }
@@ -295,14 +319,24 @@ const MainCategory = () => {
 
   const handleCategoryFilter = (categorySelected) => {
     setProducts(initialProducts);
-    const clearCategory = categories.map((category) => (category.id !== categorySelected.id ? { ...category, checked: false } : category));
+    const clearCategory = categories.map((category) =>
+      category.id !== categorySelected.id
+        ? { ...category, checked: false }
+        : category
+    );
     const newCategory = clearCategory.map((category) =>
-      category.id === categorySelected.id ? { ...category, checked: !category.checked } : category
+      category.id === categorySelected.id
+        ? { ...category, checked: !category.checked }
+        : category
     );
     setCategories(newCategory);
-    const selectedCategoryFilter = newCategory.filter((category) => category.checked === true);
+    const selectedCategoryFilter = newCategory.filter(
+      (category) => category.checked === true
+    );
     if (selectedCategoryFilter.length > 0) {
-      const reducedProducts = initialProducts.filter((product) => product.categories[0].id === selectedCategoryFilter[0].id);
+      const reducedProducts = initialProducts.filter(
+        (product) => product.categories[0].id === selectedCategoryFilter[0].id
+      );
       setProducts(reducedProducts);
     }
   };
@@ -310,27 +344,35 @@ const MainCategory = () => {
   return (
     <StyledMainContainer>
       {categories ? (
-        <StyledBreadcrumbs aria-label="breadcrumb">
-          <Link to="/">HOME</Link>
+        <StyledBreadcrumbs aria-label='breadcrumb'>
+          <Link to='/'>HOME</Link>
           <h4>{pathName}</h4>
         </StyledBreadcrumbs>
       ) : (
-        <Skeleton variant="rect" width="20%" height={20} style={{ marginBottom: '10px' }} />
+        <Skeleton
+          variant='rect'
+          width='20%'
+          height={20}
+          style={{ marginBottom: "10px" }}
+        />
       )}
 
       {categories ? (
-        <h4 className="main__heading">
-          {pathName} footware - <span>{computeTotalProducts(categories)} items</span>
+        <h4 className='main__heading'>
+          {pathName} footware -{" "}
+          <span>{computeTotalProducts(categories)} items</span>
         </h4>
       ) : (
-        <Skeleton variant="rect" width="30%" height={20} animation="wave" />
+        <Skeleton variant='rect' width='30%' height={20} animation='wave' />
       )}
       <ContentContainer>
         <FilterContainer>
-          <h5 className="filter__heading">Filters</h5>
+          <h5 className='filter__heading'>Filters</h5>
           {categories ? (
-            <div className="filter__content__container">
-              <h4 className="slim__heading filter__content__heading">Categories</h4>
+            <div className='filter__content__container'>
+              <h4 className='slim__heading filter__content__heading'>
+                Categories
+              </h4>
               {categories?.map((category) => (
                 <FormControlLabel
                   className={classes.root}
@@ -340,19 +382,27 @@ const MainCategory = () => {
                       checked={category.checked}
                       onChange={() => handleCategoryFilter(category)}
                       name={`${category.name.split(pathName)[1]}`}
-                      color="primary"
+                      color='primary'
                     />
                   }
-                  label={`${category.name.split(pathName)[1]} (${category.products})`}
+                  label={`${category.name.split(pathName)[1]} (${
+                    category.products
+                  })`}
                 />
               ))}
             </div>
           ) : (
-            <SameSkeleton variant="rect" width="90%" height="30px" limit={5} margin="10px" />
+            <SameSkeleton
+              variant='rect'
+              width='90%'
+              height='30px'
+              limit={5}
+              margin='10px'
+            />
           )}
           {products ? (
-            <div className="filter__content__container">
-              <h4 className="slim__heading filter__content__heading">Price</h4>
+            <div className='filter__content__container'>
+              <h4 className='slim__heading filter__content__heading'>Price</h4>
 
               {priceFilters?.map((price) => (
                 <FormControlLabel
@@ -363,7 +413,7 @@ const MainCategory = () => {
                       checked={price.checked}
                       onChange={() => handlePriceFilter(price.index)}
                       name={`checked${price.index}`}
-                      color="primary"
+                      color='primary'
                     />
                   }
                   label={`Rs. ${price.minValue} to Rs. ${price.maxValue}`}
@@ -371,40 +421,65 @@ const MainCategory = () => {
               ))}
             </div>
           ) : (
-            <SameSkeleton variant="rect" width="90%" height="30px" limit={5} margin="10px" />
+            <SameSkeleton
+              variant='rect'
+              width='90%'
+              height='30px'
+              limit={5}
+              margin='10px'
+            />
           )}
         </FilterContainer>
         <ProductContainer>
-          <div className="product__banner"></div>
-
           <ProductContentContainer>
             {products ? (
               products?.map((product, i) => (
                 <div
                   key={product.id}
-                  className="product__card"
+                  className='product__card'
                   onMouseEnter={() => sliderOnMouseEnter(i)}
                   onMouseLeave={() => sliderOnMouseLeave(i)}
                 >
-                  <StyledSlider {...settings} ref={(element) => (sliderRef.current[i] = element)}>
+                  <StyledSlider
+                    {...settings}
+                    ref={(element) => (sliderRef.current[i] = element)}
+                  >
                     {product.assets.map(({ url, id, filename }) => (
-                      <div className="product__image__container" key={id}>
+                      <div className='product__image__container' key={id}>
                         <img src={url} alt={filename} />
                       </div>
                     ))}
                   </StyledSlider>
-                  <div className="product__content__container">
-                    <h3 className="slim__heading">{valueChopper(product.name, 23)}</h3>
-                    <Link className="product__button" to={`/${pathName}/${product.id}`}>
+                  <div className='product__content__container'>
+                    <h3 className='slim__heading'>
+                      {valueChopper(product.name, 23)}
+                    </h3>
+                    <Link
+                      className='product__button'
+                      to={`/${pathName}/${product.id}`}
+                    >
                       View Product
                     </Link>
-                    <p contentEditable="false" dangerouslySetInnerHTML={{ __html: valueChopper(product.description, 60) }} />
-                    <h6 className="slim__heading">Rs. {product.price.formatted}</h6>
+                    <p
+                      contentEditable='false'
+                      dangerouslySetInnerHTML={{
+                        __html: valueChopper(product.description, 60),
+                      }}
+                    />
+                    <h6 className='slim__heading'>
+                      Rs. {product.price.formatted}
+                    </h6>
                   </div>
                 </div>
               ))
             ) : (
-              <SameSkeleton limit={20} variant="rect" width="100%" height="300px" margin="0px" />
+              <SameSkeleton
+                limit={20}
+                variant='rect'
+                width='100%'
+                height='300px'
+                margin='0px'
+              />
             )}
           </ProductContentContainer>
         </ProductContainer>

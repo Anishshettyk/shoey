@@ -60,6 +60,8 @@ const OrderDetailsSummary = styled.div`
       border: 2px dashed ${colors.darkBlue};
       border-radius: 5px;
       font-size: 13px;
+      font-weight: 500;
+      opacity: 0.8;
     }
   }
   .total__summary {
@@ -84,6 +86,13 @@ const Product = styled.div`
     }
     .details {
       margin-left: 20px;
+      a {
+        color: ${colors.darkBlue};
+        font-weight: bold;
+        &:hover {
+          color: ${colors.black};
+        }
+      }
       .details__additional {
         font-size: 12px;
         span {
@@ -120,6 +129,11 @@ const NoOrders = styled.div`
     border-radius: 20px;
     background-color: ${colors.darkBlue};
     color: ${colors.white};
+    transition: all 0.15s ease-in-out;
+    &:hover {
+      color: ${colors.white};
+      transform: scale(1.1);
+    }
   }
 `;
 
@@ -164,54 +178,58 @@ const OrderDetails = ({ orderDetails }) => {
     <div>
       {orderDetails?.length > 0 ? (
         <>
-          {orderDetails?.map((order, i) => (
-            <OrderContainer key={i}>
-              <OrderDetailsHeader>
-                <h6>{moment(order.date).format("Do MMM YYYY")}</h6>
-                <Tooltip title='Cancel order'>
-                  <button
-                    className='delete__icon'
-                    onClick={() => deleteOrder(order.date)}
-                    value={order.date}
-                  >
-                    <Icon name='delete' />
-                  </button>
-                </Tooltip>
-              </OrderDetailsHeader>
-              <OrderDetailsContent>
-                {order?.orders?.map((product, i) => (
-                  <Product key={i}>
-                    <div className='product__details'>
-                      <img src={product.imageurl} alt={product.name} />
-                      <div className='details'>
-                        <h5>{product.name}</h5>
-                        <div className='details__additional'>
-                          <span>
-                            {product.quantity} unit X {product.price}
-                          </span>
-                          <span>size {product.size}</span>
-                          <span>color {product.color}</span>
+          {orderDetails
+            .sort((a, b) => (moment(a.date).isBefore(b.date) ? 1 : -1))
+            ?.map((order, i) => (
+              <OrderContainer key={i}>
+                <OrderDetailsHeader>
+                  <h6>{moment(order.date).format("Do MMM YYYY")}</h6>
+                  <Tooltip title='Cancel order'>
+                    <button
+                      className='delete__icon'
+                      onClick={() => deleteOrder(order.date)}
+                      value={order.date}
+                    >
+                      <Icon name='delete' />
+                    </button>
+                  </Tooltip>
+                </OrderDetailsHeader>
+                <OrderDetailsContent>
+                  {order?.orders?.map((product, i) => (
+                    <Product key={i}>
+                      <div className='product__details'>
+                        <img src={product.imageurl} alt={product.name} />
+                        <div className='details'>
+                          <Link to={`${product?.category}/${product.id}`}>
+                            <h5>{product.name}</h5>
+                          </Link>
+                          <div className='details__additional'>
+                            <span>
+                              {product.quantity} unit X {product.price}
+                            </span>
+                            <span>size {product.size}</span>
+                            <span>color {product.color}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div className='product__status'>
-                      <p>order received</p>
-                    </div>
-                  </Product>
-                ))}
-              </OrderDetailsContent>
-              <OrderDetailsSummary>
-                <div className='payment__summary'>
-                  <h5>Payment successful</h5>
-                  <p>With card XX4242</p>
-                </div>
-                <div className='total__summary'>
-                  <h5>Order total</h5>
-                  <p>{order.total}</p>
-                </div>
-              </OrderDetailsSummary>
-            </OrderContainer>
-          ))}
+                      <div className='product__status'>
+                        <p>order received</p>
+                      </div>
+                    </Product>
+                  ))}
+                </OrderDetailsContent>
+                <OrderDetailsSummary>
+                  <div className='payment__summary'>
+                    <h5>Payment done!</h5>
+                    <p>Using card XX4242</p>
+                  </div>
+                  <div className='total__summary'>
+                    <h5>Order total</h5>
+                    <p>{order.total}</p>
+                  </div>
+                </OrderDetailsSummary>
+              </OrderContainer>
+            ))}
         </>
       ) : (
         <NoOrders>
