@@ -121,7 +121,7 @@ const ProductContentContainer = styled.div`
     overflow: hidden;
 
     .product__image__container {
-      min-height: 200px;
+      max-height: 220px;
       img {
         width: 100%;
         height: 100%;
@@ -452,7 +452,7 @@ const MainCategory = () => {
                   </StyledSlider>
                   <div className='product__content__container'>
                     <h3 className='slim__heading'>
-                      {valueChopper(product.name, 23)}
+                      {valueChopper(product.name, 20)}
                     </h3>
                     <Link
                       className='product__button'

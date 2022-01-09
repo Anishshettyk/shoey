@@ -24,7 +24,11 @@ import {
   FiRefreshCw,
 } from "react-icons/fi";
 import { SiReact, SiRedux, SiFirebase, SiMaterialUi } from "react-icons/si";
-import { RiExternalLinkLine, RiDeleteBinLine } from "react-icons/ri";
+import {
+  RiExternalLinkLine,
+  RiDeleteBinLine,
+  RiFlagFill,
+} from "react-icons/ri";
 import { GrGallery, GrClose } from "react-icons/gr";
 import { MdDescription, MdDelete } from "react-icons/md";
 import { SiGoogleanalytics } from "react-icons/si";
@@ -106,6 +110,8 @@ const Icon = ({ name }) => {
       return <RiDeleteBinLine />;
     case "analytics":
       return <SiGoogleanalytics />;
+    case "Flag":
+      return <RiFlagFill />;
     default:
       return <p>please enter a valid name</p>;
   }

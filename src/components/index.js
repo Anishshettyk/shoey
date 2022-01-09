@@ -15,6 +15,7 @@ export { default as Kawaii } from "./subComponents/Kawaii";
 export { default as BackdropMaker } from "./subComponents/BackdropMaker";
 export { default as OrderDetails } from "./subComponents/OrderDetails";
 export { default as YouMayAlsoLike } from "./subComponents/YouMayAlsoLike";
+export { default as Search } from "./subComponents/Search";
 export * from "./subComponents/Skeletons";
 
 //pages

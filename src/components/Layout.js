@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { auth } from "../lib/firebase";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser, makeNotification } from "../redux";
-import { Navbar, SnackbarMaker } from "./index";
+import { Navbar, SnackbarMaker, Search } from "./index";
 import styled from "styled-components";
 import { getUserData } from "../lib/firestore/userData";
 import { UseAllProductsData, UseCartData } from "../functions";
@@ -20,6 +20,7 @@ const StyledContentBox = styled.section`
 const Layout = ({ children }) => {
   const dispatch = useDispatch();
   const notification = useSelector((state) => state.notification);
+  const { openSearch } = useSelector((state) => state.user);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -60,6 +61,7 @@ const Layout = ({ children }) => {
       ) : (
         ""
       )}
+      {openSearch && <Search />}
     </StyledMain>
   );
 };

@@ -26,3 +26,10 @@ export const setPaymentPending = (value) => {
     payload: value,
   };
 };
+
+export const setOpenSearch = (value) => {
+  return {
+    type: types.SET_OPEN_SEARCH,
+    payload: value,
+  };
+};

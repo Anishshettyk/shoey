@@ -4,6 +4,7 @@ const initialState = {
   userDetails: {},
   profileTab: 0,
   paymentPending: false,
+  openSearch: false,
 };
 
 const userReducer = (state = initialState, action) => {
@@ -27,6 +28,11 @@ const userReducer = (state = initialState, action) => {
       return {
         ...state,
         paymentPending: action.payload,
+      };
+    case types.SET_OPEN_SEARCH:
+      return {
+        ...state,
+        openSearch: action.payload,
       };
     default:
       return state;
